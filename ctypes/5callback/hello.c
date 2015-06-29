@@ -6,6 +6,6 @@
 	#define CTYPES
 #endif
 
-typedef void (*Callback)();
+typedef void (*Callback)(char*);
 
-CTYPES void hello(Callback callback){ callback(); }
+CTYPES void hello(Callback callback){ callback("Hello, world!"); }
