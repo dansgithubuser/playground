@@ -1,4 +1,4 @@
-import glob, os, pprint, subprocess
+import glob, os, pprint, subprocess, sys
 
 commits={}
 
@@ -13,11 +13,13 @@ for folder in glob.glob(os.path.join('.git', 'objects', '*')):
 pprint.pprint(commits)
 
 import graphviz
-graph=graphviz.Digraph()
+if len(sys.argv)>1: name=sys.argv[1]
+else: name='git-corpus'
+graph=graphviz.Digraph(name, format='png')
 for commit in commits:
 	hash=commit[:8]
 	subject=subprocess.check_output('git log --pretty=format:%s -n 1 '+commit, shell=True).decode().strip()
 	graph.node(commit, hash+'\n'+subject)
 for commit, parents in commits.items():
 	for parent in parents: graph.edge(commit, parent)
-graph.render('git-corpus.gv', view=True)
+graph.render(view=True)
