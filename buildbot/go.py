@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
-import subprocess, os, argparse
+import subprocess, os, argparse, webbrowser
 
 parser=argparse.ArgumentParser()
-parser.add_argument('command', help='create, start, restart, or stop')
+parser.add_argument('command', choices=['create', 'start', 'restart', 'stop', 'browser'])
 args=parser.parse_args()
 
 if args.command=='create':
@@ -21,3 +21,6 @@ if args.command=='restart':
 if args.command=='stop':
 	print(subprocess.call('buildbot stop play-master-basedir', shell=True))
 	print(subprocess.call('buildslave stop play-slave-basedir', shell=True))
+
+if args.command=='browser':
+	webbrowser.open('http://localhost:8010')
