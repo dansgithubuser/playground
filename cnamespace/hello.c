@@ -1,7 +1,9 @@
 //main file
 #include <stdio.h>
 
-void NAMESPACE(hello)(){
+#include "namespace.h"
+
+void NAMESPACED(hello)(){
 	printf("Hello, world!\n");
 }
 
