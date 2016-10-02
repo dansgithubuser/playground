@@ -4,9 +4,10 @@
 
 #include <atomic>
 #include <map>
+#include <mutex>
 #include <thread>
 
-namespace dryad{
+namespace DRYAD_NAMESPACE{
 
 static void onAccept(dyad_Event* e);
 static void onData(dyad_Event* e);
@@ -117,4 +118,4 @@ void Client::send(const std::vector<uint8_t>& data){
 	fBoss->send((dyad_Stream*)_stream, data);
 }
 
-}//namespace dryad
+}//namespace

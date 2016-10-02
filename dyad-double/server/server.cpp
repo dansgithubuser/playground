@@ -11,13 +11,13 @@ static void receiver(const std::vector<uint8_t>& data){
 }
 
 Server::Server(){
-	dryad::start();
-	_server=new dryad::Server("127.0.0.1", 9089, receiver);
+	dryad_server::start();
+	_server=new dryad_server::Server("127.0.0.1", 9089, receiver);
 	_quit=false;
 	_thread=std::thread([this](){
 		while(!_quit){
 			std::this_thread::sleep_for(std::chrono::seconds(1));
-			((dryad::Server*)_server)->send({'j', 'k', 'l', ';'});
+			((dryad_server::Server*)_server)->send({'j', 'k', 'l', ';'});
 		}
 	});
 }
@@ -26,5 +26,5 @@ Server::~Server(){
 	_quit=true;
 	_thread.join();
 	delete _server;
-	dryad::finish();
+	dryad_server::finish();
 }
