@@ -3,7 +3,9 @@
 #include <dyad.h>
 
 #include <atomic>
+#include <condition_variable>
 #include <map>
+#include <mutex>
 #include <thread>
 
 namespace dryad{
@@ -13,19 +15,35 @@ static void onData(dyad_Event* e);
 
 class Boss{
 	public:
-		Boss(){
+		void start(){
+			{
+				std::unique_lock<std::recursive_mutex> lock(_mutex);
+				if(_state==STARTED) return;
+				else if(_state==FINISHING) while(_state!=State::FRESH) _cv.wait(lock);
+				_state=STARTED;
+			}
 			dyad_init();
-			dyad_setUpdateTimeout(1e-3);
+			dyad_setUpdateTimeout(0);
 			_quit=false;
 			_thread=std::thread([this](){ while(!_quit){
 				_mutex.lock();
 				dyad_update();
 				_mutex.unlock();
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			} });
 		}
-		~Boss(){
+		void finish(){
+			{
+				std::unique_lock<std::recursive_mutex> lock(_mutex);
+				if(_state==FRESH) return;
+				else if(_state==FINISHING){
+					while(_state!=State::FRESH) _cv.wait(lock);
+					return;
+				}
+			}
 			_quit=true;
 			_thread.join();
+			_state=State::FRESH;
 		}
 		dyad_Stream* server(std::string host, int port, Receiver receiver){
 			_mutex.lock();
@@ -82,39 +100,42 @@ class Boss{
 			_mutex.unlock();
 		}
 	private:
+		enum State{FRESH, STARTED, FINISHING};
+		State _state=State::FRESH;
 		std::atomic<bool> _quit;
 		std::thread _thread;
 		std::recursive_mutex _mutex;
+		std::condition_variable_any _cv;
 		std::map<dyad_Stream*, Receiver> _receivers;
 		std::map<dyad_Stream*, std::vector<dyad_Stream*>> _accepted;
 };
 
-static Boss* fBoss;
+static Boss fBoss;
 
-static void onAccept(dyad_Event* e){ fBoss->accept(e); }
-static void onData(dyad_Event* e){ fBoss->receive(e); }
+static void onAccept(dyad_Event* e){ fBoss.accept(e); }
+static void onData(dyad_Event* e){ fBoss.receive(e); }
 
-void start(){ fBoss=new Boss; }
-void finish(){ delete fBoss; }
+void start(){ fBoss.start(); }
+void finish(){ fBoss.finish(); }
 
 Server::Server(std::string host, int port, Receiver receiver){
-	_stream=fBoss->server(host, port, receiver);
+	_stream=fBoss.server(host, port, receiver);
 }
 
-Server::~Server(){ fBoss->close((dyad_Stream*)_stream); }
+Server::~Server(){ fBoss.close((dyad_Stream*)_stream); }
 
 void Server::send(const std::vector<uint8_t>& data){
-	fBoss->broadcast((dyad_Stream*)_stream, data);
+	fBoss.broadcast((dyad_Stream*)_stream, data);
 }
 
 Client::Client(std::string host, int port, Receiver receiver){
-	_stream=fBoss->client(host, port, receiver);
+	_stream=fBoss.client(host, port, receiver);
 }
 
-Client::~Client(){ fBoss->close((dyad_Stream*)_stream); }
+Client::~Client(){ fBoss.close((dyad_Stream*)_stream); }
 
 void Client::send(const std::vector<uint8_t>& data){
-	fBoss->send((dyad_Stream*)_stream, data);
+	fBoss.send((dyad_Stream*)_stream, data);
 }
 
 }//namespace dryad
