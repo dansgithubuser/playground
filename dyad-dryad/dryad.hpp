@@ -3,14 +3,11 @@
 
 #include <cstdint>
 #include <functional>
+#include <mutex>
 #include <string>
 #include <vector>
 
-#ifndef DRYAD_NAMESPACE
-	#define DRYAD_NAMESPACE dryad
-#endif
-
-namespace DRYAD_NAMESPACE{
+namespace dryad{
 	void start();//must be called after static initialization
 	void finish();//must be called before static destruction
 	typedef std::function<void(const std::vector<uint8_t>&)> Receiver;
