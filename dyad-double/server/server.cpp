@@ -25,6 +25,6 @@ Server::Server(){
 Server::~Server(){
 	_quit=true;
 	_thread.join();
-	delete _server;
+	delete (dryad::Server*)_server;
 	dryad::finish();
 }

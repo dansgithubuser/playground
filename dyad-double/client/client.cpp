@@ -25,6 +25,6 @@ Client::Client(){
 Client::~Client(){
 	_quit=true;
 	_thread.join();
-	delete _client;
+	delete (dryad::Client*)_client;
 	dryad::finish();
 }

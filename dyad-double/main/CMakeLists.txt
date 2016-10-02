@@ -6,4 +6,5 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}/../client
 )
 add_executable(main ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+set_property(TARGET main PROPERTY CXX_STANDARD 11)
 target_link_libraries(main server client)
