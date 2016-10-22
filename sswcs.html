@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+	<head>
+		<script type="text/javascript">
+
+var result=null
+
+function addConstraint(sender='', receiver=''){
+	var form=document.createElement('FORM')
+	var x
+	//sender
+	x=document.createElement('INPUT')
+	x.type='TEXT'
+	x.value=sender
+	form.appendChild(x)
+	//can't get
+	var x=document.createTextNode(' can\'t get ')
+	form.appendChild(x)
+	//receiver
+	var x=document.createElement('INPUT')
+	x.type='TEXT'
+	x.value=receiver
+	form.appendChild(x)
+	//
+	document.getElementById('constraints').appendChild(form)
+}
+
+function getParticipants(){
+	return document.getElementById('participants').value.split(' ')
+}
+
+function disallowSelfPick(){
+	var p=getParticipants()
+	for(i in p) addConstraint(p[i], p[i])
+}
+
+function shuffle(){
+	var p=getParticipants()
+	var q=p.slice()
+	for(var i=q.length; i>0; --i){
+		var j=Math.floor(Math.random()*i)
+		var t=q[i-1]
+		q[i-1]=q[j]
+		q[j]=t
+	}
+	result={}
+	for(var i in p) result[p[i]]=q[i]
+}
+
+function check(){
+	var constraints=document.getElementById('constraints').children
+	var n=document.getElementById('constraints').childElementCount
+	for(var i=0; i<n; ++i){
+		var sender=constraints[i].children[0].value
+		var receiver=constraints[i].children[1].value
+		for(var j in result)
+			if(j==sender&&result[j]==receiver) return false
+	}
+	return true
+}
+
+function solve(){
+	var p=getParticipants()
+	if(p.length==1&&p[0]==''){
+		alert('no participants')
+		return
+	}
+	if(result){
+		alert('already solved!')
+		return
+	}
+	var n=500, i
+	for(i=0; i<n; ++i){
+		shuffle()
+		if(check()) break
+	}
+	if(i==n){
+		alert('I tried '+n+' times, but couldn\'t solve...')
+		result=null
+		return
+	}
+	alert('solved!')
+}
+
+function show(){
+	s=document.getElementById('sender').value
+	alert(s+" got "+result[s])
+}
+
+		</script>
+	</head>
+	<body>
+		Secret Santa With Constraints Solver<br>
+		participants (space-separated)
+		<input type="text" size="80" id="participants">
+		<form>
+			<input type="button" value="add constraint" onClick="addConstraint()">
+			<input type="button" value="disallow self-pick" onClick="disallowSelfPick()">
+		</form>
+		<form id="constraints">
+		</form>
+		<input type="button" value="solve" onClick="solve()">
+		<form>
+			<input type="button" value="show result for" onClick="show()">
+			<input type="text" id="sender"/>
+		</form>
+	</body>
+</html>
