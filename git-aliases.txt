@@ -1,0 +1,9 @@
+git config --global alias.au "add -u :/"
+git config --global alias.s status
+git config --global alias.d diff
+git config --global alias.dc "diff --cached"
+git config --global alias.pf "push -f"
+git config --global alias.rc "rebase --continue"
+git config --global alias.ra "rebase -i --autosquash"
+git config --global alias.ca "commit --amend"
+git config --global alias.cm "commit -m"
