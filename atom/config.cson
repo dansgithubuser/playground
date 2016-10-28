@@ -1,0 +1,18 @@
+"*":
+  "bracket-matcher":
+    autocompleteBrackets: false
+    autocompleteSmartQuotes: false
+    wrapSelectionsInBrackets: false
+  core:
+    disabledPackages: [
+      "spell-check"
+    ]
+    telemetryConsent: "limited"
+  editor:
+    showInvisibles: true
+    softTabs: false
+    tabType: "hard"
+  "exception-reporting":
+    userId: "2aa54b4b-8d95-2b1b-56fe-3d4e1e89fd6a"
+  welcome:
+    showOnStartup: false
