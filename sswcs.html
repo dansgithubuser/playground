@@ -6,10 +6,20 @@
 var result=null
 
 function addConstraint(sender='', receiver=''){
+	//no duplicates
+	var constraints=document.getElementById('constraints').children
+	var n=document.getElementById('constraints').childElementCount
+	for(var i=0; i<n; ++i){
+		if(
+			sender==constraints[i].children[0].value
+			&&
+			receiver==constraints[i].children[1].value
+		) return
+	}
+	//form
 	var form=document.createElement('FORM')
-	var x
 	//sender
-	x=document.createElement('INPUT')
+	var x=document.createElement('INPUT')
 	x.type='TEXT'
 	x.value=sender
 	form.appendChild(x)
@@ -32,6 +42,15 @@ function getParticipants(){
 function disallowSelfPick(){
 	var p=getParticipants()
 	for(i in p) addConstraint(p[i], p[i])
+}
+
+function symmetricize(){
+	var constraints=document.getElementById('constraints').children
+	var n=document.getElementById('constraints').childElementCount
+	for(var i=0; i<n; ++i) addConstraint(
+		constraints[i].children[1].value,
+		constraints[i].children[0].value
+	)
 }
 
 function shuffle(){
@@ -96,6 +115,7 @@ function show(){
 		<form>
 			<input type="button" value="add constraint" onClick="addConstraint()">
 			<input type="button" value="disallow self-pick" onClick="disallowSelfPick()">
+			<input type="button" value="make symmetric" onClick="symmetricize()">
 		</form>
 		<form id="constraints">
 		</form>
