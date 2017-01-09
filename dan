@@ -1,0 +1,34 @@
+#!/usr/bin/python
+
+import os, subprocess, sys
+
+def invoke(invocation):
+	if '--dry' in sys.argv: print(invocation)
+	else: subprocess.check_call(invocation, shell=True)
+
+def bash():
+	with open(os.path.expanduser('~/Desktop/scripts/dan-bash.sh'), 'w') as file:
+		file.write('''
+			force_color_prompt=yes
+			PATH=$PATH:~/Desktop/scripts
+			PS1='\\e[0;37;44m               $?               \\e[m \n\\t \\w$ '
+			alias o=xdg-open
+			echo "dan bash ran"
+		''')
+
+def sleep(): invoke('systemctl suspend')
+
+def off(): invoke('poweroff')
+
+def link(link, linked):
+	invoke('ln -s {} {}'.format(linked, link))
+
+def find(name):
+	invoke('find . -name {}'.format(name))
+
+def b(level):
+	x=int(5000+float(level)*1000)
+	path='/sys/class/backlight/intel_backlight/brightness'
+	invoke('echo {}|sudo tee {}'.format(x, path))
+
+exec(sys.argv[1]+'(*sys.argv[2:])')
