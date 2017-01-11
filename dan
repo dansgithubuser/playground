@@ -12,11 +12,13 @@ def bash():
 			force_color_prompt=yes
 			PATH=$PATH:~/Desktop/scripts
 			PS1='\\e[0;37;44m               $?               \\e[m \n\\t \\w$ '
-			alias o=xdg-open
+			alias o="xdg-open ."
 			echo "dan bash ran"
 		''')
 
 def sleep(): invoke('systemctl suspend')
+
+def reboot(): invoke('reboot')
 
 def off(): invoke('poweroff')
 
@@ -26,9 +28,21 @@ def link(link, linked):
 def find(name):
 	invoke('find . -name {}'.format(name))
 
-def b(level):
-	x=int(5000+float(level)*1000)
+def vu(): invoke('pactl -- set-sink-volume 0 +10%')
+def vd(): invoke('pactl -- set-sink-volume 0 -10%')
+
+def brightness(level):
 	path='/sys/class/backlight/intel_backlight/brightness'
-	invoke('echo {}|sudo tee {}'.format(x, path))
+	if level=='get':
+		with open(path) as file:
+			return int(file.read())
+	invoke('echo {}|sudo tee {}'.format(int(level), path))
+
+def b(level):
+	if level=='get': return (brightness('get')-5000)/1000.0
+	brightness(int(level)*1000+5000)
+
+def bu(): b(b('get')*2)
+def bd(): b(b('get')//2)
 
 exec(sys.argv[1]+'(*sys.argv[2:])')
