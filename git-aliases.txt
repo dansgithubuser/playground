@@ -3,6 +3,7 @@ git config --global alias.au "add -u :/"
 git config --global alias.s status
 git config --global alias.d "diff -C"
 git config --global alias.dc "diff --cached -C"
+git config --global alias.dl "diff --word-diff-regex=."
 git config --global alias.f fetch
 git config --global alias.p push
 git config --global alias.pf "push -f"
