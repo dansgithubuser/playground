@@ -45,4 +45,11 @@ def b(level):
 def bu(): b(b('get')*2)
 def bd(): b(b('get')//2)
 
-exec(sys.argv[1]+'(*sys.argv[2:])')
+try: user_command=eval(sys.argv[1])
+except NameError:
+	print(sorted([i for i in dir() if not i.startswith('__')]))
+	sys.exit(1)
+try: exec(sys.argv[1]+'(*sys.argv[2:])')
+except TypeError:
+	import inspect
+	print(inspect.getargspec(user_command))
