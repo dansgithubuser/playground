@@ -11,7 +11,7 @@ def bash():
 		file.write('''
 			force_color_prompt=yes
 			PATH=$PATH:~/Desktop/scripts
-			PS1='\\e[0;37;44m               $?               \\e[m \n\\t \\w$ '
+			PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\t \\w$ '
 			alias o="xdg-open ."
 			echo "dan bash ran"
 		''')
