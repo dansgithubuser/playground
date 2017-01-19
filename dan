@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import timestamp
 import os, subprocess, sys
 
 def invoke(invocation):
@@ -44,6 +45,13 @@ def b(level):
 
 def bu(): b(b('get')*2)
 def bd(): b(b('get')//2)
+
+def i(command):
+	with open(os.path.expanduser('~/Desktop/dan-install.txt'), 'a') as file:
+		file.write(timestamp.timestamp(False)+'\n')
+		file.write(command+'\n')
+		file.write('\n')
+	invoke(command)
 
 try: user_command=eval(sys.argv[1])
 except NameError:
