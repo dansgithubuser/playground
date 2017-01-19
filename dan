@@ -3,12 +3,14 @@
 import timestamp
 import os, subprocess, sys
 
+def home_path(path): return os.path.join(os.path.expanduser('~'), *path.split('/'))
+
 def invoke(invocation):
 	if '--dry' in sys.argv: print(invocation)
 	else: subprocess.check_call(invocation, shell=True)
 
 def bash():
-	with open(os.path.expanduser('~/Desktop/scripts/dan-bash.sh'), 'w') as file:
+	with open(home_path('Desktop/scripts/dan-bash.sh'), 'w') as file:
 		file.write('''
 			force_color_prompt=yes
 			PATH=$PATH:~/Desktop/scripts
@@ -47,7 +49,7 @@ def bu(): b(b('get')*2)
 def bd(): b(b('get')//2)
 
 def i(command):
-	with open(os.path.expanduser('~/Desktop/dan-install.txt'), 'a') as file:
+	with open(home_path('Desktop/dan-install.txt'), 'a') as file:
 		file.write(timestamp.timestamp(False)+'\n')
 		file.write(command+'\n')
 		file.write('\n')
