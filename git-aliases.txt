@@ -1,21 +1,49 @@
+echo add
 git config --global alias.ap "add -p :/"
 git config --global alias.au "add -u :/"
-git config --global alias.s status
-git config --global alias.d "diff -C"
-git config --global alias.dc "diff --cached -C"
-git config --global alias.dl "diff --word-diff-regex=."
-git config --global alias.f fetch
-git config --global alias.p push
-git config --global alias.pf "push -f"
-git config --global alias.rc "rebase --continue"
-git config --global alias.ri "rebase -i --autosquash"
+
+echo alias
+git config --global alias.a "config --get-regexp alias"
+
+echo branch
+git config --global alias.b "branch"
+
+echo checkout
+git config --global alias.cb "checkout -b"
+
+echo commit
 git config --global alias.ca "commit --amend"
 git config --global alias.caa "commit -a --amend"
 git config --global alias.cm "commit -m"
 git config --global alias.cam "commit -am"
 git config --global alias.cf "commit --fixup"
 git config --global alias.caf "commit -a --fixup"
-git config --global alias.b "checkout -b"
+
+echo diff
+git config --global alias.d "diff -C"
+git config --global alias.dc "diff --cached -C"
+git config --global alias.dl "diff --word-diff-regex=."
+
+echo fetch
+git config --global alias.f fetch
+
+echo log
+git config --global alias.l "log --graph --oneline"
+
+echo ls-remote
+git config --global alias.lh "ls-remote --heads"
+
+echo push
+git config --global alias.p push
+git config --global alias.pf "push -f"
+
+echo rebase
+git config --global alias.rc "rebase --continue"
+git config --global alias.ri "rebase -i --autosquash"
+
+echo reset
 git config --global alias.rhh "reset --hard HEAD"
 git config --global alias.rsh1 "reset --soft HEAD~1"
-git config --global alias.lh "ls-remote --heads"
+
+echo status
+git config --global alias.s status
