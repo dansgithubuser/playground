@@ -45,5 +45,8 @@ echo reset
 git config --global alias.rhh "reset --hard HEAD"
 git config --global alias.rsh1 "reset --soft HEAD~1"
 
+echo show
+git config --global alias.sw "show -w"
+
 echo status
 git config --global alias.s status
