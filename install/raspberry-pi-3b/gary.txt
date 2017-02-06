@@ -1,0 +1,60 @@
+=====buildbot=====
+2018-01-jan-19 20:53:37.447416 (actually earlier)
+echo sudo pip install -U pip
+output summary: Not uninstalling pip at /usr/lib/python2.7/dist-packages, owned by OS
+seems to have successfully installed to:
+/usr/local/lib/python2.7/dist-packages/pip-9.0.1.dist-info
+/usr/local/lib/python2.7/dist-packages/pip-9.0.1.dist-info
+`python -m pip --version` gives:
+pip 9.0.1 from /usr/local/lib/python2.7/dist-packages (python 2.7)
+
+2017-01-jan-19 21:58:19.039351
+sudo python -m pip install buildbot==0.8.12
+src/twisted/test/raiser.c:4:20: fatal error: Python.h: No such file or directory
+     #include "Python.h"
+
+2017-01-jan-19 22:03:57.822087
+sudo apt install python-dev
+
+2017-01-jan-19 22:05:23.334905
+sudo python -m pip install buildbot==0.8.12
+
+2017-01-jan-19 22:17:58.357693
+sudo python -m pip install buildbot-slave
+
+=====bluez=====
+-----trying to get bluez ./bootstrap-configure working-----
+2017-02-feb-03 12:00:00.0
+sudo apt install cmake
+
+2017-02-feb-03 12:00:00.0
+sudo apt-get install glib2.0
+
+2017-02-feb-03 12:00:00.0
+sudo apt-get install libtool
+
+2017-02-feb-03 12:00:00.0
+sudo apt-get install automake
+
+2017-02-feb-06 15:23:07.656258
+sudo apt install libdbus-1-dev
+Err http://mirrordirector.raspbian.org/raspbian/ jessie/main libdbus-1-dev armhf 1.8.20-0+deb8u1
+  404  Not Found [IP: 5.153.225.207 80]
+E: Failed to fetch http://mirrordirector.raspbian.org/raspbian/pool/main/d/dbus/libdbus-1-dev_1.8.20-0+deb8u1_armhf.deb  404  Not Found [IP: 5.153.225.207 80]
+
+E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?
+
+`sudo apt update` really does seem to have fixed
+installation printed out a character that made the ssh session unviewable, I ctrl-c'ed in confusion, `exit`ed successfully, and logged back in...
+
+2017-02-feb-06 15:43:12.704783
+sudo apt install elfutils
+
+2017-02-feb-06 15:43:12.704783
+sudo apt remove elfutils
+same error as with elfutils installed
+giving up on building bluez repo -- trying to build own program using bluez as installed library
+
+-----trying to build a c program that uses bluez-----
+2017-02-feb-06 16:04:57.445750
+sudo apt-get install libbluetooth-dev
