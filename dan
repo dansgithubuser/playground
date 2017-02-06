@@ -14,15 +14,16 @@ def timestamp(ambiguous=True):
 	format+='-%d %H:%M:%S.%f}'
 	return format.format(datetime.datetime.now()).lower()
 
-def home_path(path): return os.path.join(os.path.expanduser('~'), *path.split('/'))
+def _home_path(path): return os.path.join(os.path.expanduser('~'), *path.split('/'))
 
-def invoke(invocation):
+def _invoke(invocation):
 	if '--dry' in sys.argv: print(invocation)
 	else: subprocess.check_call(invocation, shell=True)
 
 def bash():
-	shutil.copy(this, home_path('Desktop/scripts'))
-	with open(home_path('Desktop/scripts/dan-bash.sh'), 'w') as file:
+	'update bash setup, writes to ~/Desktop/scripts/'
+	shutil.copy(this, _home_path('Desktop/scripts'))
+	with open(_home_path('Desktop/scripts/dan-bash.sh'), 'w') as file:
 		file.write('''
 			force_color_prompt=yes
 			PATH=$PATH:~/Desktop/scripts
@@ -31,62 +32,82 @@ def bash():
 			echo "dan bash ran"
 		''')
 
-def sleep(): invoke('systemctl suspend')
+def sleep(): _invoke('systemctl suspend')
 
-def reboot(): invoke('reboot')
+def reboot(): _invoke('reboot')
 
-def off(): invoke('poweroff')
+def off(): _invoke('poweroff')
 
 def link(link, linked):
-	invoke('ln -s {} {}'.format(linked, link))
+	_invoke('ln -s {} {}'.format(linked, link))
 
 def find(name):
-	invoke('find . -name {}'.format(name))
+	'find file with name within current directory'
+	_invoke('find . -name {}'.format(name))
 
-def vu(): invoke('pactl -- set-sink-volume 0 +10%')
-def vd(): invoke('pactl -- set-sink-volume 0 -10%')
+def vu():
+	'volume up'
+	_invoke('pactl -- set-sink-volume 0 +10%')
 
-def brightness(level):
+def vd():
+	'volume down'
+	_invoke('pactl -- set-sink-volume 0 -10%')
+
+def _brightness(level):
 	path='/sys/class/backlight/intel_backlight/brightness'
 	if level=='get':
 		with open(path) as file:
 			return int(file.read())
-	invoke('echo {}|sudo tee {}'.format(int(level), path))
+	_invoke('echo {}|sudo tee {}'.format(int(level), path))
 
 def b(level):
-	if level=='get': return (brightness('get')-5000)/1000.0
-	brightness(int(level)*1000+5000)
+	'set brightness'
+	if level=='get': return (_brightness('get')-5000)/1000.0
+	_brightness(int(level)*1000+5000)
 
-def bu(): b(b('get')*2)
-def bd(): b(b('get')//2)
+def bu():
+	'brightness up'
+	b(b('get')*2)
+
+def bd():
+	'brightness down'
+	b(b('get')//2)
 
 def i(command):
-	with open(home_path('Desktop/dan-install.txt'), 'a') as file:
+	'append a note of this command to Desktop/dan-install.txt'
+	with open(_home_path('Desktop/dan-install.txt'), 'a') as file:
 		file.write(timestamp(False)+'\n')
 		file.write(command+'\n')
 		file.write('\n')
-	invoke(command)
+	_invoke(command)
 
 def install_self():
+	'hook into bash init script'
 	bash_init=None
-	if os.path.exists(home_path('.bash_profile')): bash_init=home_path('.bash_profile')
-	elif os.path.exists(home_path('.bashrc')): bash_init=home_path('.bashrc')
+	if os.path.exists(_home_path('.bash_profile')): bash_init=_home_path('.bash_profile')
+	elif os.path.exists(_home_path('.bashrc')): bash_init=_home_path('.bashrc')
 	if not bash_init:
 		print("couldn't find a bash init script!")
 		sys.exit(1)
-	print('I will append to {} and create files in ~/Desktop/scripts -- if that is OK, enter y'.format(bash_init))
+	print('I will append to {} and make it use my bash command -- if that is OK, enter y'.format(bash_init))
 	if input()!='y': sys.exit(1)
 	with open(bash_init, 'a') as file:
 		file.write("\n\n#=====appended by dan from dangihubuser's playground=====#\n")
 		file.write('python {} bash\n'.format(this))
-		file.write('source {}\n'.format(home_path('Desktop/scripts/dan-bash.sh')))
+		file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
 		file.write('#=====end dan=====#\n')
 
-try: user_command=eval(sys.argv[1])
-except:
-	print(sorted([i for i in dir() if not i.startswith('__')]))
-	sys.exit(1)
-try: exec(sys.argv[1]+'(*sys.argv[2:])')
-except TypeError:
+def help(command=None):
 	import inspect
-	print(inspect.getargspec(user_command))
+	if command==None:
+		print('list of commands:')
+		print(sorted([i for i in globals() if not i.startswith('_')]))
+		print('specify a command for help with it')
+	else:
+		print(inspect.getdoc(eval(command)))
+		print(inspect.getargspec(eval(command)))
+
+try: user_command=eval(sys.argv[1])
+except: help(); sys.exit(1)
+try: exec(sys.argv[1]+'(*sys.argv[2:])')
+except TypeError: help(user_command); sys.exit(1)
