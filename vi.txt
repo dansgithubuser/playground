@@ -41,5 +41,4 @@ D -- delete selection
 :echo has('visualextra')
 ctrl-v -- block selection
 I -- insert, edit one line, hit esc, changes should propagate to other lines (UI might not update)
-D -- delete block selection
 c -- change block selection
