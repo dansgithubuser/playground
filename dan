@@ -97,6 +97,13 @@ def install_self():
 		file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
 		file.write('#=====end dan=====#\n')
 
+def vi():
+	with open(_home_path('.vimrc')) as file:
+		file.write(':set autoindent\n')
+		file.write(':set number\n')
+		file.write(':set tabstop 2\n')
+		file.write(':set list\n')
+
 def help(command=None):
 	import inspect
 	if command==None:
