@@ -1,0 +1,41 @@
+:w -- write to file
+:q -- quit
+:q! -- quit without writing
+:wq -- write and quit
+
+i -- enter insert mode
+esc -- exit mode
+I -- insert at beginning of line
+A -- insert at end of line
+
+r -- replace one character
+R -- enter replace mode
+
+h, j, k, l -- move by character
+w, b -- move by word
+W, B -- move to space
+0, $ -- move to beginning, end of line
+gg, G -- move to beginning, end of file
+:<n> -- move to <n>th line of file
+ctrl-U, ctrl-D -- move by half-page
+
+x -- delete
+X -- backspace
+D -- delete to end of line
+dd -- delete line
+J -- join lines
+
+yy -- yank line
+p -- put line
+
+/<regex> -- search for <regex>
+
+u -- undo last change
+. -- repeat last change
+
+v -- visual selection
+V -- visual selection by line
+D -- delete selection
+
+:echo has('visualextra')
+ctrl-v -- block selection
