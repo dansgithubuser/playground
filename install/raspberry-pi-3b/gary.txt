@@ -58,3 +58,7 @@ giving up on building bluez repo -- trying to build own program using bluez as i
 -----trying to build a c program that uses bluez-----
 2017-02-feb-06 16:04:57.445750
 sudo apt-get install libbluetooth-dev
+
+-----vim extra features-----
+2017-02-feb-08 15:00:01.631356
+sudo apt install vim-gui-common
