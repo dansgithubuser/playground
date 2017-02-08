@@ -2,3 +2,7 @@ __pycache__
 bin
 *.gv
 *.pdf
+.*.swp
+*.pyc
+a.out
+
