@@ -18,6 +18,7 @@ W, B -- move to space
 gg, G -- move to beginning, end of file
 :<n> -- move to <n>th line of file
 ctrl-U, ctrl-D -- move by half-page
+ctrl-G -- show info about cursor position, including column number
 
 x -- delete
 X -- backspace
