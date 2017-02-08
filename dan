@@ -96,12 +96,18 @@ def install_self():
 		file.write('python {} bash\n'.format(this))
 		file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
 		file.write('#=====end dan=====#\n')
+	vi()
 
 def vi():
-	with open(_home_path('.vimrc')) as file:
+	p=_home_path('.vimrc')
+	print('I will create a .vimrc file.')
+	if os.path.exists(p): print('I will overwrite the existing one.')
+	print('If that is OK, enter y.')
+	if input()!='y': sys.exit(1)
+	with open(p) as file:
 		file.write(':set autoindent\n')
 		file.write(':set number\n')
-		file.write(':set tabstop 2\n')
+		file.write(':set tabstop=2\n')
 		file.write(':set list\n')
 
 def help(command=None):
