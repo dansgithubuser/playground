@@ -32,7 +32,7 @@ p -- put line
 /<regex> -- search for <regex>
 
 u -- undo
-R -- redo
+ctrl-R -- redo
 . -- repeat
 
 v -- visual selection
