@@ -31,8 +31,9 @@ p -- put line
 
 /<regex> -- search for <regex>
 
-u -- undo last change
-. -- repeat last change
+u -- undo
+R -- redo
+. -- repeat
 
 v -- visual selection
 V -- visual selection by line
