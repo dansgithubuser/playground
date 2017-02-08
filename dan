@@ -105,10 +105,12 @@ def vi():
 	print('If that is OK, enter y.')
 	if input()!='y': sys.exit(1)
 	with open(p) as file:
-		file.write(':set autoindent\n')
-		file.write(':set number\n')
-		file.write(':set tabstop=2\n')
-		file.write(':set list\n')
+		file.write('set autoindent\n')
+		file.write('set number\n')
+		file.write('set tabstop=2\n')
+		file.write('set list\n')
+		file.write('set nocompatible\n')
+		file.write('syntax on\n')
 
 def help(command=None):
 	import inspect
