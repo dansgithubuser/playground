@@ -112,6 +112,8 @@ def vi():
 		file.write('set nocompatible\n')
 		file.write('syntax on\n')
 
+def disk_usage(): invoke('ncdu')
+
 def help(command=None):
 	import inspect
 	if command==None:
