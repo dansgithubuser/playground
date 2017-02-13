@@ -114,6 +114,62 @@ def vi():
 
 def disk_usage(): invoke('ncdu')
 
+_conservative_logrotate_conf='''size 1M
+rotate 0
+create
+include /etc/logrotate.d
+/var/log/wtmp {
+	missingok
+	monthly
+	create 0664 root utmp
+	rotate 1
+}
+
+/var/log/btmp {
+	missingok
+	monthly
+	create 0660 root utmp
+	rotate 1
+}
+'''
+
+_conservative_rsyslog='''/var/log/syslog
+{
+	rotate 0
+	size 1M
+	missingok
+	postrotate
+		invoke-rc.d rsyslog rotate > /dev/null
+	endscript
+}
+
+/var/log/mail.info
+/var/log/mail.warn
+/var/log/mail.err
+/var/log/mail.log
+/var/log/daemon.log
+/var/log/kern.log
+/var/log/auth.log
+/var/log/user.log
+/var/log/lpr.log
+/var/log/cron.log
+/var/log/debug
+/var/log/messages
+{
+	rotate 0
+	size 1M
+	missingok
+	sharedscripts
+	postrotate
+		invoke-rc.d rsyslog rotate > /dev/null
+	endscript
+}
+'''
+
+def conservative_logrotate():
+	with open('/etc/logrotate.conf') as file: file.write(_conservative_logrotate_conf)
+	with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
+
 def help(command=None):
 	import inspect
 	if command==None:
