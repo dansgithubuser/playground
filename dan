@@ -22,6 +22,8 @@ def _invoke(invocation):
 
 def bash():
 	'update bash setup, writes to ~/Desktop/scripts/'
+	try: os.makedirs(_home_path('Desktop/scripts'))
+	except: pass
 	shutil.copy(this, _home_path('Desktop/scripts'))
 	with open(_home_path('Desktop/scripts/dan-bash.sh'), 'w') as file:
 		file.write('''
@@ -97,6 +99,7 @@ def install_self():
 		file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
 		file.write('#=====end dan=====#\n')
 	vi()
+	git()
 
 def vi():
 	p=_home_path('.vimrc')
@@ -104,13 +107,17 @@ def vi():
 	if os.path.exists(p): print('I will overwrite the existing one.')
 	print('If that is OK, enter y.')
 	if input()!='y': sys.exit(1)
-	with open(p) as file:
+	with open(p, 'w') as file:
 		file.write('set autoindent\n')
 		file.write('set number\n')
 		file.write('set tabstop=2\n')
 		file.write('set list\n')
 		file.write('set nocompatible\n')
 		file.write('syntax on\n')
+
+def git():
+	'update git aliases'
+	_invoke('source git-aliases.txt')
 
 def disk_usage(): invoke('ncdu')
 
