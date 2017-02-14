@@ -89,6 +89,45 @@ Advertisement inquire(DeviceDescriptor deviceDescriptor){
 	return result;
 }
 
+void toggleAdvert(DeviceDescriptor deviceDescriptor, bool enable){
+	if(enable){
+		struct hci_request request;
+		memset(&request, 0, sizeof request);
+		request.ogf=OGF_LE_CTL;
+		request.ocf=OCF_LE_SET_ADVERTISING_PARAMETERS;
+		le_set_advertising_parameters_cp cp;
+		memset(&cp, 0, sizeof cp);
+		cp.min_interval=htobs(0x20);
+		cp.max_interval=htobs(0x20);
+		cp.chan_map=7;
+		request.cparam=&cp;
+		request.clen=LE_SET_ADVERTISING_PARAMETERS_CP_SIZE;
+		uint8_t status;
+		request.rparam=&status;
+		request.rlen=1;
+		if(hci_send_req(deviceDescriptor.i, &request, 0)<0) throw std::runtime_error("error setting advert parameters");
+		if(status) throw std::runtime_error("error: bad status after setting advert parameters");
+	}
+	hci_le_set_advertise_enable(deviceDescriptor.i, enable?1:0, 0);
+}
+
+void setAdvert(DeviceDescriptor deviceDescriptor, const std::vector<uint8_t> data){
+	struct hci_request request;
+	memset(&request, 0, sizeof request);
+	request.ogf=OGF_LE_CTL;
+	request.ocf=OCF_LE_SET_ADVERTISING_DATA;
+	le_set_advertising_data_cp cp;
+	cp.length=data.size();
+	memcpy(&cp.data, data.data(), data.size());
+	request.cparam=&cp;
+	request.clen=LE_SET_ADVERTISING_DATA_CP_SIZE;
+	uint8_t status;
+	request.rparam=&status;
+	request.rlen=1;
+	if(hci_send_req(deviceDescriptor.i, &request, 0)<0) throw std::runtime_error("error sending advert request");
+	if(status) throw std::runtime_error("error: bad status after sending advert request");
+}
+
 int close(DeviceDescriptor deviceDescriptor){
 	return ::close(deviceDescriptor.i);
 }
