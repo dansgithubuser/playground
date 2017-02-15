@@ -50,7 +50,8 @@ git config --global alias.rhh "reset --hard HEAD"
 git config --global alias.rsh1 "reset --soft HEAD~1"
 
 echo show
-git config --global alias.sw "show -w --word-diff"
+git config --global alias.sww "show -w --word-diff"
+git config --global alias.sw "show -w"
 
 echo stash
 git config --global alias.sts "stash show -p"
