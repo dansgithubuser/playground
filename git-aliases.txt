@@ -21,8 +21,13 @@ git config --global alias.caf "commit -a --fixup"
 
 echo diff
 git config --global alias.d "diff -C"
-git config --global alias.dc "diff --cached -C"
-git config --global alias.dl "diff --word-diff-regex=."
+git config --global alias.dw "diff -C -w"
+git config --global alias.dww "show -C -w --word-diff"
+git config --global alias.dl "diff -C --word-diff-regex=."
+git config --global alias.dc "diff -C --cached"
+git config --global alias.dcw "diff -C --cached -w"
+git config --global alias.dcww "diff -C --cached -w --word-diff"
+git config --global alias.dcl "diff -C --cached --word-diff-regex=."
 
 echo fetch
 git config --global alias.f fetch
