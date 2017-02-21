@@ -52,6 +52,7 @@ git config --global alias.rl "reflog --date=iso"
 
 echo reset
 git config --global alias.rhh "reset --hard HEAD"
+git config --global alias.rhh1 "reset --hard HEAD~1"
 git config --global alias.rsh1 "reset --soft HEAD~1"
 
 echo show
