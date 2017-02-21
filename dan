@@ -181,7 +181,7 @@ def help(command=None):
 	import inspect
 	if command==None:
 		print('list of commands:')
-		print(sorted([i for i in globals() if not i.startswith('_')]))
+		print(sorted([i for i in globals() if callable(eval(i)) and not i.startswith('_')]))
 		print('specify a command for help with it')
 	else:
 		print(inspect.getdoc(eval(command)))
