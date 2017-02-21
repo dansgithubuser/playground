@@ -119,7 +119,9 @@ def git():
 	'update git aliases'
 	_invoke('source git-aliases.txt')
 
-def disk_usage(): invoke('ncdu')
+def disk_usage(): _invoke('ncdu')
+
+def monitor(): _invoke('top')
 
 _conservative_logrotate_conf='''size 1M
 rotate 0
