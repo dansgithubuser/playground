@@ -20,19 +20,19 @@ def _invoke(invocation):
 	if '--dry' in sys.argv: print(invocation)
 	else: subprocess.check_call(invocation, shell=True)
 
+_dan_bash='''force_color_prompt=yes
+PATH=$PATH:~/Desktop/scripts
+PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\t \\w$ '
+alias o="xdg-open ."
+echo "dan bash ran"
+'''
+
 def bash():
 	'update bash setup, writes to ~/Desktop/scripts/'
 	try: os.makedirs(_home_path('Desktop/scripts'))
 	except: pass
 	shutil.copy(this, _home_path('Desktop/scripts'))
-	with open(_home_path('Desktop/scripts/dan-bash.sh'), 'w') as file:
-		file.write('''
-			force_color_prompt=yes
-			PATH=$PATH:~/Desktop/scripts
-			PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\t \\w$ '
-			alias o="xdg-open ."
-			echo "dan bash ran"
-		''')
+	with open(_home_path('Desktop/scripts/dan-bash.sh'), 'w') as file: file.write(_dan_bash)
 
 def sleep(): _invoke('systemctl suspend')
 
@@ -101,19 +101,22 @@ def install_self():
 	vi()
 	git()
 
+_vimrc='''set autoindent
+set number
+set tabstop=2
+set list
+set nocompatible
+syntax on
+set pastetoggle=<F2>
+'''
+
 def vi():
 	p=_home_path('.vimrc')
 	print('I will create a .vimrc file.')
 	if os.path.exists(p): print('I will overwrite the existing one.')
 	print('If that is OK, enter y.')
 	if input()!='y': sys.exit(1)
-	with open(p, 'w') as file:
-		file.write('set autoindent\n')
-		file.write('set number\n')
-		file.write('set tabstop=2\n')
-		file.write('set list\n')
-		file.write('set nocompatible\n')
-		file.write('syntax on\n')
+	with open(p, 'w') as file: file.write(_vimrc)
 
 def git():
 	'update git aliases'
