@@ -85,19 +85,30 @@ def i(command):
 
 def install_self():
 	'hook into bash init script'
+	#find bash init script
 	bash_init=None
 	if os.path.exists(_home_path('.bash_profile')): bash_init=_home_path('.bash_profile')
 	elif os.path.exists(_home_path('.bashrc')): bash_init=_home_path('.bashrc')
 	if not bash_init:
 		print("couldn't find a bash init script!")
 		sys.exit(1)
-	print('I will append to {} and make it use my bash command -- if that is OK, enter y'.format(bash_init))
-	if input()!='y': sys.exit(1)
-	with open(bash_init, 'a') as file:
-		file.write("\n\n#=====appended by dan from dangihubuser's playground=====#\n")
-		file.write('python {} bash\n'.format(this))
-		file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
-		file.write('#=====end dan=====#\n')
+	#append if not already done
+	header="#=====appended by dan from dangihubuser's playground=====#"
+	already_done=False
+	with open(bash_init, 'r') as file:
+		for line in file.readlines():
+			if header in line:
+				already_done=True
+				break
+	if not already_done:
+		print('I will append to {} and make it use my bash command -- if that is OK, enter y'.format(bash_init))
+		if input()!='y': sys.exit(1)
+		with open(bash_init, 'a') as file:
+			file.write("\n\n{}\n".format(header))
+			file.write('python {} bash\n'.format(this))
+			file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
+			file.write('#=====end dan=====#\n')
+	#other stuff
 	vi()
 	git()
 
@@ -120,7 +131,7 @@ def vi():
 
 def git():
 	'update git aliases'
-	_invoke('source git-aliases.txt')
+	_invoke('sh git-aliases.txt')
 
 def disk_usage(): _invoke('ncdu')
 
