@@ -34,6 +34,7 @@ git config --global alias.f fetch
 
 echo log
 git config --global alias.l "log --graph --oneline"
+git config --global alias.la "log --graph --oneline --decorate --all"
 
 echo ls-remote
 git config --global alias.lh "ls-remote --heads"
