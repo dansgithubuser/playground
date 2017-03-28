@@ -198,6 +198,9 @@ def conservative_logrotate():
 	with open('/etc/logrotate.conf') as file: file.write(_conservative_logrotate_conf)
 	with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
 
+def last():
+	print(sorted(os.listdir('.'))[-1])
+
 def help(command=None):
 	import inspect
 	if command==None:
