@@ -15,6 +15,7 @@ def timestamp(ambiguous=True):
 	return format.format(datetime.datetime.now()).lower()
 
 def _home_path(path): return os.path.join(os.path.expanduser('~'), *path.split('/'))
+def _this_path(path): return os.path.join(os.path.split(this)[0], *path.split('/'))
 
 def _invoke(invocation):
 	if '--dry' in sys.argv: print(invocation)
@@ -136,7 +137,7 @@ def vi():
 
 def git():
 	'update git aliases'
-	_invoke('sh git-aliases.txt')
+	_invoke('sh '+_this_path('git-aliases.txt'))
 
 def disk_usage(): _invoke('ncdu')
 
