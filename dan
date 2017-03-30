@@ -21,8 +21,8 @@ def _invoke(invocation):
 	else: subprocess.check_call(invocation, shell=True)
 
 opener=None
-if   not subprocess.call('which xdg-open', shell=True): opener='xdg-open'
-elif not subprocess.call('which open'    , shell=True): opener='open'
+if   not subprocess.call('which xdg-open>/dev/null', shell=True): opener='xdg-open'
+elif not subprocess.call('which open    >/dev/null', shell=True): opener='open'
 if not opener and platform.system()=='Windows': opener='explorer'
 
 _dan_bash='''force_color_prompt=yes
