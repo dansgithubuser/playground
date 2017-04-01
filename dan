@@ -21,6 +21,11 @@ def _invoke(invocation):
 	if '--dry' in sys.argv: print(invocation)
 	else: subprocess.check_call(invocation, shell=True)
 
+def _platform_invoke(linux=None, darwin=None, windows=None):
+	if   platform.system()=='Linux'  : _invoke(linux)
+	elif platform.system()=='Darwin' : _invoke(darwin)
+	elif platform.system()=='Windows': _invoke(windows)
+
 opener=None
 if   not subprocess.call('which xdg-open>/dev/null', shell=True): opener='xdg-open'
 elif not subprocess.call('which open    >/dev/null', shell=True): opener='open'
@@ -44,7 +49,7 @@ def sleep(): _invoke('systemctl suspend')
 
 def reboot(): _invoke('reboot')
 
-def off(): _invoke('poweroff')
+def off(): _platform_invoke('poweroff', 'sudo halt')
 
 def link(link, linked):
 	_invoke('ln -s {} {}'.format(linked, link))
