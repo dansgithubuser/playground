@@ -207,6 +207,8 @@ def conservative_logrotate():
 def last():
 	print(sorted(os.listdir('.'))[-1])
 
+def network_discover(): _invoke('avahi-discover')
+
 def help(command=None):
 	import inspect
 	if command==None:
