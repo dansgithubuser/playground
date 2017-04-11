@@ -5,7 +5,7 @@
 
 var result=null
 
-function addConstraint(sender='', receiver=''){
+function addConstraint(sender, receiver){
 	//no duplicates
 	var constraints=document.getElementById('constraints').children
 	var n=document.getElementById('constraints').childElementCount
@@ -113,7 +113,7 @@ function show(){
 		participants (space-separated)
 		<input type="text" size="80" id="participants">
 		<form>
-			<input type="button" value="add constraint" onClick="addConstraint()">
+			<input type="button" value="add constraint" onClick="addConstraint('', '')">
 			<input type="button" value="disallow self-pick" onClick="disallowSelfPick()">
 			<input type="button" value="make symmetric" onClick="symmetricize()">
 		</form>

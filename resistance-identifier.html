@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+	<head>
+		<script type="text/javascript">
+
+var assigned=false
+var players={}
+
+function showKnowledge(i){
+	var playersForm=document.getElementById('players')
+	var name=playersForm.children[i].children[0].value
+	if(!confirm('show '+name+"'s knowledge?")) return
+	//spies
+	spy_spies='Known spies are '+JSON.stringify(Object.keys(players).reduce(function(x, i){
+		p=players[i]
+		if(!p['resistance']&&p['special']!='oberon') x.push(i)
+		return x
+	}, []))
+	merlin_spies='Known spies are '+JSON.stringify(Object.keys(players).reduce(function(x, i){
+		p=players[i]
+		if(!p['resistance']&&p['special']!='mordred') x.push(i)
+		return x
+	}, []))
+	//merlin and morgana
+	merlins=Object.keys(players).reduce(function(x, i){
+		p=players[i]
+		if(p['special']=='merlin'||p['special']=='morgana') x.push(i)
+		return x
+	}, [])
+	if(document.getElementById('morgana').checked)
+		merlins='Merlin and Morgana are '+JSON.stringify(merlins)
+	else
+		merlins=merlins[0]+' is Merlin.'
+	//show
+	p=players[name]
+	if     (p['special']=='merlin') alert('You are Merlin. '+merlin_spies)
+	else if(p['special']=='percival') alert('You are Percival. '+merlins)
+	else if(p['special']=='mordred') alert('You are Mordred. '+spy_spies)
+	else if(p['special']=='morgana') alert('You are Morgana. '+spy_spies)
+	else if(p['special']=='oberon') alert('You are Oberon.')
+	else if(p['special']=='assassin') alert('You are the assassin. '+spy_spies)
+	else if(!p['resistance']) alert('You are a spy. '+spy_spies)
+	else alert('You are a resistance member.')
+}
+
+function addPlayer(){
+	var form=document.createElement('FORM')
+	var x=document.createElement('INPUT')
+	x.type='TEXT'
+	form.appendChild(x)
+	x=document.createElement('INPUT')
+	x.type='BUTTON'
+	var i=document.getElementById('players').childElementCount
+	x.onclick=function(){ showKnowledge(i) }
+	form.appendChild(x)
+	document.getElementById('players').appendChild(form)
+}
+
+function add5Players(){
+	for(var i=0; i<5; ++i) addPlayer()
+}
+
+function shuffle(x){
+	for(var i=x.length; i>0; --i){
+		var j=Math.floor(Math.random()*i)
+		var t=x[i-1]
+		x[i-1]=x[j]
+		x[j]=t
+	}
+}
+
+function remove(a, x){
+	a.splice(a.indexOf(x), 1)
+}
+
+function take(a){
+	var i=Math.floor(Math.random()*a.length)
+	var t=a[i]
+	remove(a, t)
+	return t
+}
+
+function assign(){
+	if(assigned){
+		alert('already assigned!')
+		return
+	}
+	//players
+	playersForm=document.getElementById('players')
+	var n=playersForm.childElementCount
+	for(var i=0; i<n; ++i){
+		players[playersForm.children[i].children[0].value]={
+			'resistance': true,
+			'special': false,
+		}
+	}
+	//spies
+	names=Object.keys(players)
+	resistance=names
+	spies=[]
+	shuffle(names)
+	for(var i=0; i<[0, 0, 0, 0, 0, 2, 2, 3, 3, 3, 4][n]; ++i){
+		players[names[i]]['resistance']=false
+		spies.push(names[i])
+		remove(resistance, names[i])
+	}
+	//special roles
+	special=['merlin', 'percival', 'mordred', 'morgana', 'oberon', 'assassin']
+	special_team={
+		'merlin': resistance,
+		'percival': resistance,
+		'mordred': spies,
+		'morgana': spies,
+		'oberon': spies,
+		'assassin': spies,
+	}
+	for(var i=0; i<special.length; ++i){
+		s=special[i]
+		if(document.getElementById(s).checked) players[take(special_team[s])]['special']=s
+	}
+	//
+	assigned=true
+	alert('assigned!')
+}
+
+window.onload=add5Players
+			</script>
+		</head>
+	<body>
+		<h1>Resistance Identifier</h1><br>
+		Players
+		<form id="players">
+		</form>
+		<br>
+		<br>
+		<input type="button" value="add player" onClick="addPlayer()"><br>
+		<br>
+		<br>
+		Merlin<input id="merlin" type="checkbox"><br>
+		Percival<input id="percival" type="checkbox"><br>
+		Mordred<input id="mordred" type="checkbox"><br>
+		Morgana<input id="morgana" type="checkbox"><br>
+		Oberon<input id="oberon" type="checkbox"><br>
+		Assassin<input id="assassin" type="checkbox"><br>
+		<br>
+		<br>
+		<input type="button" value="assign" onClick="assign()">
+	</body>
+</html>
