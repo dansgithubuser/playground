@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, platform, re, shutil, subprocess, sys
+import os, platform, pprint, re, shutil, subprocess, sys
 
 try: input=raw_input
 except: pass
@@ -16,6 +16,7 @@ def timestamp(ambiguous=True):
 
 def _home_path(path): return os.path.join(os.path.expanduser('~'), *path.split('/'))
 def _this_path(path): return os.path.join(os.path.split(this)[0], *path.split('/'))
+def _scripts_path(path): return _home_path('Desktop/scripts/'+path)
 
 def _invoke(invocation):
 	if '--dry' in sys.argv: print(invocation)
@@ -38,12 +39,16 @@ alias o="{} ."
 echo "dan bash ran"
 '''.format(opener)
 
+if os.path.exists(_scripts_path('dan-aliases.txt')):
+	with open(_scripts_path('dan-aliases.txt')) as file:
+		_dan_bash+=file.read()
+
 def bash():
 	'update bash setup, writes to ~/Desktop/scripts/'
-	try: os.makedirs(_home_path('Desktop/scripts'))
+	try: os.makedirs(_scripts_path(''))
 	except: pass
-	shutil.copy(this, _home_path('Desktop/scripts'))
-	with open(_home_path('Desktop/scripts/dan-bash.sh'), 'w') as file: file.write(_dan_bash)
+	shutil.copy(this, _scripts_path(''))
+	with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
 
 def sleep(): _invoke('systemctl suspend')
 
@@ -222,6 +227,25 @@ def regex(pattern, file_name):
 	for i, line in enumerate(lines):
 		if re.search(pattern, line):
 			print('{}@{}: {}'.format(file_name, i+1, line))
+
+def bookmark(name):
+	with open(_this_path('dan-bookmarks.txt'), 'a') as file:
+		file.write('{} {}\n'.format(name, os.getcwd()))
+
+def g(name):
+	possibilities={}
+	all={}
+	with open(_this_path('dan-bookmarks.txt')) as file:
+		for line in file.readlines():
+			i, j=line.split()
+			if i.startswith(name): possibilities[i]=j
+			all[i]=j
+	if len(possibilities)==0: pprint.pprint(all); return
+	print(min(possibilities.items(), key=lambda i: len(i[0]))[1])
+
+def alias(name, command):
+	with open(_this_path('dan-aliases.txt'), 'a') as file:
+		file.write('function {}(){{\n\t{}\n}}\n\n'.format(name, command))
 
 def help(command=None):
 	import inspect
