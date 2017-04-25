@@ -223,10 +223,19 @@ def walk(command):
 		_invoke('{} "{}"'.format(command, path))
 
 def regex(pattern, file_name):
+	r'''use \\ to split pattern across lines'''
+	pattern=pattern.split(r'\\')
 	with open(file_name) as file: lines=file.readlines()
-	for i, line in enumerate(lines):
-		if re.search(pattern, line):
-			print('{}@{}: {}'.format(file_name, i+1, line))
+	for i in range(len(lines)):
+		for j in range(len(pattern)):
+			if not re.search(pattern[j], lines[i+j]): break
+		else:
+			if len(pattern)==1:
+				print('{}@{}: {}'.format(file_name, i+1, lines[i].rstrip()))
+			else:
+				print('{}@{}:'.format(file_name, i+1))
+				for j in range(len(pattern)): print(lines[i+j].rstrip())
+				print('')
 
 def bookmark(name):
 	with open(_this_path('dan-bookmarks.txt'), 'a') as file:
