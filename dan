@@ -256,6 +256,14 @@ def alias(name, command):
 	with open(_this_path('dan-aliases.txt'), 'a') as file:
 		file.write('function {}(){{\n\t{}\n}}\n\n'.format(name, command))
 
+def ssh_save(name):
+	shutil.copytree(_home_path('.ssh'), _home_path('.ssh-'+name))
+
+def ssh_load(name):
+	shutil.rmtree(_home_path('.ssh'))
+	name=_home_path('.ssh-'+name)
+	shutil.copytree(name, _home_path('.ssh'))
+
 def help(command=None):
 	import inspect
 	if command==None:
