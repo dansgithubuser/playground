@@ -54,7 +54,7 @@ def sleep(): _invoke('systemctl suspend')
 
 def reboot(): _invoke('reboot')
 
-def off(): _platform_invoke('poweroff', 'sudo halt')
+def off(): _platform_invoke('sudo poweroff', 'sudo halt')
 
 def link(link, linked):
 	_invoke('ln -s {} {}'.format(linked, link))
@@ -139,7 +139,7 @@ set pastetoggle=<F2>
 
 def vi():
 	p=_home_path('.vimrc')
-	print('I will create a .vimrc file.')
+	print('I will create a .vimrc file, it requires package vim-gui-common.')
 	if os.path.exists(p): print('I will overwrite the existing one.')
 	print('If that is OK, enter y.')
 	if input()!='y': sys.exit(1)
