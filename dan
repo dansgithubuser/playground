@@ -209,8 +209,8 @@ def conservative_logrotate():
 	with open('/etc/logrotate.conf') as file: file.write(_conservative_logrotate_conf)
 	with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
 
-def last():
-	print(sorted(os.listdir('.'))[-1])
+def last(prefix=''):
+	print([i for i in sorted(os.listdir('.')) if i.startswith(prefix)][-1])
 
 def network_discover(): _invoke('avahi-discover')
 
