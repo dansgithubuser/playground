@@ -288,11 +288,30 @@ def p(format, *args):
 	'invoke python'
 	exec(format.format(*args))
 
+def _getmtime(path):
+	return timestamp(False, datetime.datetime.fromtimestamp(os.path.getmtime(path)))
+
 def getmtime(path):
-	print('{} {}'.format(
-		timestamp(False, datetime.datetime.fromtimestamp(os.path.getmtime(path))),
-		path
-	))
+	print('{} {}'.format( _getmtime(path), path))
+
+def _exif(path, key):
+	import exifread
+	with open(path) as file: tags=exifread.process_file(file)
+	if key=='*': return tags
+	return tags.get(key, None)
+
+def exif(path, key='*'):
+	if key=='*':
+		import pprint
+		pprint.pprint(_exif(path, '*'))
+	print('{} {}'.format(_exif(path, key), path))
+
+def google_photos_time(path):
+	x=_exif(path, 'Image DateTime')
+	if x:
+		x=timestamp(False, datetime.datetime(*[int(i) for i in re.split(':| ', x.values)]))
+	else: x=_getmtime(path) or '?'
+	print('{} {}'.format(x, path))
 
 def sort():
 	lines=sys.stdin.readlines()
