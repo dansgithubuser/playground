@@ -279,6 +279,10 @@ def alias(name, command):
 def ssh_save(name):
 	shutil.copytree(_home_path('.ssh'), _home_path('.ssh-'+name))
 
+def ssh_list():
+	import glob
+	print([i.split('ssh-')[-1] for i in glob.glob(_home_path('.ssh-*'))])
+
 def ssh_load(name):
 	shutil.rmtree(_home_path('.ssh'))
 	name=_home_path('.ssh-'+name)
