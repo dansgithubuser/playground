@@ -22,7 +22,7 @@ git config --global alias.caf "commit -a --fixup"
 echo diff
 git config --global alias.d "diff -C"
 git config --global alias.dw "diff -C -w"
-git config --global alias.dww "show -C -w --word-diff"
+git config --global alias.dww "diff -C -w --word-diff"
 git config --global alias.dl "diff -C --word-diff-regex=."
 git config --global alias.dc "diff -C --cached"
 git config --global alias.dcw "diff -C --cached -w"
