@@ -1,5 +1,8 @@
 #link to post
 
+try: input=raw_input
+except: pass
+
 import subprocess, os
 
 def section(name):
