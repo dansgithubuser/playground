@@ -5,6 +5,9 @@ except: pass
 
 import subprocess, os
 
+HOME=os.path.split(os.path.realpath(__file__))[0]
+GIT_CORPUS=os.path.join(HOME, '..', 'git-corpus.py')
+
 def section(name):
 	y=10
 	x=len(name)+2*y
@@ -151,7 +154,7 @@ invoke(
 )
 
 section('foo\'s corpus of commits before rebase')
-invoke('python ../../git-corpus.py git-tutorial-pre-rebase')
+invoke('python {} git-tutorial-pre-rebase'.format(GIT_CORPUS))
 pause()
 
 section('rebase')
@@ -173,5 +176,5 @@ operate_and_print(3)
 operate_and_print(4)
 
 print('done')''')
-invoke('git add math.py', 'git rebase --continue', 'python ../../git-corpus.py git-tutorial-post-rebase')
+invoke('git add math.py', 'git rebase --continue', 'python {} git-tutorial-post-rebase'.format(GIT_CORPUS))
 pause()
