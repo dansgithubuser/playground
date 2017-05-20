@@ -144,6 +144,7 @@ set list
 set nocompatible
 syntax on
 set pastetoggle=<F2>
+set ignorecase
 
 colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
