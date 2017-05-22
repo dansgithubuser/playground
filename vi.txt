@@ -30,6 +30,7 @@ J -- join lines
 
 yy -- yank line
 p -- put line
+"+yy -- yank line to clipboard (" means register, + is clipboard register, yy is command)
 
 /<regex> -- search for <regex>
 
