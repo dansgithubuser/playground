@@ -33,10 +33,13 @@ p -- put line
 "+yy -- yank line to clipboard (" means register, + is clipboard register, yy is command)
 
 /<regex> -- search for <regex>
+:s/<pattern>/<replacement> -- replace <pattern> with <replacement> on current line
+:%s/<pattern>/<replacement>/gc -- replace all <pattern> with <replacement> on each line, ask for confirmation
 
 u -- undo
 ctrl-R -- redo
-. -- repeat
+. -- repeat last edit
+@: -- repeat  last command
 
 v -- visual selection
 V -- visual selection by line
