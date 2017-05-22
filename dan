@@ -146,6 +146,12 @@ syntax on
 set pastetoggle=<F2>
 set ignorecase
 
+"substitution with non-insane syntax
+function DanFunctionSubstitute(pattern, replacement)
+	execute '%s/'.a:pattern.'/'.a:replacement.'/gc'
+endfunction
+command -nargs=* Substitute call DanFunctionSubstitute(<f-args>)
+
 colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
 match Whitespace /\s/
