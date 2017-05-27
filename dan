@@ -4,13 +4,6 @@ import argparse, datetime, os, platform, pprint, re, shutil, subprocess, sys
 
 sys.stderr.write('invoked with: {}\n'.format(sys.argv))
 
-parser=argparse.ArgumentParser()
-parser.add_argument('--dry', action='store_true', help='only print invocations')
-parser.add_argument('-l', action='store_true', help='run on each stdin line')
-parser.add_argument('command')
-parser.add_argument('args', nargs='*')
-args=parser.parse_args()
-
 try: input=raw_input
 except: pass
 
@@ -229,8 +222,8 @@ def conservative_logrotate():
 	with open('/etc/logrotate.conf') as file: file.write(_conservative_logrotate_conf)
 	with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
 
-def last(prefix=''):
-	print([i for i in sorted(os.listdir('.')) if i.startswith(prefix)][-1])
+def last(index=1):
+	print(sorted([i.strip() for i in sys.stdin.read().split()])[-int(index)])
 
 def network_discover(): _invoke('avahi-discover')
 
@@ -352,10 +345,17 @@ def help(command=None):
 	if command==None:
 		print('list of commands:')
 		print(sorted([i for i in globals() if callable(eval(i)) and not i.startswith('_')]))
-		print('specify a command for help with it')
 	else:
 		print(inspect.getdoc(eval(command)))
 		print(inspect.getargspec(eval(command)))
+
+parser=argparse.ArgumentParser()
+parser.add_argument('--dry', action='store_true', help='only print invocations')
+parser.add_argument('-l', action='store_true', help='run on each stdin line')
+parser.add_argument('command')
+parser.add_argument('args', nargs='*')
+if len(sys.argv)==1: help()
+args=parser.parse_args()
 
 try: eval(args.command)
 except: help(); raise
