@@ -15,24 +15,27 @@ def section(name):
 	print('|'+' '*y+name+' '*y+'|')
 	print('+'+'-'*x           +'+')
 
+def pause():
+	print(r'\---/press enter to continue')
+	input()
+
 def invoke(*args):
 	for arg in args:
 		f=subprocess.check_call
 		if type(arg)==list: arg=arg[0]; f=subprocess.call
-		print('invoking '+arg)
+		print(r'/---\about to invoke '+arg)
+		pause()
 		if arg.split()[0]=='cd': os.chdir(arg.split()[1])
 		else: f(arg, shell=True)
 
-def pause():
-	print('press enter to continue')
-	input()
-
 def write_file(name, contents):
+	print(r'/---\about to write to '+name)
+	print(contents)
+	pause()
 	with open(name, 'w') as file:
 		file.write(contents)
-	print('invoking git diff')
+	print('resulting in git diff')
 	print(subprocess.check_output('git diff', shell=True).decode())
-	pause()
 
 section('1st commit')
 invoke('mkdir foo', 'cd foo', 'git init')
@@ -155,7 +158,6 @@ invoke(
 
 section('foo\'s corpus of commits before rebase')
 invoke('python {} git-tutorial-pre-rebase'.format(GIT_CORPUS))
-pause()
 
 section('rebase')
 invoke('git checkout nomenclature', ['git rebase master'])
@@ -177,4 +179,3 @@ operate_and_print(4)
 
 print('done')''')
 invoke('git add math.py', 'git rebase --continue', 'python {} git-tutorial-post-rebase'.format(GIT_CORPUS))
-pause()
