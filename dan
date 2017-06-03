@@ -340,6 +340,14 @@ def lines_run_length(pattern='.*'):
 		body.append(line)
 	p()
 
+def copy(name='clipboard'):
+	with open(_scripts_path('dan-copy-'+name), 'w') as file:
+		file.write(input())
+
+def paste(name='clipboard'):
+	with open(_scripts_path('dan-copy-'+name)) as file:
+		sys.stdout.write(file.read())
+
 def help(command=None):
 	import inspect
 	if command==None:
