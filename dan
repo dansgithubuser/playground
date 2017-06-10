@@ -348,6 +348,10 @@ def paste(name='clipboard'):
 	with open(_scripts_path('dan-copy-'+name)) as file:
 		sys.stdout.write(file.read())
 
+def wait(seconds):
+	import time
+	time.sleep(float(seconds))
+
 def help(command=None):
 	import inspect
 	if command==None:
