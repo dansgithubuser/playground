@@ -138,6 +138,7 @@ set nocompatible
 syntax on
 set pastetoggle=<F2>
 set ignorecase
+set backspace=indent,eol,start
 
 "substitution with non-insane syntax
 function DanFunctionSubstitute(pattern, replacement)
