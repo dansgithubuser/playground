@@ -131,7 +131,6 @@ def install_self():
 	git()
 
 _vimrc='''set autoindent
-set copyindent
 set number
 set tabstop=2
 set list
@@ -150,6 +149,8 @@ command -nargs=* Substitute call DanFunctionSubstitute(<f-args>)
 colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
 match Whitespace /\s/
+
+autocmd FileType rust setlocal expandtab tabstop=4 softtabstop=4
 '''
 
 def vi():
