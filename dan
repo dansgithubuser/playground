@@ -131,6 +131,7 @@ def install_self():
 	git()
 
 _vimrc='''set autoindent
+set copyindent
 set number
 set tabstop=2
 set list
