@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 def mean_and_deviation(x):
 	from math import sqrt
 	m=sum(x)/float(len(x))
@@ -80,14 +82,20 @@ def assign_teams(familiarity, n_teams, extra_value=lambda teams: 0):
 	#done
 	return teams
 
-def show(familiarity, teams):
-	for i in range(len(teams)):
-		print('team {}: {}'.format(i, team_familiarity(familiarity, teams[i])))
-		for person in teams[i]:
-			print('\t{}: {}'.format(person, person_familiarity(familiarity, person, teams[i])))
-	m, d=mean_and_deviation(persons_familiarity(familiarity, teams))
-	print('average person familiarity: {}'.format(m))
-	print('deviation in person familiarity: {}'.format(d))
+def show(familiarity, teams, readable=False, names=[]):
+	if readable:
+		for i in range(len(teams)):
+			if i<len(names): print(names[i], end=': ')
+			for person in teams[i]: print(person, end=' ')
+			print()
+	else:
+		for i in range(len(teams)):
+			print('team {}: {}'.format(i, team_familiarity(familiarity, teams[i])))
+			for person in teams[i]:
+				print('\t{}: {}'.format(person, person_familiarity(familiarity, person, teams[i])))
+		m, d=mean_and_deviation(persons_familiarity(familiarity, teams))
+		print('average person familiarity: {}'.format(m))
+		print('deviation in person familiarity: {}'.format(d))
 
 if __name__=='__main__':
 	import random
