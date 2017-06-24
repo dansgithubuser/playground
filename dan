@@ -287,7 +287,7 @@ def ssh_list():
 	print([i.split('ssh-')[-1] for i in glob.glob(_home_path('.ssh-*'))])
 
 def ssh_load(name):
-	shutil.rmtree(_home_path('.ssh'))
+	shutil.rmtree(_home_path('.ssh'), True)
 	name=_home_path('.ssh-'+name)
 	shutil.copytree(name, _home_path('.ssh'))
 
