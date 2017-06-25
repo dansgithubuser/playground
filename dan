@@ -150,6 +150,7 @@ colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
 match Whitespace /\s/
 
+autocmd BufNewFile,BufRead *.rs set filetype=rust
 autocmd FileType rust setlocal expandtab tabstop=4 softtabstop=4
 '''
 
