@@ -9,6 +9,7 @@ echo branch
 git config --global alias.b "branch"
 
 echo checkout
+git config --global alias.co "checkout"
 git config --global alias.cb "checkout -b"
 
 echo commit
