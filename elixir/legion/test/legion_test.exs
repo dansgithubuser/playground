@@ -2,7 +2,7 @@ defmodule LegionTest do
   use ExUnit.Case
   doctest Legion
 
-  test "the truth" do
-    assert 1 + 1 == 2
+  test "basic" do
+    IO.inspect Legion.march("node()")
   end
 end
