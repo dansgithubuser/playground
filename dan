@@ -152,6 +152,9 @@ match Whitespace /\s/
 
 autocmd BufNewFile,BufRead *.rs set filetype=rust
 autocmd FileType rust setlocal expandtab tabstop=4 softtabstop=4
+
+autocmd BufNewFile,BufRead *.ex,*.exs set filetype=elixir
+autocmd FileType elixir setlocal expandtab tabstop=2 softtabstop=2
 '''
 
 def vi():
