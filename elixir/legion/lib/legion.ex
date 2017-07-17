@@ -3,16 +3,10 @@ defmodule Legion do
   Documentation for Legion.
   """
 
-  @doc """
-  Hello world.
+  use Application
 
-  ## Examples
-
-      iex> Legion.hello
-      :world
-
-  """
-  def hello do
-    :world
+  def start(_type, _args) do
+    IO.puts "Hello, world!"
+    Supervisor.start_link([], [strategy: :one_for_one])
   end
 end
