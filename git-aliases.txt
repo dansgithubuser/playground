@@ -62,6 +62,7 @@ git config --global alias.rhu "reset --hard @{u}"
 echo show
 git config --global alias.sww "show -w --word-diff"
 git config --global alias.sw "show -w"
+git config --global alias.ss "show --name-status"
 
 echo stash
 git config --global alias.sts "stash show -p"
