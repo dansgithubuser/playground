@@ -43,7 +43,8 @@ git config --global alias.lh "ls-remote --heads"
 
 echo push
 git config --global alias.p push
-git config --global alias.pf "push -f"
+git config --global alias.pf "push --force-with-lease"
+git config --global alias.pff "push -f"
 git config --global alias.pu "push -u origin HEAD"
 
 echo rebase
