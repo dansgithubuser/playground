@@ -83,7 +83,7 @@ def _brightness(level):
 def b(level):
 	'set brightness'
 	if level=='get': return (_brightness('get')-5000)/1000.0
-	_brightness(int(level)*1000+5000)
+	_brightness(int(float(level)*1000+5000))
 
 def bu():
 	'brightness up'
@@ -142,7 +142,7 @@ set backspace=indent,eol,start
 
 "substitution with non-insane syntax
 function DanFunctionSubstitute(pattern, replacement)
-	execute '%s/'.a:pattern.'/'.a:replacement.'/gc'
+	execute '.,$s/'.a:pattern.'/'.a:replacement.'/gc'
 endfunction
 command -nargs=* Substitute call DanFunctionSubstitute(<f-args>)
 
