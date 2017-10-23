@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+from __future__ import print_function
+
 import argparse, datetime, os, platform, pprint, re, shutil, subprocess, sys
 
 sys.stderr.write('invoked with: {}\n'.format(sys.argv))
@@ -358,6 +360,14 @@ def paste(name='clipboard'):
 def wait(seconds):
 	import time
 	time.sleep(float(seconds))
+
+def print_hex(file_name):
+	with open(file_name, 'rb') as file: bytes=file.read()
+	for i in range(len(bytes)):
+		print('{:02x}'.format(ord(bytes[i])), end=' ')
+		if i%4==3: print(end=' ')
+		if i%16==15: print()
+	print()
 
 def help(command=None):
 	import inspect
