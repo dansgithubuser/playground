@@ -262,6 +262,9 @@ def regex(pattern, file_name):
 def replace(pattern, replacement, string):
 	print(re.sub(pattern, replacement, string))
 
+def sed(pattern, replacement):
+	print(re.sub(pattern, replacement, sys.stdin.read()))
+
 def extract(pattern, string):
 	x=re.match(pattern, string)
 	if x: print(x.group(0))
