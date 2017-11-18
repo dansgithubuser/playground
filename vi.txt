@@ -19,6 +19,7 @@ gg, G -- move to beginning, end of file
 :<n> -- move to <n>th line of file
 ctrl-U, ctrl-D -- move by half-page
 ctrl-Y, ctrl-E -- move screen by line
+H, M, L -- move cursor to top, middle, low line of screen
 zt, zz, zb -- move screen so current line is in top, middle, or bottom of screen
 ctrl-G -- show info about cursor position, including column number
 m<c> -- set bookmark <c>
