@@ -36,6 +36,7 @@ git config --global alias.f fetch
 echo log
 git config --global alias.l "log --graph --oneline"
 git config --global alias.ld "log --graph --pretty=\"%h %ad %s\""
+git config --global alias.lau "log --graph --pretty=\"%h %cn %s\""
 git config --global alias.la "log --graph --oneline --decorate --all"
 
 echo ls-remote
