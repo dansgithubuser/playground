@@ -61,6 +61,9 @@ git config --global alias.rhh1 "reset --hard HEAD~1"
 git config --global alias.rsh1 "reset --soft HEAD~1"
 git config --global alias.rhu "reset --hard @{u}"
 
+echo rev-parse
+git config --global alias.rph "rev-parse HEAD"
+
 echo show
 git config --global alias.sww "show -w --word-diff"
 git config --global alias.sw "show -w"
