@@ -74,3 +74,6 @@ git config --global alias.sts "stash show -p"
 
 echo status
 git config --global alias.s status
+
+echo submodule
+git config --global alias.smr "submodule update --init --recursive"

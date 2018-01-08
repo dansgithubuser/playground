@@ -391,6 +391,16 @@ def print_hex(file_name):
 		if i%16==15: print()
 	print()
 
+#=====git=====#
+def gcaapf():
+	_invoke('git caa')
+	_invoke('git pf')
+
+def gsmu():
+	_invoke('git submodule update --remote')
+	_invoke('git submodule foreach "git submodule update --init --recursive"')
+
+#=====help=====#
 def help(command=None):
 	import inspect
 	if command==None:
@@ -400,6 +410,7 @@ def help(command=None):
 		print(inspect.getdoc(eval(command)))
 		print(inspect.getargspec(eval(command)))
 
+#=====main=====#
 parser=argparse.ArgumentParser()
 parser.add_argument('--dry', action='store_true', help='only print invocations')
 parser.add_argument('-l', action='store_true', help='run on each stdin line')
