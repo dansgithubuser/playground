@@ -52,3 +52,7 @@ D -- delete selection
 ctrl-v -- block selection
 I -- insert, edit one line, hit esc, changes should propagate to other lines (UI might not update)
 c -- change block selection
+
+q<letter><commands>q -- record macro
+@<letter> -- play macro
+@@ -- play last macro
