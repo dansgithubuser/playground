@@ -3,9 +3,11 @@
 from __future__ import print_function
 import argparse
 
+DEGREES=360
+
 class Stem:
 	def __init__(self, locality):
-		self.food=[1]*360
+		self.food=[1]*DEGREES
 		self.curr_leaf=None
 		self.prev_leaf=None
 		self.locality=locality
@@ -14,9 +16,9 @@ class Stem:
 		self.prev_leaf=self.curr_leaf
 		self.curr_leaf=max(enumerate(self.food), key=lambda x: x[1])[0]
 		for i in range(len(self.food)):
-			angle=(i-self.curr_leaf+360)%360
-			distance=min(angle, 360-angle)
-			self.food[i]*=1-2**(-(self.locality*distance/180.0)**2)
+			angle=(i-self.curr_leaf+DEGREES)%DEGREES
+			distance=min(angle, DEGREES-angle)
+			self.food[i]*=1-2**(-(1.0*self.locality*distance/DEGREES)**2)
 			self.food[i]+=1
 
 	def show(self):
@@ -27,7 +29,7 @@ class Stem:
 			for i in range(60):
 				def level(l): return l/5.0*(hi-lo)
 				c=' '
-				if level(5-h)>=self.food[i*6]-lo>=level(4-h): c='x'
+				if level(5-h)>=self.food[i*DEGREES/60]-lo>=level(4-h): c='x'
 				print(c, end='')
 			print()
 		print(lo)
@@ -35,7 +37,7 @@ class Stem:
 	def angle(self):
 		if self.curr_leaf is None: return None
 		if self.prev_leaf is None: return None
-		return (self.curr_leaf-self.prev_leaf+360)%360
+		return (self.curr_leaf-self.prev_leaf+DEGREES)%DEGREES
 
 	def characterize(self):
 		for i in range(40): self.grow()
