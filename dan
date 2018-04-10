@@ -54,7 +54,22 @@ def bash():
 	shutil.copy(this, _scripts_path(''))
 	with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
 
-def sleep(): _invoke('systemctl suspend')
+def sleep(type=None):
+	if type=='deep':
+		for i in [
+			'LID0',
+			'SLPB',
+			'UHC0',
+			'UHC1',
+			'UHC2',
+			'UHC3',
+			'UHC4',
+			'UHCR',
+			'EHC1',
+			'EHC2',
+		]:
+			_invoke('sudo sh -c "echo {} > /proc/acpi/wakeup"'.format(i))
+	_invoke('systemctl suspend')
 
 def reboot(): _invoke('reboot')
 
