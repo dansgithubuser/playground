@@ -40,6 +40,7 @@ _dan_bash='''force_color_prompt=yes
 PATH=$PATH:~/Desktop/scripts
 PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\t \\w$ '
 alias o="{} ."
+if ! ps -e | grep xbindkeys > /dev/null; then xbindkeys; fi
 echo "dan bash ran"
 '''.format(opener)
 
