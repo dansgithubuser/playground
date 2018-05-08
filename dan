@@ -6,8 +6,8 @@ import argparse, datetime, os, platform, pprint, re, shutil, subprocess, sys
 
 sys.stderr.write('invoked with: {}\n'.format(sys.argv))
 
-try: input=raw_input
-except: pass
+try: _input=raw_input
+except: _input=input
 
 this=os.path.realpath(__file__)
 
@@ -41,6 +41,7 @@ PATH=$PATH:~/Desktop/scripts
 PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\t \\w$ '
 alias o="{} ."
 if ! ps -e | grep xbindkeys > /dev/null; then xbindkeys; fi
+alias dss="dan sleep deep"
 echo "dan bash ran"
 '''.format(opener)
 
@@ -56,6 +57,7 @@ def bash():
 	with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
 
 def sleep(type=None):
+	'put computer to sleep'
 	if type=='deep':
 		for i in [
 			'LID0',
@@ -72,11 +74,16 @@ def sleep(type=None):
 			_invoke('sudo sh -c "echo {} > /proc/acpi/wakeup"'.format(i))
 	_invoke('systemctl suspend')
 
-def reboot(): _invoke('reboot')
+def reboot():
+	'reboot computer'
+	_invoke('reboot')
 
-def off(): _platform_invoke('sudo poweroff', 'sudo halt')
+def off():
+	'turn computer off'
+	_platform_invoke('sudo poweroff', 'sudo halt')
 
 def link(link, linked):
+	'create symlink'
 	_invoke('ln -s {} {}'.format(linked, link))
 
 def find(name):
@@ -138,7 +145,7 @@ def install_self():
 				break
 	if not already_done:
 		print('I will append to {} and make it use my bash command -- if that is OK, enter y'.format(bash_init))
-		if input()!='y': sys.exit(1)
+		if _input()!='y': sys.exit(1)
 		with open(bash_init, 'a') as file:
 			file.write("\n\n{}\n".format(header))
 			file.write('python {} bash\n'.format(this))
@@ -195,11 +202,12 @@ autocmd FileType elixir setlocal expandtab tabstop=2 softtabstop=2
 '''
 
 def vi():
+	'setup vi stuff'
 	p=_home_path('.vimrc')
 	print('I will create a .vimrc file, it requires package vim-gui-common.')
 	if os.path.exists(p): print('I will overwrite the existing one.')
 	print('If that is OK, enter y.')
-	if input()!='y': sys.exit(1)
+	if _input()!='y': sys.exit(1)
 	with open(p, 'w') as file: file.write(_vimrc)
 
 def git():
@@ -267,11 +275,13 @@ def conservative_logrotate():
 	with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
 
 def last(index=1):
+	'print last item in stdin'
 	print(sorted([i.strip() for i in sys.stdin.read().split()])[-int(index)])
 
 def network_discover(): _invoke('avahi-discover')
 
 def walk(command):
+	'walk current path, invoking command on each file'
 	paths=[]
 	for dirpath, dirnames, filenames in os.walk('.'):
 		for filename in filenames:
@@ -280,7 +290,8 @@ def walk(command):
 		_invoke('{} "{}"'.format(command, path))
 
 def regex(pattern, file_name):
-	r'''use \\ to split pattern across lines'''
+	r'''find regex in file
+use \\ to split pattern across lines'''
 	pattern=pattern.split(r'\\')
 	with open(file_name) as file: lines=file.readlines()
 	for i in range(len(lines)):
@@ -294,21 +305,13 @@ def regex(pattern, file_name):
 				for j in range(len(pattern)): print(lines[i+j].rstrip())
 				print('')
 
-def replace(pattern, replacement, string):
-	print(re.sub(pattern, replacement, string))
-
-def sed(pattern, replacement):
-	print(re.sub(pattern, replacement, sys.stdin.read()))
-
-def extract(pattern, string):
-	x=re.match(pattern, string)
-	if x: print(x.group(0))
-
 def bookmark(name):
+	'bookmark current directory'
 	with open(_this_path('dan-bookmarks.txt'), 'a') as file:
 		file.write('{} {}\n'.format(name, os.getcwd()))
 
 def g(name):
+	'go to bookmark'
 	possibilities={}
 	all={}
 	with open(_this_path('dan-bookmarks.txt')) as file:
@@ -320,6 +323,7 @@ def g(name):
 	print(min(possibilities.items(), key=lambda i: len(i[0]))[1])
 
 def alias(name, command):
+	'create a semipermanent alias'
 	with open(_this_path('dan-aliases.txt'), 'a') as file:
 		file.write('function {}(){{\n\t{}\n}}\n\n'.format(name, command))
 
@@ -343,7 +347,8 @@ def _getmtime(path):
 	return timestamp(False, datetime.datetime.fromtimestamp(os.path.getmtime(path)))
 
 def getmtime(path):
-	print('{} {}'.format( _getmtime(path), path))
+	'get modified time of specified path'
+	print('{} {}'.format(_getmtime(path), path))
 
 def _exif(path, key):
 	import exifread
@@ -352,22 +357,19 @@ def _exif(path, key):
 	return tags.get(key, None)
 
 def exif(path, key='*'):
+	'get exif data from path'
 	if key=='*':
 		import pprint
 		pprint.pprint(_exif(path, '*'))
 	print('{} {}'.format(_exif(path, key), path))
 
 def google_photos_time(path):
+	'get creation time of image downloaded from google photos (?)'
 	x=_exif(path, 'Image DateTime')
 	if x:
 		x=timestamp(False, datetime.datetime(*[int(i) for i in re.split(':| ', x.values)]))
 	else: x=_getmtime(path) or '?'
 	print('{} {}'.format(x, path))
-
-def sort():
-	lines=sys.stdin.readlines()
-	lines=sorted(lines)
-	for line in lines: sys.stdout.write(line)
 
 def lines_run_length(pattern='.*'):
 	previous=None
@@ -387,19 +389,23 @@ def lines_run_length(pattern='.*'):
 		body.append(line)
 	p()
 
-def copy(name='clipboard'):
+def copy(name='default'):
+	'copy to file'
 	with open(_scripts_path('dan-copy-'+name), 'w') as file:
-		file.write(input())
+		file.write(sys.stdin.read())
 
-def paste(name='clipboard'):
+def paste(name='default'):
+	'paste from file'
 	with open(_scripts_path('dan-copy-'+name)) as file:
 		sys.stdout.write(file.read())
 
 def wait(seconds):
+	'wait for specified number of seconds'
 	import time
 	time.sleep(float(seconds))
 
 def print_hex(file_name):
+	'print specified file in hex'
 	with open(file_name, 'rb') as file: bytes=file.read()
 	for i in range(len(bytes)):
 		print('{:02x}'.format(ord(bytes[i])), end=' ')
@@ -409,37 +415,57 @@ def print_hex(file_name):
 
 #=====git=====#
 def gcaapf():
+	'git add and amend commit, then force push'
 	_invoke('git caa')
 	_invoke('git pf')
 
 def gsmu():
+	'git update submodules to latest, and sync their submodules'
 	_invoke('git submodule update --remote')
 	_invoke('git submodule foreach "git submodule update --init --recursive"')
 
 #=====help=====#
-def help(command=None):
+def h(command=None):
+	'help'
 	import inspect
 	if command==None:
+		commands=sorted([i for i in globals() if callable(eval(i)) and not i.startswith('_')])
+		max_len_command=max([len(i) for i in commands])
 		print('list of commands:')
-		print(sorted([i for i in globals() if callable(eval(i)) and not i.startswith('_')]))
+		for command in commands:
+			full_help=inspect.getdoc(eval(command))
+			if full_help:
+				full_help=full_help.splitlines()
+				short_help=full_help[0]
+				if len(full_help)>1: short_help+='...'
+			else: short_help=''
+			print(('{:>'+str(max_len_command)+'} {}').format(command, short_help))
 	else:
 		print(inspect.getdoc(eval(command)))
 		print(inspect.getargspec(eval(command)))
 
 #=====main=====#
-parser=argparse.ArgumentParser()
+parser=argparse.ArgumentParser(description='`dan h` to list commands, `dan h command` for help with specific command')
 parser.add_argument('--dry', action='store_true', help='only print invocations')
-parser.add_argument('-l', action='store_true', help='run on each stdin line')
+parser.add_argument('-l', help='run on each stdin line in specified slice, or start from specified line')
 parser.add_argument('command')
-parser.add_argument('args', nargs='*')
-if len(sys.argv)==1: help()
+parser.add_argument('args', nargs='*', help='use {} to sub in line(s) from stdin')
+if len(sys.argv)==1: h()
 args=parser.parse_args()
 
 try: eval(args.command)
-except: help(); raise
+except: h(); raise
 try:
+	if not sys.stdin.isatty():
+		lines=[line.strip() for line in sys.stdin.readlines()]
+	else:
+		lines=[]
 	if args.l:
-		for line in sys.stdin.readlines():
-			exec(args.command+'(*[i.format(line.strip()) for i in args.args])')
-	else: exec(args.command+'(*args.args)')
-except TypeError: help(args.command); raise
+		slice={k: int(v) for k, v in enumerate(args.l.split(':'))}
+		start=slice.get(0, 0)
+		end  =slice.get(1, len(lines))
+		step =slice.get(2, 1)
+		for line in lines[start:end:step]:
+			exec(args.command+'(*[i.format(line) for i in args.args])')
+	else: exec(args.command+'(*[i.format(lines) for i in args.args])')
+except TypeError: h(args.command); raise
