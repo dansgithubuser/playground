@@ -2,7 +2,16 @@
 
 from __future__ import print_function
 
-import argparse, datetime, os, platform, pprint, re, shutil, subprocess, sys
+import argparse
+import datetime
+import inspect
+import os
+import platform
+import pprint
+import re
+import shutil
+import subprocess
+import sys
 
 sys.stderr.write('invoked with: {}\n'.format(sys.argv))
 
@@ -11,12 +20,9 @@ except: _input=input
 
 this=os.path.realpath(__file__)
 
-def timestamp(ambiguous=True, when=None):
-	if when==None: when=datetime.datetime.now()
-	format='{:%Y-%m'
-	if not ambiguous: format+='-%b'
-	format+='-%d %H:%M:%S.%f}'
-	return format.format(when).lower()
+class _Section:
+	def __init__(self):
+		self.line=inspect.stack()[1][2]
 
 def _home_path(path): return os.path.join(os.path.expanduser('~'), *path.split('/'))
 def _this_path(path): return os.path.join(os.path.split(this)[0], *path.split('/'))
@@ -49,12 +55,8 @@ if os.path.exists(_scripts_path('dan-aliases.txt')):
 	with open(_scripts_path('dan-aliases.txt')) as file:
 		_dan_bash+=file.read()
 
-def bash():
-	'update bash setup, writes to ~/Desktop/scripts/'
-	try: os.makedirs(_scripts_path(''))
-	except: pass
-	shutil.copy(this, _scripts_path(''))
-	with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
+#=====commands=====#
+computer=_Section()
 
 def sleep(type=None):
 	'put computer to sleep'
@@ -81,14 +83,6 @@ def reboot():
 def off():
 	'turn computer off'
 	_platform_invoke('sudo poweroff', 'sudo halt')
-
-def link(link, linked):
-	'create symlink'
-	_invoke('ln -s {} {}'.format(linked, link))
-
-def find(name):
-	'find file with name within current directory'
-	_invoke('find . -name {}'.format(name))
 
 def vu():
 	'volume up'
@@ -126,6 +120,132 @@ def i(command):
 		file.write('\n')
 	_invoke(command)
 
+convenience=_Section()
+
+def timestamp(ambiguous=True, when=None):
+	if when==None: when=datetime.datetime.now()
+	format='{:%Y-%m'
+	if not ambiguous: format+='-%b'
+	format+='-%d %H:%M:%S.%f}'
+	return format.format(when).lower()
+
+def copy(name='default'):
+	'copy to file'
+	with open(_scripts_path('dan-copy-'+name), 'w') as file:
+		file.write(sys.stdin.read())
+
+def paste(name='default'):
+	'paste from file'
+	with open(_scripts_path('dan-copy-'+name)) as file:
+		sys.stdout.write(file.read())
+
+def wait(seconds):
+	'wait for specified number of seconds'
+	import time
+	time.sleep(float(seconds))
+
+def print_hex(file_name):
+	'print specified file in hex'
+	with open(file_name, 'rb') as file: bytes=file.read()
+	for i in range(len(bytes)):
+		print('{:02x}'.format(ord(bytes[i])), end=' ')
+		if i%4==3: print(end=' ')
+		if i%16==15: print()
+	print()
+
+def find(name):
+	'find file with name within current directory'
+	_invoke('find . -name {}'.format(name))
+
+def walk(command):
+	'walk current path, invoking command on each file'
+	paths=[]
+	for dirpath, dirnames, filenames in os.walk('.'):
+		for filename in filenames:
+			paths.append(os.path.join(dirpath, filename))
+	for path in sorted(paths):
+		_invoke('{} "{}"'.format(command, path))
+
+def regex(pattern, file_name):
+	r'''find regex in file
+use \\ to split pattern across lines'''
+	pattern=pattern.split(r'\\')
+	with open(file_name) as file: lines=file.readlines()
+	for i in range(len(lines)):
+		for j in range(len(pattern)):
+			if not re.search(pattern[j], lines[i+j]): break
+		else:
+			if len(pattern)==1:
+				print('{}@{}: {}'.format(file_name, i+1, lines[i].rstrip()))
+			else:
+				print('{}@{}:'.format(file_name, i+1))
+				for j in range(len(pattern)): print(lines[i+j].rstrip())
+				print('')
+
+def last(index=1):
+	'print last item in stdin'
+	print(sorted([i.strip() for i in sys.stdin.read().split()])[-int(index)])
+
+def bookmark(name):
+	'bookmark current directory'
+	with open(_this_path('dan-bookmarks.txt'), 'a') as file:
+		file.write('{} {}\n'.format(name, os.getcwd()))
+
+def g(name):
+	'go to bookmark'
+	possibilities={}
+	all={}
+	with open(_this_path('dan-bookmarks.txt')) as file:
+		for line in file.readlines():
+			i, j=line.split()
+			if i.startswith(name): possibilities[i]=j
+			all[i]=j
+	if len(possibilities)==0: pprint.pprint(all); return
+	print(min(possibilities.items(), key=lambda i: len(i[0]))[1])
+
+def link(link, linked):
+	'create symlink'
+	_invoke('ln -s {} {}'.format(linked, link))
+
+def disk_usage(): _invoke('ncdu')
+
+def monitor(): _invoke('top')
+
+def network_discover(): _invoke('avahi-discover')
+
+def alias(name, command):
+	'create a semipermanent alias'
+	with open(_this_path('dan-aliases.txt'), 'a') as file:
+		file.write('function {}(){{\n\t{}\n}}\n\n'.format(name, command))
+
+def ssh_save(name):
+	shutil.copytree(_home_path('.ssh'), _home_path('.ssh-'+name))
+
+def ssh_list():
+	import glob
+	print([i.split('ssh-')[-1] for i in glob.glob(_home_path('.ssh-*'))])
+
+def ssh_load(name):
+	shutil.rmtree(_home_path('.ssh'), True)
+	name=_home_path('.ssh-'+name)
+	shutil.copytree(name, _home_path('.ssh'))
+
+def gcaapf():
+	'git add and amend commit, then force push'
+	_invoke('git caa')
+	_invoke('git pf')
+
+def gsmu():
+	'git update submodules to latest, and sync their submodules'
+	_invoke('git submodule update --remote')
+	_invoke('git submodule foreach "git submodule update --init --recursive"')
+
+def p(format, *args):
+	'invoke python'
+	exec(format.format(*args))
+
+setup=_Section()
+
 def install_self():
 	'hook into bash init script'
 	#find bash init script
@@ -154,6 +274,13 @@ def install_self():
 	#other stuff
 	vi()
 	git()
+
+def bash():
+	'update bash setup, writes to ~/Desktop/scripts/'
+	try: os.makedirs(_scripts_path(''))
+	except: pass
+	shutil.copy(this, _scripts_path(''))
+	with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
 
 _vimrc='''set autoindent
 set number
@@ -214,9 +341,53 @@ def git():
 	'update git aliases'
 	_invoke('sh '+_this_path('git-aliases.txt'))
 
-def disk_usage(): _invoke('ncdu')
+esoteric=_Section()
 
-def monitor(): _invoke('top')
+def _getmtime(path):
+	return timestamp(False, datetime.datetime.fromtimestamp(os.path.getmtime(path)))
+
+def getmtime(path):
+	'get modified time of specified path'
+	print('{} {}'.format(_getmtime(path), path))
+
+def _exif(path, key):
+	import exifread
+	with open(path) as file: tags=exifread.process_file(file)
+	if key=='*': return tags
+	return tags.get(key, None)
+
+def exif(path, key='*'):
+	'get exif data from path'
+	if key=='*':
+		import pprint
+		pprint.pprint(_exif(path, '*'))
+	print('{} {}'.format(_exif(path, key), path))
+
+def google_photos_time(path):
+	'get creation time of image downloaded from google photos (?)'
+	x=_exif(path, 'Image DateTime')
+	if x:
+		x=timestamp(False, datetime.datetime(*[int(i) for i in re.split(':| ', x.values)]))
+	else: x=_getmtime(path) or '?'
+	print('{} {}'.format(x, path))
+
+def lines_run_length(pattern='.*'):
+	previous=None
+	body=[]
+	def p():
+		if not body: return
+		print('{:6} {}'.format(len(body), previous))
+		for i in body: print('\t'+i)
+	def e(l):
+		return re.match(pattern, l).group(0)
+	for line in sys.stdin.readlines():
+		line=line.strip()
+		if e(line)!=previous:
+			p()
+			body=[]
+		previous=e(line)
+		body.append(line)
+	p()
 
 _conservative_logrotate_conf='''size 1M
 rotate 0
@@ -274,172 +445,33 @@ def conservative_logrotate():
 	with open('/etc/logrotate.conf') as file: file.write(_conservative_logrotate_conf)
 	with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
 
-def last(index=1):
-	'print last item in stdin'
-	print(sorted([i.strip() for i in sys.stdin.read().split()])[-int(index)])
+help=_Section()
 
-def network_discover(): _invoke('avahi-discover')
-
-def walk(command):
-	'walk current path, invoking command on each file'
-	paths=[]
-	for dirpath, dirnames, filenames in os.walk('.'):
-		for filename in filenames:
-			paths.append(os.path.join(dirpath, filename))
-	for path in sorted(paths):
-		_invoke('{} "{}"'.format(command, path))
-
-def regex(pattern, file_name):
-	r'''find regex in file
-use \\ to split pattern across lines'''
-	pattern=pattern.split(r'\\')
-	with open(file_name) as file: lines=file.readlines()
-	for i in range(len(lines)):
-		for j in range(len(pattern)):
-			if not re.search(pattern[j], lines[i+j]): break
-		else:
-			if len(pattern)==1:
-				print('{}@{}: {}'.format(file_name, i+1, lines[i].rstrip()))
-			else:
-				print('{}@{}:'.format(file_name, i+1))
-				for j in range(len(pattern)): print(lines[i+j].rstrip())
-				print('')
-
-def bookmark(name):
-	'bookmark current directory'
-	with open(_this_path('dan-bookmarks.txt'), 'a') as file:
-		file.write('{} {}\n'.format(name, os.getcwd()))
-
-def g(name):
-	'go to bookmark'
-	possibilities={}
-	all={}
-	with open(_this_path('dan-bookmarks.txt')) as file:
-		for line in file.readlines():
-			i, j=line.split()
-			if i.startswith(name): possibilities[i]=j
-			all[i]=j
-	if len(possibilities)==0: pprint.pprint(all); return
-	print(min(possibilities.items(), key=lambda i: len(i[0]))[1])
-
-def alias(name, command):
-	'create a semipermanent alias'
-	with open(_this_path('dan-aliases.txt'), 'a') as file:
-		file.write('function {}(){{\n\t{}\n}}\n\n'.format(name, command))
-
-def ssh_save(name):
-	shutil.copytree(_home_path('.ssh'), _home_path('.ssh-'+name))
-
-def ssh_list():
-	import glob
-	print([i.split('ssh-')[-1] for i in glob.glob(_home_path('.ssh-*'))])
-
-def ssh_load(name):
-	shutil.rmtree(_home_path('.ssh'), True)
-	name=_home_path('.ssh-'+name)
-	shutil.copytree(name, _home_path('.ssh'))
-
-def p(format, *args):
-	'invoke python'
-	exec(format.format(*args))
-
-def _getmtime(path):
-	return timestamp(False, datetime.datetime.fromtimestamp(os.path.getmtime(path)))
-
-def getmtime(path):
-	'get modified time of specified path'
-	print('{} {}'.format(_getmtime(path), path))
-
-def _exif(path, key):
-	import exifread
-	with open(path) as file: tags=exifread.process_file(file)
-	if key=='*': return tags
-	return tags.get(key, None)
-
-def exif(path, key='*'):
-	'get exif data from path'
-	if key=='*':
-		import pprint
-		pprint.pprint(_exif(path, '*'))
-	print('{} {}'.format(_exif(path, key), path))
-
-def google_photos_time(path):
-	'get creation time of image downloaded from google photos (?)'
-	x=_exif(path, 'Image DateTime')
-	if x:
-		x=timestamp(False, datetime.datetime(*[int(i) for i in re.split(':| ', x.values)]))
-	else: x=_getmtime(path) or '?'
-	print('{} {}'.format(x, path))
-
-def lines_run_length(pattern='.*'):
-	previous=None
-	body=[]
-	def p():
-		if not body: return
-		print('{:6} {}'.format(len(body), previous))
-		for i in body: print('\t'+i)
-	def e(l):
-		return re.match(pattern, l).group(0)
-	for line in sys.stdin.readlines():
-		line=line.strip()
-		if e(line)!=previous:
-			p()
-			body=[]
-		previous=e(line)
-		body.append(line)
-	p()
-
-def copy(name='default'):
-	'copy to file'
-	with open(_scripts_path('dan-copy-'+name), 'w') as file:
-		file.write(sys.stdin.read())
-
-def paste(name='default'):
-	'paste from file'
-	with open(_scripts_path('dan-copy-'+name)) as file:
-		sys.stdout.write(file.read())
-
-def wait(seconds):
-	'wait for specified number of seconds'
-	import time
-	time.sleep(float(seconds))
-
-def print_hex(file_name):
-	'print specified file in hex'
-	with open(file_name, 'rb') as file: bytes=file.read()
-	for i in range(len(bytes)):
-		print('{:02x}'.format(ord(bytes[i])), end=' ')
-		if i%4==3: print(end=' ')
-		if i%16==15: print()
-	print()
-
-#=====git=====#
-def gcaapf():
-	'git add and amend commit, then force push'
-	_invoke('git caa')
-	_invoke('git pf')
-
-def gsmu():
-	'git update submodules to latest, and sync their submodules'
-	_invoke('git submodule update --remote')
-	_invoke('git submodule foreach "git submodule update --init --recursive"')
-
-#=====help=====#
 def h(command=None):
 	'help'
-	import inspect
 	if command==None:
-		commands=sorted([i for i in globals() if callable(eval(i)) and not i.startswith('_')])
+		sections=sorted(
+			[i for i in globals() if isinstance(eval(i), _Section)],
+			key=lambda x: eval(x).line
+		)
+		section=0
+		commands=sorted(
+			[i for i in globals() if callable(eval(i)) and not i.startswith('_')],
+			key=lambda x: inspect.getsourcelines(eval(x))[1]
+		)
 		max_len_command=max([len(i) for i in commands])
 		print('list of commands:')
 		for command in commands:
+			if section<len(sections) and inspect.getsourcelines(eval(command))[1]>eval(sections[section]).line:
+				print('\n'+'='*max_len_command+sections[section]+'='*max_len_command)
+				section+=1
 			full_help=inspect.getdoc(eval(command))
 			if full_help:
 				full_help=full_help.splitlines()
 				short_help=full_help[0]
 				if len(full_help)>1: short_help+='...'
 			else: short_help=''
-			print(('{:>'+str(max_len_command)+'} {}').format(command, short_help))
+			print(('{:>'+str(max_len_command)+'}  {}').format(command, short_help))
 	else:
 		print(inspect.getdoc(eval(command)))
 		print(inspect.getargspec(eval(command)))
