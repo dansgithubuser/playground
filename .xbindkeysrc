@@ -71,6 +71,12 @@
 "dan vu"
   alt + period
 
+""
+  control + q
+
+""
+  control + shift + w
+
 ##################################
 # End of xbindkeys configuration #
 ##################################
