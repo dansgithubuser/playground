@@ -216,7 +216,7 @@ def network_discover(): _invoke('avahi-discover')
 def alias(name, command):
 	'create a semipermanent alias'
 	with open(_this_path('dan-aliases.txt'), 'a') as file:
-		file.write('function {}(){{\n\t{}\n}}\n\n'.format(name, command))
+		file.write('alias {}={}\n'.format(name, command))
 
 def ssh_save(name):
 	shutil.copytree(_home_path('.ssh'), _home_path('.ssh-'+name))
