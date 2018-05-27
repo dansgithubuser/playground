@@ -47,6 +47,7 @@ PATH=$PATH:~/Desktop/scripts
 PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\t \\w$ '
 alias o="{} ."
 if ! ps -e | grep xbindkeys > /dev/null; then xbindkeys; fi
+alias ds="dan dan \\"wait 3600\\" \\"sleep deep\\""
 alias dss="dan sleep deep"
 echo "dan bash ran"
 '''.format(opener)
@@ -243,6 +244,9 @@ def gsmu():
 def p(format, *args):
 	'invoke python'
 	exec(format.format(*args))
+
+def dan(*args):
+	for arg in args: _invoke('dan '+arg)
 
 setup=_Section()
 
