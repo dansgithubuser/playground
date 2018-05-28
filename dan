@@ -233,7 +233,7 @@ def ssh_load(name):
 
 def gcaapf():
 	'git add and amend commit, then force push'
-	_invoke('git caa')
+	_invoke('git commit -a --amend --no-edit')
 	_invoke('git pf')
 
 def gsmu():
