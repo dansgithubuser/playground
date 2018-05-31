@@ -1,0 +1,33 @@
+<script>
+
+var gSocket;
+
+function e(name){ return document.getElementById(name) }
+function v(name){ return e(name).value }
+
+function connect(){
+	gSocket=new WebSocket('ws://localhost:'+v('port'));
+	gSocket.onmessage=function(event){ console.log(event.data); };
+}
+
+function send(){
+	gSocket.send(v('to_send'));
+}
+
+function log_state(){
+	console.log(gSocket.readyState);
+}
+
+</script>
+
+<div>
+	port: <input type='text' id='port'/>
+	<button onclick='connect()'>connect</button>
+</div>
+<div>
+	<input type='text' id='to_send'/>
+	<button onclick='send()'>send</button>
+</div>
+<div>
+	<button onclick='log_state()'>log state</button>
+</div>
