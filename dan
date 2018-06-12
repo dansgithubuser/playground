@@ -42,13 +42,18 @@ if   not subprocess.call('which xdg-open>/dev/null', shell=True): opener='xdg-op
 elif not subprocess.call('which open    >/dev/null', shell=True): opener='open'
 if not opener and platform.system()=='Windows': opener='explorer'
 
-_dan_bash='''force_color_prompt=yes
+_dan_bash='''
+force_color_prompt=yes
 PATH=$PATH:~/Desktop/scripts
 PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\t \\w$ '
+
 alias o="{} ."
-if ! ps -e | grep xbindkeys > /dev/null; then xbindkeys; fi
 alias ds="dan dan \\"wait 3600\\" \\"sleep deep\\""
 alias dss="dan sleep deep"
+
+if [ -f ~/git-completion.bash ]; then source ~/git-completion.bash; fi
+if ! ps -e | grep xbindkeys > /dev/null; then xbindkeys; fi
+
 echo "dan bash ran"
 '''.format(opener)
 
@@ -342,8 +347,9 @@ def vi():
 	with open(p, 'w') as file: file.write(_vimrc)
 
 def git():
-	'update git aliases'
+	'update git aliases and download git-completion.bash'
 	_invoke('sh '+_this_path('git-aliases.txt'))
+	_invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
 
 esoteric=_Section()
 
