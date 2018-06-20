@@ -135,30 +135,33 @@ def timestamp(ambiguous=True, when=None):
 	format+='-%d %H:%M:%S.%f}'
 	return format.format(when).lower()
 
-def copy(name='default'):
-	'copy to file'
-	with open(_scripts_path('dan-copy-'+name), 'w') as file:
-		file.write(sys.stdin.read())
-
-def paste(name='default'):
-	'paste from file'
-	with open(_scripts_path('dan-copy-'+name)) as file:
-		sys.stdout.write(file.read())
-
-def c(*args):
-	'copy stdin to clipboard'
+def _put_in_clipboard(contents):
 	path=_this_path('.dan.tmp')
-	with open(path, 'w') as file: file.write(stdin)
+	with open(path, 'w') as file: file.write(contents)
 	with open(path) as file: _platform_invoke(
 		darwin='pbcopy',
 		stdin=file,
 	)
+
+def c(*args):
+	'copy stdin to clipboard'
+	_put_in_clipboard(stdin)
 
 def v():
 	'paste clipboard to stdout'
 	_platform_invoke(
 		darwin='pbpaste',
 	)
+
+def snipw(name):
+	'take clipboard contents and save it as a snippet'
+	with open(_scripts_path('dan-snippet-'+name), 'w') as file:
+		file.write(subprocess.check_output('dan v', shell=True))
+
+def snipr(name):
+	'put snippet contents into clipboard'
+	with open(_scripts_path('dan-snippet-'+name)) as file:
+		_put_in_clipboard(file.read())
 
 def wait(seconds):
 	'wait for specified number of seconds'
