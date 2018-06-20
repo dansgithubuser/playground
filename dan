@@ -28,14 +28,14 @@ def _home_path(path): return os.path.join(os.path.expanduser('~'), *path.split('
 def _this_path(path): return os.path.join(os.path.split(this)[0], *path.split('/'))
 def _scripts_path(path): return _home_path('Desktop/scripts/'+path)
 
-def _invoke(invocation):
+def _invoke(invocation, stdin=None):
 	if args.dry: print(invocation)
-	else: subprocess.check_call(invocation, shell=True)
+	else: subprocess.check_call(invocation, shell=True, stdin=stdin)
 
-def _platform_invoke(linux=None, darwin=None, windows=None):
-	if   platform.system()=='Linux'  : _invoke(linux)
-	elif platform.system()=='Darwin' : _invoke(darwin)
-	elif platform.system()=='Windows': _invoke(windows)
+def _platform_invoke(linux=None, darwin=None, windows=None, stdin=None):
+	if   platform.system()=='Linux'  : _invoke(linux  , stdin=stdin)
+	elif platform.system()=='Darwin' : _invoke(darwin , stdin=stdin)
+	elif platform.system()=='Windows': _invoke(windows, stdin=stdin)
 
 opener=None
 if   not subprocess.call('which xdg-open>/dev/null', shell=True): opener='xdg-open'
@@ -145,6 +145,21 @@ def paste(name='default'):
 	with open(_scripts_path('dan-copy-'+name)) as file:
 		sys.stdout.write(file.read())
 
+def c(*args):
+	'copy stdin to clipboard'
+	path=_this_path('.dan.tmp')
+	with open(path, 'w') as file: file.write(stdin)
+	with open(path) as file: _platform_invoke(
+		darwin='pbcopy',
+		stdin=file,
+	)
+
+def v():
+	'paste clipboard to stdout'
+	_platform_invoke(
+		darwin='pbpaste',
+	)
+
 def wait(seconds):
 	'wait for specified number of seconds'
 	import time
@@ -194,14 +209,14 @@ def last(index=1):
 
 def bookmark(name):
 	'bookmark current directory'
-	with open(_this_path('dan-bookmarks.txt'), 'a') as file:
+	with open(_scripts_path('dan-bookmarks.txt'), 'a') as file:
 		file.write('{} {}\n'.format(name, os.getcwd()))
 
 def g(name):
 	'go to bookmark'
 	possibilities={}
 	all={}
-	with open(_this_path('dan-bookmarks.txt')) as file:
+	with open(_scripts_path('dan-bookmarks.txt')) as file:
 		for line in file.readlines():
 			i, j=line.split()
 			if i.startswith(name): possibilities[i]=j
@@ -221,7 +236,7 @@ def network_discover(): _invoke('avahi-discover')
 
 def alias(name, command):
 	'create a semipermanent alias'
-	with open(_this_path('dan-aliases.txt'), 'a') as file:
+	with open(_scripts_path('dan-aliases.txt'), 'a') as file:
 		file.write('alias {}={}\n'.format(name, command))
 
 def ssh_save(name):
@@ -499,9 +514,13 @@ args=parser.parse_args()
 try: eval(args.command)
 except: h(); raise
 try:
+	#if you read from stdin with no input, run blocks for input
+	#this is the best way I could find to check for input
 	if not sys.stdin.isatty():
-		lines=[line.strip() for line in sys.stdin.readlines()]
+		stdin=sys.stdin.read()
+		lines=[line.strip() for line in stdin.splitlines()]
 	else:
+		stdin=''
 		lines=[]
 	if args.l:
 		slice={k: int(v) for k, v in enumerate(args.l.split(':'))}
