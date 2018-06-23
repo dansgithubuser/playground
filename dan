@@ -208,7 +208,7 @@ use \\ to split pattern across lines'''
 
 def last(index=1):
 	'print last item in stdin'
-	print(sorted([i.strip() for i in sys.stdin.read().split()])[-int(index)])
+	print(sorted([i.strip() for i in stdin.split()])[-int(index)])
 
 def bookmark(name):
 	'bookmark current directory'
@@ -409,7 +409,7 @@ def lines_run_length(pattern='.*'):
 		for i in body: print('\t'+i)
 	def e(l):
 		return re.match(pattern, l).group(0)
-	for line in sys.stdin.readlines():
+	for line in lines:
 		line=line.strip()
 		if e(line)!=previous:
 			p()
