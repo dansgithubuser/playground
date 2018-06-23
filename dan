@@ -178,8 +178,8 @@ def print_hex(file_name):
 	print()
 
 def find(name):
-	'find file with name within current directory'
-	_invoke('find . -name {}'.format(name))
+	'find file with regex within current directory'
+	_invoke('find . -regex {}'.format(name))
 
 def walk(command):
 	'walk current path, invoking command on each file'
