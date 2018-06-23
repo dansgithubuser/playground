@@ -62,7 +62,7 @@ if os.path.exists(_scripts_path('dan-aliases.txt')):
 		_dan_bash+=file.read()
 
 #=====commands=====#
-computer=_Section()
+_computer=_Section()
 
 def sleep(type=None):
 	'put computer to sleep'
@@ -126,7 +126,7 @@ def i(command):
 		file.write('\n')
 	_invoke(command)
 
-convenience=_Section()
+_convenience=_Section()
 
 def timestamp(ambiguous=True, when=None):
 	if when==None: when=datetime.datetime.now()
@@ -271,7 +271,7 @@ def p(format, *args):
 def dan(*args):
 	for arg in args: _invoke('dan '+arg)
 
-setup=_Section()
+_setup=_Section()
 
 def install_self():
 	'hook into bash init script'
@@ -370,7 +370,7 @@ def git():
 	_invoke('sh '+_this_path('git-aliases.txt'))
 	_invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
 
-esoteric=_Section()
+_esoteric=_Section()
 
 def _getmtime(path):
 	return timestamp(False, datetime.datetime.fromtimestamp(os.path.getmtime(path)))
@@ -474,7 +474,7 @@ def conservative_logrotate():
 	with open('/etc/logrotate.conf') as file: file.write(_conservative_logrotate_conf)
 	with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
 
-help=_Section()
+_help=_Section()
 
 def h(command=None):
 	'help'
@@ -492,7 +492,7 @@ def h(command=None):
 		print('list of commands:')
 		for command in commands:
 			if section<len(sections) and inspect.getsourcelines(eval(command))[1]>eval(sections[section]).line:
-				print('\n'+'='*max_len_command+sections[section]+'='*max_len_command)
+				print('\n'+'='*max_len_command+sections[section][1:]+'='*max_len_command)
 				section+=1
 			full_help=inspect.getdoc(eval(command))
 			if full_help:
@@ -514,8 +514,7 @@ parser.add_argument('args', nargs='*', help='use {} to sub in line(s) from stdin
 if len(sys.argv)==1: h()
 args=parser.parse_args()
 
-try: eval(args.command)
-except: h(); raise
+if args.command not in locals(): h(); raise Exception('no such command "{}"'.format(args.command))
 try:
 	#if you read from stdin with no input, run blocks for input
 	#this is the best way I could find to check for input
