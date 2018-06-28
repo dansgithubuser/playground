@@ -12,6 +12,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 
 sys.stderr.write('invoked with: {}\n'.format(sys.argv))
 
@@ -125,6 +126,14 @@ def i(command):
 		file.write(command+'\n')
 		file.write('\n')
 	_invoke(command)
+
+def kill_the_greedy():
+	while True:
+		if int(subprocess.check_output(['free']).decode().split()[12])<100000:
+			info=subprocess.check_output(['ps', '-e', '--sort', '%mem']).decode().split()[-4:] 
+			subprocess.check_call(['kill', info[0]])
+			print('killed {}'.format(info[-1]))
+		time.sleep(0.1)
 
 _convenience=_Section()
 
