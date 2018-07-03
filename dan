@@ -25,9 +25,9 @@ class _Section:
 	def __init__(self):
 		self.line=inspect.stack()[1][2]
 
-def _home_path(path): return os.path.join(os.path.expanduser('~'), *path.split('/'))
-def _this_path(path): return os.path.join(os.path.split(this)[0], *path.split('/'))
-def _scripts_path(path): return _home_path('Desktop/scripts/'+path)
+def _home_path(path=''): return os.path.join(os.path.expanduser('~'), *path.split('/'))
+def _this_path(path=''): return os.path.join(os.path.split(this)[0], *path.split('/'))
+def _scripts_path(path=''): return _home_path('Desktop/scripts/'+path)
 
 def _invoke(invocation, stdin=None):
 	if args.dry: print(invocation)
@@ -162,15 +162,29 @@ def v():
 		darwin='pbpaste',
 	)
 
+_snippet_prefix='dan-snippet-'
+
 def snipw(name):
 	'take clipboard contents and save it as a snippet'
-	with open(_scripts_path('dan-snippet-'+name), 'w') as file:
+	with open(_scripts_path(_snippet_prefix+name), 'w') as file:
 		file.write(subprocess.check_output('dan v', shell=True))
 
 def snipr(name):
 	'put snippet contents into clipboard'
-	with open(_scripts_path('dan-snippet-'+name)) as file:
+	with open(_scripts_path(_snippet_prefix+name)) as file:
 		_put_in_clipboard(file.read())
+
+def snipl():
+	'list snippets'
+	snippets=[]
+	for i in sorted(os.listdir(_scripts_path())):
+		if i.startswith(_snippet_prefix):
+			with open(_scripts_path(i)) as file:
+				first_line=file.readlines()[0].strip()
+			snippets.append((i[len(_snippet_prefix):], first_line))
+	space=max([len(i[0]) for i in snippets])
+	for name, first_line in snippets:
+		print(('{:'+str(space)+'}: {}').format(name, first_line))
 
 def wait(seconds):
 	'wait for specified number of seconds'
