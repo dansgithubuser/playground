@@ -29,9 +29,14 @@ def _home_path(path=''): return os.path.join(os.path.expanduser('~'), *path.spli
 def _this_path(path=''): return os.path.join(os.path.split(this)[0], *path.split('/'))
 def _scripts_path(path=''): return _home_path('Desktop/scripts/'+path)
 
-def _invoke(invocation, stdin=None):
-	if args.dry: print(invocation)
-	else: subprocess.check_call(invocation, shell=True, stdin=stdin)
+def _invoke(invocation, stdin=None, stdout=None):
+	if args.dry:
+		print(invocation)
+		return
+	if stdout is not None:
+		return subprocess.check_output(invocation, shell=True, stdin=stdin).decode().strip()
+	else:
+		subprocess.check_call(invocation, shell=True, stdin=stdin)
 
 def _platform_invoke(linux=None, darwin=None, windows=None, stdin=None):
 	if   platform.system()=='Linux'  : _invoke(linux  , stdin=stdin)
@@ -286,6 +291,22 @@ def gsmu():
 	'git update submodules to latest, and sync their submodules'
 	_invoke('git submodule update --remote')
 	_invoke('git submodule foreach "git submodule update --init --recursive"')
+
+def grbo():
+	'git remote branch owners (most recent committers)'
+	b=_invoke('git ls-remote -qh', stdout=True).splitlines()
+	b=[i.split()[1][len('refs/heads/'):] for i in b]
+	results=[]
+	for i in b:
+		rev='origin/'+i
+		split='vlkaeiwhvi4uhlksajhdvkausdhv'
+		author, date=_invoke('git show -q --pretty="format:%an{}%ai" {}'.format(split, rev), stdout=True).split(split)
+		results.append((rev, author, date))
+	results=sorted(results, key=lambda x: x[2])
+	a=str(max([len(i[0]) for i in results]))
+	b=str(max([len(i[1]) for i in results]))
+	for i in results:
+		print(('{:'+a+'} {:'+b+'} {}').format(*i))
 
 def p(format, *args):
 	'invoke python'
