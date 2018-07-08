@@ -25,7 +25,10 @@ table_names=engine.table_names()
 connection=engine.connect()
 
 #=====basics=====#
-def query(q): return [i for i in connection.execute(q)]
+def query(q):
+	result=connection.execute(q)
+	if result.returns_rows: return [i for i in result]
+	return result
 
 def table_detail(name):
 	return sqlalchemy.Table(name, sqlalchemy.MetaData(),
