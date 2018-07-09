@@ -205,9 +205,12 @@ def print_hex(file_name):
 		if i%16==15: print()
 	print()
 
-def find(name):
-	'find file with regex within current directory'
-	_invoke('find . -regex {}'.format(name))
+def find(regex):
+	'find files and directories matching regex within current directory'
+	for dirpath, dirnames, filenames in os.walk('.'):
+		for basename in filenames+dirnames:
+			if re.match(regex, basename):
+				print(os.path.join(dirpath, basename))
 
 def walk(command):
 	'walk current path, invoking command on each file'
