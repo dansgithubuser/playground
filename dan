@@ -262,7 +262,13 @@ def link(link, linked):
 	'create symlink'
 	_invoke('ln -s {} {}'.format(linked, link))
 
-def disk_usage(): _invoke('ncdu')
+def disk_usage():
+	try:
+		_invoke('ncdu')
+		return
+	except Exception as e: print(e)
+	print('ncdu failed, resorting to df')
+	_invoke('df -h')
 
 def monitor(): _invoke('top')
 
