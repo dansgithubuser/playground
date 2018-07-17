@@ -26,7 +26,7 @@ connection=engine.connect()
 
 #=====basics=====#
 def query(q):
-	result=connection.execute(q)
+	result=connection.execute(sqlalchemy.text(q))
 	if result.returns_rows: return [i for i in result]
 	return result
 
