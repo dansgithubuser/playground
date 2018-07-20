@@ -1,5 +1,7 @@
 import argparse
 import subprocess
+import sys
+import traceback
 
 #sudo apt install mysql-server
 #sudo apt install libmysqlclient-dev
@@ -26,7 +28,17 @@ connection=engine.connect()
 
 #=====basics=====#
 def query(q):
-	result=connection.execute(sqlalchemy.text(q))
+	try:
+		result=self.connection.execute(q)
+	except Exception:
+		exc_type, exc_value, exc_traceback=sys.exc_info()
+		try:
+			result=self.connection.execute(sqlalchemy.text(q))
+		except Exception:
+			print('exception when querying normally')
+			traceback.print_exception(exc_type, exc_value, exc_traceback)
+			print('exception when querying converted to text')
+			raise
 	if result.returns_rows: return [i for i in result]
 	return result
 
