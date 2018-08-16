@@ -32,6 +32,7 @@ git config --global alias.dcl "diff -C --cached --word-diff-regex=."
 
 echo fetch
 git config --global alias.f fetch
+git config --global alias.fpa "fetch --prune --all"
 
 echo log
 git config --global alias.l "log --graph --oneline"
