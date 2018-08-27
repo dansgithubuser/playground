@@ -325,6 +325,9 @@ def p(format, *args):
 def dan(*args):
 	for arg in args: _invoke('dan '+arg)
 
+def pyre(pattern, repl):
+	print(re.sub(pattern, repl, stdin), end='')
+
 _setup=_Section()
 
 def install_self():
