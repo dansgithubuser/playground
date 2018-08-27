@@ -328,6 +328,13 @@ def dan(*args):
 def pyre(pattern, repl):
 	print(re.sub(pattern, repl, stdin), end='')
 
+def hista():
+	'''\
+Print out a command that will immediately update history on mac.
+So you'd use it like `dan hista`.
+history doesn't work right, seemingly because it's a builtin.'''
+	print('history -w {}'.format(_home_path('.bash_history')))
+
 _setup=_Section()
 
 def install_self():
