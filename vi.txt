@@ -42,6 +42,7 @@ p -- put line
 on regexes:
 	- groups are done with parens, but you need to escape them with \
 		- example: `:%s/\(\S*\)\ =\ EXCLUDED./\1\ =\ EXCLUDED.\1/gc`
+	- + must be escaped with \, unlike *
 
 u -- undo
 ctrl-R -- redo
