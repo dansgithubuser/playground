@@ -39,10 +39,15 @@ p -- put line
 :s/<pattern>/<replacement> -- replace <pattern> with <replacement> on current line
 :%s/<pattern>/<replacement>/gc -- replace all <pattern> with <replacement> on each line, ask for confirmation
 
+on regexes:
+	- groups are done with parens, but you need to escape them with \
+		- example: `:%s/\(\S*\)\ =\ EXCLUDED./\1\ =\ EXCLUDED.\1/gc`
+
 u -- undo
 ctrl-R -- redo
 . -- repeat last edit
-@: -- repeat  last command
+@: -- repeat last command
+q: -- interactive command history
 
 v -- visual selection
 V -- visual selection by line
