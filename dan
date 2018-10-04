@@ -406,8 +406,7 @@ function TabsOrSpaces()
     let numSpaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^ "'))
 
     if numTabs < numSpaces
-        setlocal expandtab
-        setlocal tabstop=4
+        setlocal expandtab tabstop=4 softtabstop=4
     endif
 endfunction
 
