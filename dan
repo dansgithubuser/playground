@@ -38,10 +38,16 @@ def _invoke(invocation, stdin=None, stdout=None):
 	else:
 		subprocess.check_call(invocation, shell=True, stdin=stdin)
 
-def _platform_invoke(linux=None, darwin=None, windows=None, stdin=None):
-	if   platform.system()=='Linux'  : _invoke(linux  , stdin=stdin)
-	elif platform.system()=='Darwin' : _invoke(darwin , stdin=stdin)
-	elif platform.system()=='Windows': _invoke(windows, stdin=stdin)
+def _platform_invoke(linux=None, darwin=None, windows=None, **kwargs):
+	if   platform.system()=='Linux'  : return _invoke(linux  , **kwargs)
+	elif platform.system()=='Darwin' : return _invoke(darwin , **kwargs)
+	elif platform.system()=='Windows': return _invoke(windows, **kwargs)
+
+def _clipboard_paste(**kwargs):
+	return _platform_invoke(
+		darwin='pbpaste',
+		**kwargs
+	)
 
 opener=None
 if   not subprocess.call('which xdg-open>/dev/null', shell=True): opener='xdg-open'
@@ -164,9 +170,7 @@ def c(*args):
 
 def v():
 	'paste clipboard to stdout'
-	_platform_invoke(
-		darwin='pbpaste',
-	)
+	_clipboard_paste()
 
 _snippet_prefix='dan-snippet-'
 
@@ -334,6 +338,12 @@ Print out a command that will immediately update history on mac.
 So you'd use it like `dan hista`.
 history doesn't work right, seemingly because it's a builtin.'''
 	print('history -w {}'.format(_home_path('.bash_history')))
+
+def json():
+	'take json from clipboard and pretty print'
+	j=_clipboard_paste(stdout=True)
+	import json
+	pprint.pprint(json.loads(j))
 
 _setup=_Section()
 
