@@ -322,6 +322,17 @@ def grbo():
 	for i in results:
 		print(('{:'+a+'} {:'+b+'} {}').format(*i))
 
+def gfor(commit, invocation):
+	'run specified invocation on each commit from HEAD to specified commit'
+	log=_invoke('git log --graph --pretty="%h %an" {}..HEAD'.format(commit), stdout=True).splitlines()
+	for line in log:
+		print(line)
+		m=re.match('[| *]* ([^ ]+)', line)
+		if not m: continue
+		commit=m.group(1)
+		_invoke('git checkout {}'.format(commit))
+		_invoke(invocation)
+
 def p(format, *args):
 	'invoke python'
 	exec(format.format(*args))
