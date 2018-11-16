@@ -356,6 +356,12 @@ def json():
 	import json
 	pprint.pprint(json.loads(j))
 
+def base64():
+	'take base64 from clipboard and print'
+	x=_clipboard_paste(stdout=True)
+	import base64
+	print(base64.b64decode(x))
+
 _setup=_Section()
 
 def install_self():
