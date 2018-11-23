@@ -14,8 +14,6 @@ import subprocess
 import sys
 import time
 
-sys.stderr.write('invoked with: {}\n'.format(sys.argv))
-
 try: _input=raw_input
 except: _input=input
 
@@ -600,10 +598,14 @@ def h(command=None):
 parser=argparse.ArgumentParser(description='`dan h` to list commands, `dan h command` for help with specific command')
 parser.add_argument('--dry', action='store_true', help='only print invocations')
 parser.add_argument('-l', help='run on each stdin line in specified slice, or start from specified line')
+parser.add_argument('--quiet', '-q', action='store_true')
 parser.add_argument('command')
 parser.add_argument('args', nargs='*', help='use {} to sub in line(s) from stdin')
 if len(sys.argv)==1: h()
 args=parser.parse_args()
+
+if not args.quiet:
+	sys.stderr.write('invoked with: {}\n'.format(sys.argv))
 
 if args.command not in locals(): h(); raise Exception('no such command "{}"'.format(args.command))
 try:
