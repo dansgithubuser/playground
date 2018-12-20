@@ -4,6 +4,7 @@ from __future__ import print_function
 
 import argparse
 import datetime
+import functools
 import inspect
 import os
 import platform
@@ -208,11 +209,12 @@ def print_hex(file_name):
 		if i%16==15: print()
 	print()
 
-def find(regex):
+def find(regex, flags='i'):
 	'find files and directories matching regex within current directory'
+	flags=functools.reduce(lambda a, b: a|b, [getattr(re, flag.upper()) for flag in flags])
 	for dirpath, dirnames, filenames in os.walk('.'):
 		for basename in filenames+dirnames:
-			if re.match(regex, basename):
+			if re.search(regex, basename, flags):
 				print(os.path.join(dirpath, basename))
 
 def walk(command):
