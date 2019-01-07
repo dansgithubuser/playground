@@ -343,6 +343,11 @@ def dan(*args):
 def pyre(pattern, repl):
 	print(re.sub(pattern, repl, stdin), end='')
 
+def filter(pattern):
+	'for each line in stdin, print if it matches pattern'
+	for line in lines:
+		if re.match(pattern, line): print(line)
+
 def hista():
 	'''\
 Print out a command that will immediately update history on mac.
