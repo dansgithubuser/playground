@@ -209,13 +209,23 @@ def print_hex(file_name):
 		if i%16==15: print()
 	print()
 
-def find(regex, flags='i'):
-	'find files and directories matching regex within current directory'
+def find(regex, n=None, flags='i'):
+	'''\
+find files and directories matching regex within current directory
+if n is specified, print only the nth file that matches'''
+	if n!=None: n=int(n)
 	flags=functools.reduce(lambda a, b: a|b, [getattr(re, flag.upper()) for flag in flags])
-	for dirpath, dirnames, filenames in os.walk('.'):
-		for basename in filenames+dirnames:
-			if re.search(regex, basename, flags):
-				print(os.path.join(dirpath, basename))
+	count=0
+	for root, dirs, files in os.walk('.'):
+		for base in dirs+files:
+			path=os.path.join(root, base)
+			if re.search(regex, path, flags):
+				count+=1
+				if n==None or count==n:
+					print(path)
+					if count==n: break
+		else: continue
+		break
 
 def walk(command):
 	'walk current path, invoking command on each file'
