@@ -415,7 +415,8 @@ def bash():
 	shutil.copy(this, _scripts_path(''))
 	with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
 
-_vimrc='''set autoindent
+_vimrc='''\
+set autoindent
 set number
 set tabstop=2
 set list
@@ -444,22 +445,24 @@ function TabsOrSpaces()
         return
     endif
 
-    let numTabs=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^\\t"'))
-    let numSpaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^ "'))
+    let numTabs=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^\t"'))
+    let num2Spaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^  [^ ]"'))
+    let num4Spaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^    [^ ]"'))
 
-    if numTabs < numSpaces
-        setlocal expandtab tabstop=4 softtabstop=4
+    if max([num2Spaces, num4Spaces]) > numTabs
+        setlocal expandtab
+        if num2Spaces > 0
+            setlocal tabstop=2
+            setlocal softtabstop=2
+        else
+            setlocal tabstop=4
+            setlocal softtabstop=4
+        endif
     endif
 endfunction
 
 " Call the function after opening a buffer
 autocmd BufReadPost * call TabsOrSpaces()
-
-autocmd BufNewFile,BufRead *.rs set filetype=rust
-autocmd FileType rust setlocal expandtab tabstop=4 softtabstop=4
-
-autocmd BufNewFile,BufRead *.ex,*.exs set filetype=elixir
-autocmd FileType elixir setlocal expandtab tabstop=2 softtabstop=2
 '''
 
 def vi():
