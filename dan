@@ -59,9 +59,14 @@ PATH=$PATH:~/Desktop/scripts
 PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\t \\w$ '
 
 alias o="{} ."
-alias ds="dan dan \\"wait 3600\\" \\"sleep deep\\""
+alias ds="dan dan \\"wait 3600\\" \\"sleep\\""
 alias dss="dan sleep deep"
 alias p3=python3
+alias bb="dan b 500"
+alias b="dan b 40"
+alias bn="dan b 4"
+alias bnn="dan b -4"
+alias rbe="eval $(rbenv init -)"
 
 if [ -f ~/git-completion.bash ]; then source ~/git-completion.bash; fi
 if ! ps -e | grep xbindkeys > /dev/null; then xbindkeys; fi
@@ -348,6 +353,7 @@ def p(format, *args):
 	exec(format.format(*args))
 
 def dan(*args):
+	'invoke this script on each arg in order'
 	for arg in args: _invoke('dan '+arg)
 
 def pyre(pattern, repl):
