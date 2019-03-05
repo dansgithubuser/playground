@@ -25,7 +25,7 @@ class Pdf:
             line_i += 1
         # body
         self.objects = {}
-        while lines[line_i] != 'xref':
+        while lines[line_i] not in ['xref', 'startxref']:
             object_number, generation_number, obj = lines[line_i].split()
             if obj != 'obj': raise Exception('expected "obj" on line {} but got "{}"'.format(line_i + 1, obj))
             line_i += 1
@@ -35,6 +35,8 @@ class Pdf:
                 line_i += 1
             self.objects[(int(object_number), int(generation_number))] = obj
             line_i += 1
+        # no idea! adobe prosperity-through-obscurity!
+        if lines[line_i] == 'startxref': return self
         # cross-reference table
         line_i += 1
         self.xref = {}
