@@ -6,4 +6,4 @@ bin
 *.pyc
 a.out
 .dan.tmp
-
+.DS_Store
