@@ -36,6 +36,7 @@ class Pdf:
             self.objects[(int(object_number), int(generation_number))] = obj
             line_i += 1
         # no idea! adobe prosperity-through-obscurity!
+        # ah, XFA forms, run away
         if lines[line_i] == 'startxref': return self
         # cross-reference table
         line_i += 1
