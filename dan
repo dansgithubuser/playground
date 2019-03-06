@@ -432,7 +432,6 @@ set pastetoggle=<F2>
 set ignorecase
 set backspace=indent,eol,start
 set noswapfile
-set colorcolumn=80
 
 "substitution with non-insane syntax
 function DanFunctionSubstitute(pattern, replacement)
