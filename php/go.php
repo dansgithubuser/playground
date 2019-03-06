@@ -1,4 +1,4 @@
 <?php
 
-require_once 'replace_in_file.php';
+require_once 'ReplaceInFile.php';
 replaceInFile('go.php', 'replaced.txt', Array('php' => '?????>'));
