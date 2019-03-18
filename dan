@@ -67,9 +67,9 @@ alias b="dan b 40"
 alias bn="dan b 4"
 alias bnn="dan b -4"
 alias rbe="eval $(rbenv init -)"
+alias sd="sudo docker"
 
 if [ -f ~/git-completion.bash ]; then source ~/git-completion.bash; fi
-if ! ps -e | grep xbindkeys > /dev/null; then xbindkeys; fi
 
 echo "dan bash ran"
 '''.format(opener)
