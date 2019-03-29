@@ -480,9 +480,10 @@ def vi():
 	with open(p, 'w') as file: file.write(_vimrc)
 
 def git():
-	'update git aliases and download git-completion.bash'
+	'update git aliases, download git-completion.bash, set conflict style to diff3'
 	_invoke('sh '+_this_path('git-aliases.txt'))
 	_invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
+	_invoke('git config --global merge.conflictstyle diff3')
 
 _esoteric=_Section()
 
