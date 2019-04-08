@@ -407,7 +407,7 @@ def install_self():
 		if _input()!='y': sys.exit(1)
 		with open(bash_init, 'a') as file:
 			file.write("\n\n{}\n".format(header))
-			file.write('python {} bash\n'.format(this))
+			file.write('python3 {} bash\n'.format(this))
 			file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
 			file.write('#=====end dan=====#\n')
 	#other stuff
