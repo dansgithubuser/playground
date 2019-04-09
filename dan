@@ -66,8 +66,11 @@ alias bb="dan b 500"
 alias b="dan b 40"
 alias bn="dan b 4"
 alias bnn="dan b -4"
-alias rbe="eval $(rbenv init -)"
 alias sd="sudo docker"
+
+function rbe {{
+	eval "$(rbenv init -)"
+}}
 
 if [ -f ~/git-completion.bash ]; then source ~/git-completion.bash; fi
 
