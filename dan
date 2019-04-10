@@ -67,6 +67,7 @@ alias b="dan b 40"
 alias bn="dan b 4"
 alias bnn="dan b -4"
 alias sd="sudo docker"
+alias ruste="source $HOME/.cargo/env"
 
 function rbe {{
 	eval "$(rbenv init -)"
