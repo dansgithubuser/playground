@@ -20,6 +20,11 @@ except: _input=input
 
 this=os.path.realpath(__file__)
 
+try:
+	computer=subprocess.check_output('hostname').decode().strip()
+except:
+	computer=None
+
 class _Section:
 	def __init__(self):
 		self.line=inspect.stack()[1][2]
@@ -120,7 +125,12 @@ def vd():
 	_invoke('pactl -- set-sink-volume 0 -10%')
 
 def _brightness(level):
-	path='/sys/class/backlight/intel_backlight/brightness'
+	#find path on new computer with `sudo find /sys/ -type f -iname '*brightness*'`
+	if computer=='dan-ThinkPad-13':
+		path='/sys/devices/pci0000:00/0000:00:02.0/drm/card0/card0-eDP-1/intel_backlight/brightness'
+		level/=1000
+	else:
+		path='/sys/class/backlight/intel_backlight/brightness'
 	if level=='get':
 		with open(path) as file:
 			return int(file.read())
