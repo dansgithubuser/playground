@@ -603,6 +603,62 @@ def conservative_logrotate():
 	with open('/etc/logrotate.conf') as file: file.write(_conservative_logrotate_conf)
 	with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
 
+def tdcc():
+	'analyze td credit card statement, PDF content copied into clipboard'
+	content=_clipboard_paste(stdout=True)
+	txns=re.findall(r'[A-Z]{3}\d\d?[A-Z]{3}\d\d?\$(\d+\.\d\d)(?=(.*?)...\d\d?...\d\d?)', content)
+	txns=[(float(i[0]), i[1]) for i in txns]
+	categories={
+		'transport': [
+			'presto',
+		],
+		'groceries': [
+			'foodbasics',
+			'freshco',
+			'bulkbarn',
+			'nationsfreshfoods',
+			'organicgarage',
+			'rabba',
+			'mr.convenience',
+			'macsconv',
+			'loblaws',
+		],
+		'social': [
+			'snakes&lattes',
+			'greenbeanery',
+			'eventbrite',
+			'lockhart',
+			'torontoultimatec',
+			'hotblack',
+			'aromaespresso',
+			'paintnite',
+			'h bar',
+		],
+		'eat out': [
+			'mcdonald',
+			'jimmythegreek',
+			'burgerfactory',
+			'umamipoke',
+			'sansotei',
+			'paappasito',
+		],
+	}
+	txns_by_category={i: [] for i in categories.keys()}
+	txns_by_category['other']=[]
+	for txn in txns:
+		for category, v in categories.items():
+			if [i for i in v if i in txn[1].lower()]:
+				txns_by_category[category].append(txn)
+				break
+		else:
+			txns_by_category['other'].append(txn)
+	for category, category_txns in txns_by_category.items():
+		print(category)
+		for txn in category_txns:
+			print('\t{:>6.2f} {}'.format(txn[0], txn[1]))
+		print('\t{:>6.2f}'.format(sum(i[0] for i in category_txns)))
+	print('{:.2f}'.format(sum(i[0] for i in txns)))
+
 _help=_Section()
 
 def h(command=None):
