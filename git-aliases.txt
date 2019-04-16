@@ -69,6 +69,7 @@ echo show
 git config --global alias.sww "show -w --word-diff"
 git config --global alias.sw "show -w"
 git config --global alias.ss "show --name-status"
+git config --global alias.sf '!git show $1:$2'
 
 echo stash
 git config --global alias.sts "stash show -p"
