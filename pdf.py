@@ -4,8 +4,10 @@ http://lotabout.me/orgwiki/pdf.html
 http://wwwimages.adobe.com/www.adobe.com/content/dam/acom/en/devnet/pdf/pdfs/PDF32000_2008.pdf
 '''
 
+import argparse
 import re
 import os
+import pprint
 import string
 import sys
 
@@ -23,14 +25,23 @@ class Stream:
         self.stream = stream
 
     def __repr__(self):
-        return 'Stream({})'.format(self.dictionary)
+        return 'Stream({})'.format(pprint.pformat(self.dictionary))
 
 class Ref:
-    def __init__(self, literal):
-        self.object_number, self.generation_number = [int(i) for i in literal.split()[:2]]
+    def __init__(self, *args):
+        if len(args) == 1:
+            literal = args[0]
+            self.object_number, self.generation_number = [int(i) for i in literal.split()[:2]]
+        elif len(args) == 2:
+            self.object_number, self.generation_number = args
+        else:
+            raise Exception('wrong number of arguments')
 
-    def __lt__(self, other):
-        return (self.object_number, self.generation_number) < (other.object_number, other.generation_number)
+    def __eq__(self, other):
+        return (self.object_number, self.generation_number) == (other.object_number, other.generation_number)
+
+    def __hash__(self):
+        return hash((self.object_number, self.generation_number))
 
     def __repr__(self):
         return '{} {}'.format(self.object_number, self.generation_number)
@@ -154,6 +165,21 @@ class Parser:
         raise Exception('unknown object at line {}, index {}'.format(self.line, self.i))
 
 class Pdf:
+    def __repr__(self):
+        return '''\
+===== header =====
+{}
+
+===== objects =====
+{}
+
+===== xref =====
+{}
+
+===== trailer =====
+{}
+'''.format(self.header, pprint.pformat(self.objects), pprint.pformat(self.xref), pprint.pformat(self.trailer))
+
     def load(self, file_name):
         with open(file_name, 'rb') as f: parser = Parser(f.read())
         # header
@@ -195,14 +221,14 @@ class Pdf:
         return self
 
     def root(self):
-        for line in self.trailer:
-            m = re.search('/Root ([ 0-9]+) R', line)
-            if not m: continue
-            object_number, generation_number = [int(i) for i in m.group(1).split()]
-            return self.object(object_number, generation_number)
+        return self.objects[self.trailer['dictionary']['Root']]
 
     def object(self, object_number, generation_number=0):
         return self.objects[Ref(object_number, generation_number)]
 
 if __name__ == '__main__':
-    pdf = Pdf().load(sys.argv[1])
+    parser = argparse.ArgumentParser()
+    parser.add_argument('pdf')
+    parser.add_argument('--compare', '-c', action='store_true')
+    args = parser.parse_args()
+    pdf = Pdf().load(args.pdf)
