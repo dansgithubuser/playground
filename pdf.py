@@ -12,9 +12,13 @@ import string
 import sys
 
 class Name:
+    escape_regex = re.compile('#([0-9a-fA-F]{2})')
+
     def __init__(self, literal):
-        r = re.compile('#([0-9a-fA-F]{2})')
-        self.value = r.sub(lambda m: chr(int(m.group(1), 16)), literal)
+        self.value = Name.escape_regex.sub(lambda m: chr(int(m.group(1), 16)), literal)
+
+    def __eq__(self, other):
+        return self.value == other.value
 
     def __repr__(self):
         return '/{}'.format(self.value)
@@ -24,8 +28,11 @@ class Stream:
         self.dictionary = dictionary
         self.stream = stream
 
+    def __eq__(self, other):
+        return (self.dictionary, self.stream) == (other.dictionary, other.stream)
+
     def __repr__(self):
-        return 'Stream({})'.format(pprint.pformat(self.dictionary))
+        return 'Stream({} {})'.format(pprint.pformat(self.dictionary), hash(self.stream))
 
 class Ref:
     def __init__(self, *args):
@@ -166,19 +173,24 @@ class Parser:
 
 class Pdf:
     def __repr__(self):
-        return '''\
-===== header =====
-{}
+        return (
+            '===== header =====\n'
+            '{}\n'
+            '\n'
+            '===== objects =====\n'
+            '{}\n'
+            '\n'
+            '===== xref =====\n'
+            '{}\n'
+            '\n'
+            '===== trailer =====\n'
+            '{}'
+        ).format(self.header, pprint.pformat(self.objects), pprint.pformat(self.xref), pprint.pformat(self.trailer))
 
-===== objects =====
-{}
-
-===== xref =====
-{}
-
-===== trailer =====
-{}
-'''.format(self.header, pprint.pformat(self.objects), pprint.pformat(self.xref), pprint.pformat(self.trailer))
+    def __getitem__(self, key):
+        if type(key) == int: return self.object(key)
+        elif isinstance(key, Ref): return self.objects[key]
+        else: raise Exception('bad key type')
 
     def load(self, file_name):
         with open(file_name, 'rb') as f: parser = Parser(f.read())
@@ -229,6 +241,22 @@ class Pdf:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('pdf')
-    parser.add_argument('--compare', '-c', action='store_true')
+    parser.add_argument('--compare', '-c')
     args = parser.parse_args()
     pdf = Pdf().load(args.pdf)
+    if args.compare:
+        other = Pdf().load(args.compare)
+        for k, v in pdf.objects.items():
+            if k not in other.objects:
+                print('===== {} ===== missing from other'.format(k))
+            if other.objects[k] != v:
+                print((
+                    '===== {} =====\n'
+                    '{}\n'
+                    '\n'
+                    '===== other =====\n'
+                    '{}'
+                ).format(k, v, other.objects[k]))
+        for k in other.objects.keys():
+            if k not in pdf.objects:
+                print('===== {} ===== missing'.format(k))
