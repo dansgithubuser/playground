@@ -66,8 +66,9 @@ echo rev-parse
 git config --global alias.rph "rev-parse HEAD"
 
 echo show
-git config --global alias.sww "show -w --word-diff"
 git config --global alias.sw "show -w"
+git config --global alias.sww "show -w --word-diff"
+git config --global alias.sl "show --word-diff-regex=."
 git config --global alias.ss "show --name-status"
 git config --global alias.sf '!git show $1:$2'
 
