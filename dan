@@ -74,6 +74,7 @@ alias bnn="dan b -4"
 alias sd="sudo docker"
 alias ruste="source $HOME/.cargo/env"
 alias vi="dan rename_tab_and_open vi"
+alias tf="dan rename_tab_pwd"
 
 function rbe {{
 	eval "$(rbenv init -)"
@@ -301,6 +302,9 @@ def rename_tab_and_open(program, path):
 	if len(tab_name) > 12: tab_name = '{}..{}'.format(tab_name[:5], tab_name[-5:])
 	rename_tab(tab_name)
 	_invoke('{} {}'.format(program, path))
+
+def rename_tab_pwd():
+	rename_tab(os.path.basename(os.path.abspath(os.getcwd())))
 
 def link(link, linked):
 	'create symlink'
