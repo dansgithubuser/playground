@@ -292,6 +292,9 @@ def g(name):
 	if len(possibilities)==0: pprint.pprint(all); return
 	print(min(possibilities.items(), key=lambda i: len(i[0]))[1])
 
+def rename_tab(name):
+	print('\x1b]2;{}\a'.format(name))
+
 def link(link, linked):
 	'create symlink'
 	_invoke('ln -s {} {}'.format(linked, link))
