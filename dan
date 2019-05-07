@@ -73,6 +73,7 @@ alias bn="dan b 4"
 alias bnn="dan b -4"
 alias sd="sudo docker"
 alias ruste="source $HOME/.cargo/env"
+alias vi="dan rename_tab_and_open vi"
 
 function rbe {{
 	eval "$(rbenv init -)"
