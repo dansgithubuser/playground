@@ -74,7 +74,7 @@ alias bnn="dan b -4"
 alias sd="sudo docker"
 alias ruste="source $HOME/.cargo/env"
 alias vi="dan rename_tab_and_open vi"
-alias tf="dan rename_tab_pwd"
+alias tp="dan rename_tab_pwd"
 
 function rbe {{
 	eval "$(rbenv init -)"
@@ -496,6 +496,8 @@ endfunction
 
 " Call the function after opening a buffer
 autocmd BufReadPost * call TabsOrSpaces()
+
+autocmd BufEnter * :syntax sync fromstart
 '''
 
 def vi():
