@@ -75,6 +75,7 @@ alias sd="sudo docker"
 alias ruste="source $HOME/.cargo/env"
 alias vi="dan rename_tab_and_open vi"
 alias tp="dan rename_tab_pwd"
+alias pg="cd ~/Desktop/repos/playground"
 
 function rbe {{
 	eval "$(rbenv init -)"
@@ -514,6 +515,9 @@ def git():
 	_invoke('sh '+_this_path('git-aliases.txt'))
 	_invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
 	_invoke('git config --global merge.conflictstyle diff3')
+
+def disable_capslock():
+	_invoke('xmodmap -e "keycode 66 = Shift_L NoSymbol Shift_L"')
 
 _esoteric=_Section()
 
