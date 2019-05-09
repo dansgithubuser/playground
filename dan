@@ -381,6 +381,13 @@ def p(format, *args):
 	'invoke python'
 	exec(format.format(*args))
 
+def php():
+	'run php code from stdin; useful in vim `:w !dan php`'
+	with open(_scripts_path('tmp'), 'w') as f:
+		f.write('<?php\n')
+		f.write(stdin)
+	_invoke('php -f {}'.format(_scripts_path('tmp')))
+
 def dan(*args):
 	'invoke this script on each arg in order'
 	for arg in args: _invoke('dan '+arg)
