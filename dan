@@ -388,6 +388,18 @@ def php():
 		f.write(stdin)
 	_invoke('php -f {}'.format(_scripts_path('tmp')))
 
+def cpp():
+	'run c++ code from std; useful in vim `:w !dan cpp`'
+	with open(_scripts_path('tmp.cpp'), 'w') as f:
+		f.write('#include <iostream>\n')
+		f.write('#include <sstream>\n')
+		f.write('using namespace std;\n')
+		f.write('int main(){\n')
+		f.write(stdin)
+		f.write('}\n')
+	_invoke('g++ -o {} {}'.format(_scripts_path('tmp'), _scripts_path('tmp.cpp')))
+	_invoke(_scripts_path('tmp'))
+
 def dan(*args):
 	'invoke this script on each arg in order'
 	for arg in args: _invoke('dan '+arg)
