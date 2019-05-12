@@ -377,9 +377,14 @@ def gfor(commit, invocation):
 		_invoke('git checkout {}'.format(commit))
 		_invoke(invocation)
 
-def p(format, *args):
+def p(format=None, *args):
 	'invoke python'
-	exec(format.format(*args))
+	if stdin:
+		with open(_scripts_path('tmp'), 'w') as f:
+			f.write(stdin)
+		_invoke('python {}'.format(_scripts_path('tmp')))
+	else:
+		exec(format.format(*args))
 
 def php():
 	'run php code from stdin; useful in vim `:w !dan php`'
