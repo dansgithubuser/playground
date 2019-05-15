@@ -398,10 +398,16 @@ def cpp():
 	with open(_scripts_path('tmp.cpp'), 'w') as f:
 		f.write('#include <iostream>\n')
 		f.write('#include <sstream>\n')
+		f.write('#include <vector>\n')
+		f.write('#include <map>\n')
+		f.write('#include <set>\n')
+		f.write('#include <cmath>\n')
+		f.write('#include <ctime>\n')
+		f.write('#include <cstdlib>\n')
 		f.write('using namespace std;\n')
-		f.write('int main(){\n')
+		if 'main' not in stdin: f.write('int main(){')
 		f.write(stdin)
-		f.write('}\n')
+		if 'main' not in stdin: f.write('}')
 	_invoke('g++ -o {} {}'.format(_scripts_path('tmp'), _scripts_path('tmp.cpp')))
 	_invoke(_scripts_path('tmp'))
 
