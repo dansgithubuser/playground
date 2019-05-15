@@ -49,6 +49,7 @@ def _platform_invoke(linux=None, darwin=None, windows=None, **kwargs):
 
 def _clipboard_paste(**kwargs):
 	return _platform_invoke(
+		linux='xclip -selection clipboard -o',
 		darwin='pbpaste',
 		**kwargs
 	)
@@ -656,7 +657,10 @@ def conservative_logrotate():
 def tdcc():
 	'analyze td credit card statement, PDF content copied into clipboard'
 	content=_clipboard_paste(stdout=True)
-	txns=re.findall(r'[A-Z]{3}\d\d?[A-Z]{3}\d\d?\$(\d+\.\d\d)(?=(.*?)...\d\d?...\d\d?)', content)
+	date=r'[A-Z]{3}\d\d?'
+	predictable=date+date+r'\$(\d+\.\d\d)'
+	txns=re.findall('{0}(.*?)((?={0})|$)'.format(predictable), content)
+	pprint.pprint(txns)
 	txns=[(float(i[0]), i[1]) for i in txns]
 	categories={
 		'transport': [
@@ -683,14 +687,25 @@ def tdcc():
 			'aromaespresso',
 			'paintnite',
 			'h bar',
+			'riddle',
+			'timhorton',
+			'starbuck',
 		],
-		'eat out': [
+		'fast food': [
 			'mcdonald',
 			'jimmythegreek',
+			'muncheez',
+			'subway',
+			'swisschalet',
+		],
+		'eat social': [
 			'burgerfactory',
 			'umamipoke',
 			'sansotei',
 			'paappasito',
+			'burger',
+			'pizza',
+			"fran's",
 		],
 	}
 	txns_by_category={i: [] for i in categories.keys()}
