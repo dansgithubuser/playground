@@ -1,0 +1,125 @@
+<!DOCTYPE html">
+<html>
+	<script type="text/javascript">
+
+var gCanvas;
+var gContext;
+var gInputs = [];
+var gSelected;
+
+function e(id) { return document.getElementById(id); }
+function v(id) { return e(id).value; }
+
+function coordsLogicToPixel(coords) {
+	return {
+		x:  coords.x + (gCanvas.width  / 2),
+		y: -coords.y + (gCanvas.height / 2),
+	};
+}
+
+function coordsEventToLogic(coords) {
+	const rect = gCanvas.getBoundingClientRect();
+	return {
+		x:  (coords.x - rect.left - (gCanvas.width  / 2)),
+		y: -(coords.y - rect.top  - (gCanvas.height / 2)),
+	};
+}
+
+function drawRect(x, y, w, h, r, g, b) {
+	gContext.fillStyle = `rgb(${r}, ${g}, ${b})`;
+	gContext.fillRect(x, y, w, h);
+}
+
+function drawIcon(x, y, r = 255, g = 0, b = 0, size = 4) {
+	drawRect(
+		x - size / 2, y - size / 2,
+		size, size,
+		r, g, b
+	);
+}
+
+function addInput() {
+	gInputs.push({ x: 0, y: 0 });
+	render();
+}
+
+function addOutput() {
+	const output=document.createElement('input');
+	output.type='text';
+	output.size=80;
+	output.value='ax, ay';
+	output.addEventListener('keyup', render);
+	e('outputs').appendChild(output);
+}
+
+function render() {
+	drawRect(0, 0, gCanvas.width, gCanvas.height, 0, 0, 0);
+	for (var i = 0; i < gInputs.length; ++i) {
+		const c = coordsLogicToPixel(gInputs[i]);
+		drawIcon(c.x, c.y);
+		gContext.fillText(String.fromCharCode(97 + i), c.x + 4, c.y);
+	}
+	const outputs = e('outputs');
+	for (var i = 0; i < outputs.children.length; ++i) {
+		var [x, y] = outputs.children[i].value.replace(
+			/([a-z])([xy])/g,
+			(m, a, b) => `gInputs[${a.charCodeAt(0) - 97}].${b}`,
+		).split(',').map((i) => eval(i));
+		if (y == undefined) y = 0;
+		const c = coordsLogicToPixel({ x, y });
+		drawIcon(c.x, c.y, r = 0, g = 255);
+		gContext.fillText(i + 1, c.x + 4, c.y);
+		gContext.fillText(`${x}, ${y}`, c.x + 16, c.y);
+	}
+}
+
+function handleTapDown(x, y) {
+	const c = coordsEventToLogic({x, y});
+	for (const i of gInputs) {
+		if (Math.abs(i.x - c.x) + Math.abs(i.y - c.y) < 100) {
+			gSelected = i;
+			return;
+		}
+	}
+}
+
+function handleTapMove(x, y) {
+	if (!gSelected) return;
+	const c = coordsEventToLogic({ x, y });
+	gSelected.x = c.x;
+	gSelected.y = c.y;
+	render();
+}
+
+function handleTapUp() {
+	gSelected = null;
+}
+
+window.onload = () => {
+	gCanvas = e('canvas');
+	gContext = gCanvas.getContext('2d');
+	addInput();
+	addOutput();
+	render();
+	gCanvas.addEventListener('mousedown', function(e) {
+		handleTapDown(e.x, e.y);
+	});
+	gCanvas.addEventListener('mousemove', function(e) {
+		handleTapMove(e.x, e.y);
+	});
+	gCanvas.addEventListener('mouseup', function(e) {
+		handleTapUp();
+	});
+}
+
+	</script>
+	<body>
+		<canvas id='canvas' width=720 height=720>
+			<p>Your browser does not support the canvas element.</p>
+		</canvas><br>
+		<input type='button' onclick='addInput()' value='add input'><br>
+		<input type='button' onclick='addOutput()' value='add output'><br>
+		<div id='outputs' style='display:table'>
+		</div>
+	</body>
+</html>
