@@ -396,6 +396,7 @@ def php():
 
 def cpp():
 	'run c++ code from std; useful in vim `:w !dan cpp`'
+	obvious_path=os.path.expanduser('~/Desktop/repos/obvious/cpp/obvious.hpp')
 	with open(_scripts_path('tmp.cpp'), 'w') as f:
 		f.write('#include <iostream>\n')
 		f.write('#include <sstream>\n')
@@ -405,6 +406,8 @@ def cpp():
 		f.write('#include <cmath>\n')
 		f.write('#include <ctime>\n')
 		f.write('#include <cstdlib>\n')
+		if os.path.exists(obvious_path):
+			f.write('#include "{}"\n'.format(obvious_path))
 		f.write('using namespace std;\n')
 		if 'main' not in stdin: f.write('int main(){')
 		f.write(stdin)
