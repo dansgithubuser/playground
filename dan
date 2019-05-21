@@ -426,6 +426,7 @@ def dan(*args):
 	for arg in args: _invoke('dan '+arg)
 
 def pyre(pattern, repl):
+	'python regex'
 	print(re.sub(pattern, repl, stdin), end='')
 
 def filter(pattern):
@@ -489,6 +490,7 @@ def bash():
 	except: pass
 	shutil.copy(this, _scripts_path(''))
 	with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
+	disable_capslock()
 
 _vimrc='''\
 set autoindent
@@ -732,6 +734,10 @@ def tdcc():
 			print('\t{:>6.2f} {}'.format(txn[0], txn[1]))
 		print('\t{:>6.2f}'.format(sum(i[0] for i in category_txns)))
 	print('{:.2f}'.format(sum(i[0] for i in txns)))
+
+def rm_crash_dumps():
+	'remove files that cause ubuntu to ask you if you want to report a detected problem'
+	_invoke('sudo rm /var/crash/*')
 
 _help=_Section()
 
