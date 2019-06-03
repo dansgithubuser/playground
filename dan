@@ -14,6 +14,7 @@ import shutil
 import subprocess
 import sys
 import time
+import webbrowser
 
 try: _input=raw_input
 except: _input=input
@@ -420,6 +421,9 @@ def cpp():
 		if 'main' not in stdin: f.write('}')
 	_invoke('g++ -o {} {}'.format(_scripts_path('tmp'), _scripts_path('tmp.cpp')))
 	_invoke(_scripts_path('tmp'))
+
+def browser(url):
+	webbrowser.open(url)
 
 def dan(*args):
 	'invoke this script on each arg in order'
