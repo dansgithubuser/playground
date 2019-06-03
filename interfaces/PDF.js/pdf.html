@@ -7,19 +7,37 @@ function v(name){ return e(name).value }
 
 const pdfjsLib = window['pdfjs-dist/build/pdf'];
 
+var gPdf;
+
 async function render() {
-  const pdf = await pdfjsLib.getDocument(v('pdfUrl')).promise;
-  for (var page = 1; page <= pdf.numPages; ++page) {
+  gPdf = await pdfjsLib.getDocument(v('pdfUrl')).promise;
+  for (var page = 1; page <= gPdf.numPages; ++page) {
+    const div = document.createElement('div');
+    div.className = 'page';
+    e('main').appendChild(div);
     const canvas = document.createElement('canvas');
-    e('main').appendChild(canvas);
-    pdf.getPage(page).then((page) => {
+    div.appendChild(canvas);
+    gPdf.getPage(page).then(async (page) => {
       const viewport = page.getViewport({ scale: 1 });
       canvas.width = viewport.width;
       canvas.height = viewport.height;
-      page.render({
-        canvasContext: canvas.getContext('2d'),
-        viewport,
-      });
+      page.render({ canvasContext: canvas.getContext('2d'), viewport });
+      // make an input for each fillable annotation
+      const annotations = await page.getAnnotations();
+      for (const anno of annotations) {
+        if (anno.readOnly) continue;
+        const input = document.createElement('input');
+        input.className = 'fillable-annotation';
+        input.style = `
+          left: ${anno.rect[0]}px;
+          bottom: ${anno.rect[1]}px;
+          width: ${anno.rect[2] - anno.rect[0]}px;
+          height: ${anno.rect[3] - anno.rect[1]}px;
+        `;
+        input.name = anno.fieldName;
+        input.value = anno.fieldValue;
+        div.appendChild(input);
+      }
     });
   }
 };
@@ -28,8 +46,16 @@ async function render() {
 <style>
 
 canvas {
-  margin: 10px;
   box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+.page {
+  margin: 10px;
+  position: relative;
+}
+
+.fillable-annotation {
+  position: absolute;
 }
 
 </style>
@@ -39,7 +65,10 @@ canvas {
   <input type='text' id='pdfUrl' placeholder='PDF URL' size=80/>
   <input type='button' value='render' onclick='render()'/>
 </div>
-<div id='main'>
-</div>
+<form>
+  <div id='main'>
+  </div>
+  <input type='submit'/>
+</form>
 
 </body>
