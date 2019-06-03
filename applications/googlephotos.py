@@ -52,7 +52,7 @@ else:
     if args.upload:
         REFRESH_TOKEN = os.environ['GOOGLE_PHOTOS_REFRESH_TOKEN']
 
-        with open('gull.jpg', 'rb') as f: gull = f.read()
+        with open('../gull.jpg', 'rb') as f: gull = f.read()
 
         response = requests.post('https://photoslibrary.googleapis.com/v1/uploads',
             headers={
