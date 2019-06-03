@@ -1,0 +1,45 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.min.js"></script>
+
+<script>
+
+function e(name){ return document.getElementById(name) }
+function v(name){ return e(name).value }
+
+const pdfjsLib = window['pdfjs-dist/build/pdf'];
+
+async function render() {
+  const pdf = await pdfjsLib.getDocument(v('pdfUrl')).promise;
+  for (var page = 1; page <= pdf.numPages; ++page) {
+    const canvas = document.createElement('canvas');
+    e('main').appendChild(canvas);
+    pdf.getPage(page).then((page) => {
+      const viewport = page.getViewport({ scale: 1 });
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      page.render({
+        canvasContext: canvas.getContext('2d'),
+        viewport,
+      });
+    });
+  }
+};
+
+</script>
+<style>
+
+canvas {
+  margin: 10px;
+  box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+</style>
+<body>
+
+<div>
+  <input type='text' id='pdfUrl' placeholder='PDF URL' size=80/>
+  <input type='button' value='render' onclick='render()'/>
+</div>
+<div id='main'>
+</div>
+
+</body>
