@@ -394,7 +394,7 @@ def py(format=None, *args):
 	'run python code from stdin; useful in vim `:w !dan py`'
 	with open(_scripts_path('tmp'), 'w') as f:
 		f.write(stdin)
-	_invoke('python {}'.format(_scripts_path('tmp')))
+	_invoke('python3 {}'.format(_scripts_path('tmp')))
 
 def php():
 	'run php code from stdin; useful in vim `:w !dan php`'
@@ -577,7 +577,7 @@ def getmtime(path):
 
 def _exif(path, key):
 	import exifread
-	with open(path) as file: tags=exifread.process_file(file)
+	with open(path, 'rb') as file: tags=exifread.process_file(file)
 	if key=='*': return tags
 	return tags.get(key, None)
 
@@ -594,7 +594,7 @@ def google_photos_time(path):
 	if x:
 		x=timestamp(False, datetime.datetime(*[int(i) for i in re.split(':| ', x.values)]))
 	else: x=_getmtime(path) or '?'
-	print('{} {}'.format(x, path))
+	print('{}\t{}'.format(x, path))
 
 def lines_run_length(pattern='.*'):
 	previous=None
