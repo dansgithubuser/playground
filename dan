@@ -385,14 +385,16 @@ def gfor(commit, invocation):
 		_invoke('git checkout {}'.format(commit))
 		_invoke(invocation)
 
-def p(format=None, *args):
-	'invoke python'
-	if stdin:
-		with open(_scripts_path('tmp'), 'w') as f:
-			f.write(stdin)
-		_invoke('python {}'.format(_scripts_path('tmp')))
-	else:
-		exec(format.format(*args))
+def p(expression, should_print='1'):
+	'python exec expression'
+	if eval(should_print): expression='print({})'.format(expression)
+	exec(expression)
+
+def py(format=None, *args):
+	'run python code from stdin; useful in vim `:w !dan py`'
+	with open(_scripts_path('tmp'), 'w') as f:
+		f.write(stdin)
+	_invoke('python {}'.format(_scripts_path('tmp')))
 
 def php():
 	'run php code from stdin; useful in vim `:w !dan php`'
@@ -402,7 +404,7 @@ def php():
 	_invoke('php -f {}'.format(_scripts_path('tmp')))
 
 def cpp():
-	'run c++ code from std; useful in vim `:w !dan cpp`'
+	'run c++ code from stdin; useful in vim `:w !dan cpp`'
 	obvious_path=os.path.expanduser('~/Desktop/repos/obvious/cpp/obvious.hpp')
 	with open(_scripts_path('tmp.cpp'), 'w') as f:
 		f.write('#include <iostream>\n')
@@ -427,16 +429,12 @@ def browser(url):
 
 def dan(*args):
 	'invoke this script on each arg in order'
+	' -- useful for creating compound statements, for example in an alias'
 	for arg in args: _invoke('dan '+arg)
 
 def pyre(pattern, repl):
 	'python regex'
 	print(re.sub(pattern, repl, stdin), end='')
-
-def filter(pattern):
-	'for each line in stdin, print if it matches pattern'
-	for line in lines:
-		if re.match(pattern, line): print(line)
 
 def hista():
 	'''\
@@ -777,10 +775,11 @@ def h(command=None):
 #=====main=====#
 parser=argparse.ArgumentParser(description='`dan h` to list commands, `dan h command` for help with specific command')
 parser.add_argument('--dry', action='store_true', help='only print invocations')
-parser.add_argument('-l', help='run on each stdin line in specified slice, or start from specified line')
+parser.add_argument('-l', action='store_true',
+	help='take a Python iterable from stdin and run command on each item')
 parser.add_argument('--quiet', '-q', action='store_true')
 parser.add_argument('command')
-parser.add_argument('args', nargs='*', help='use {} to sub in line(s) from stdin')
+parser.add_argument('args', nargs='*', help='use {} to sub stdin')
 if len(sys.argv)==1: h()
 args=parser.parse_args()
 
@@ -793,16 +792,15 @@ try:
 	#this is the best way I could find to check for input
 	if not sys.stdin.isatty():
 		stdin=sys.stdin.read()
-		lines=[line.strip() for line in stdin.splitlines()]
 	else:
 		stdin=''
-		lines=[]
+	def _ex(args, stdin):
+		f=eval(args.command)
+		f(*[i.format(stdin) for i in args.args])
 	if args.l:
-		slice={k: int(v) for k, v in enumerate(args.l.split(':'))}
-		start=slice.get(0, 0)
-		end  =slice.get(1, len(lines))
-		step =slice.get(2, 1)
-		for line in lines[start:end:step]:
-			exec(args.command+'(*[i.format(line) for i in args.args])')
-	else: exec(args.command+'(*[i.format(lines) for i in args.args])')
+		outer_stdin=stdin
+		del stdin
+		for stdin in eval(outer_stdin):
+			_ex(args, stdin)
+	else: _ex(args, stdin)
 except TypeError: h(args.command); raise
