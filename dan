@@ -16,51 +16,51 @@ import sys
 import time
 import webbrowser
 
-try: _input=raw_input
-except: _input=input
+try: _input = raw_input
+except: _input = input
 
-this=os.path.realpath(__file__)
+this = os.path.realpath(__file__)
 
 try:
-	computer=subprocess.check_output('hostname').decode().strip()
+    computer = subprocess.check_output('hostname').decode().strip()
 except:
-	computer=None
+    computer = None
 
 class _Section:
-	def __init__(self):
-		self.line=inspect.stack()[1][2]
+    def __init__(self):
+        self.line = inspect.stack()[1][2]
 
 def _home_path(path=''): return os.path.join(os.path.expanduser('~'), *path.split('/'))
 def _this_path(path=''): return os.path.join(os.path.split(this)[0], *path.split('/'))
 def _scripts_path(path=''): return _home_path('Desktop/scripts/'+path)
 
 def _invoke(invocation, stdin=None, stdout=None):
-	if args.dry:
-		print(invocation)
-		return
-	if stdout is not None:
-		return subprocess.check_output(invocation, shell=True, stdin=stdin).decode().strip()
-	else:
-		subprocess.check_call(invocation, shell=True, stdin=stdin)
+    if args.dry:
+        print(invocation)
+        return
+    if stdout is not None:
+        return subprocess.check_output(invocation, shell=True, stdin=stdin).decode().strip()
+    else:
+        subprocess.check_call(invocation, shell=True, stdin=stdin)
 
 def _platform_invoke(linux=None, darwin=None, windows=None, **kwargs):
-	if   platform.system()=='Linux'  : return _invoke(linux  , **kwargs)
-	elif platform.system()=='Darwin' : return _invoke(darwin , **kwargs)
-	elif platform.system()=='Windows': return _invoke(windows, **kwargs)
+    if   platform.system() == 'Linux'  : return _invoke(linux  , **kwargs)
+    elif platform.system() == 'Darwin' : return _invoke(darwin , **kwargs)
+    elif platform.system() == 'Windows': return _invoke(windows, **kwargs)
 
 def _clipboard_paste(**kwargs):
-	return _platform_invoke(
-		linux='xclip -selection clipboard -o',
-		darwin='pbpaste',
-		**kwargs
-	)
+    return _platform_invoke(
+        linux='xclip -selection clipboard -o',
+        darwin='pbpaste',
+        **kwargs
+    )
 
-opener=None
-if   not subprocess.call('which xdg-open>/dev/null', shell=True): opener='xdg-open'
-elif not subprocess.call('which open    >/dev/null', shell=True): opener='open'
-if not opener and platform.system()=='Windows': opener='explorer'
+opener = None
+if   not subprocess.call('which xdg-open>/dev/null', shell=True): opener = 'xdg-open'
+elif not subprocess.call('which open    >/dev/null', shell=True): opener = 'open'
+if not opener and platform.system() == 'Windows': opener = 'explorer'
 
-_dan_bash='''
+_dan_bash = '''
 force_color_prompt=yes
 PATH=$PATH:~/Desktop/scripts
 PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\t \\w$ '
@@ -80,13 +80,13 @@ alias tp="dan rename_tab_pwd"
 alias pg="cd ~/Desktop/repos/playground"
 
 function rbe {{
-	eval "$(rbenv init -)"
+    eval "$(rbenv init -)"
 }}
 
 function pye {{
-	export PATH="~/.pyenv/bin:$PATH"
-	eval "$(pyenv init -)"
-	eval "$(pyenv virtualenv-init -)"
+    export PATH="~/.pyenv/bin:$PATH"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
 }}
 
 if [ -f ~/git-completion.bash ]; then source ~/git-completion.bash; fi
@@ -95,409 +95,409 @@ echo "dan bash ran"
 '''.format(opener)
 
 if os.path.exists(_scripts_path('dan-aliases.txt')):
-	with open(_scripts_path('dan-aliases.txt')) as file:
-		_dan_bash+=file.read()
+    with open(_scripts_path('dan-aliases.txt')) as file:
+        _dan_bash += file.read()
 
 #=====commands=====#
-_computer=_Section()
+_computer = _Section()
 
 def sleep(type=None):
-	'put computer to sleep'
-	if type=='deep':
-		for i in [
-			'LID0',
-			'SLPB',
-			'UHC0',
-			'UHC1',
-			'UHC2',
-			'UHC3',
-			'UHC4',
-			'UHCR',
-			'EHC1',
-			'EHC2',
-		]:
-			_invoke('sudo sh -c "echo {} > /proc/acpi/wakeup"'.format(i))
-	_invoke('systemctl suspend')
+    'put computer to sleep'
+    if type == 'deep':
+        for i in [
+            'LID0',
+            'SLPB',
+            'UHC0',
+            'UHC1',
+            'UHC2',
+            'UHC3',
+            'UHC4',
+            'UHCR',
+            'EHC1',
+            'EHC2',
+        ]:
+            _invoke('sudo sh -c "echo {} > /proc/acpi/wakeup"'.format(i))
+    _invoke('systemctl suspend')
 
 def reboot():
-	'reboot computer'
-	_invoke('reboot')
+    'reboot computer'
+    _invoke('reboot')
 
 def off():
-	'turn computer off'
-	_platform_invoke('sudo poweroff', 'sudo halt')
+    'turn computer off'
+    _platform_invoke('sudo poweroff', 'sudo halt')
 
 def vu():
-	'volume up'
-	_invoke('pactl -- set-sink-volume 0 +10%')
+    'volume up'
+    _invoke('pactl -- set-sink-volume 0 +10%')
 
 def vd():
-	'volume down'
-	_invoke('pactl -- set-sink-volume 0 -10%')
+    'volume down'
+    _invoke('pactl -- set-sink-volume 0 -10%')
 
 def _brightness(level):
-	#find path on new computer with `sudo find /sys/ -type f -iname '*brightness*'`
-	if computer=='dan-ThinkPad-13':
-		path='/sys/devices/pci0000:00/0000:00:02.0/drm/card0/card0-eDP-1/intel_backlight/brightness'
-		level/=1000
-	else:
-		path='/sys/class/backlight/intel_backlight/brightness'
-	if level=='get':
-		with open(path) as file:
-			return int(file.read())
-	_invoke('echo {}|sudo tee {}'.format(int(level), path))
+    #find path on new computer with `sudo find /sys/ -type f -iname '*brightness*'`
+    if computer == 'dan-ThinkPad-13':
+        path = '/sys/devices/pci0000:00/0000:00:02.0/drm/card0/card0-eDP-1/intel_backlight/brightness'
+        level /= 1000
+    else:
+        path = '/sys/class/backlight/intel_backlight/brightness'
+    if level == 'get':
+        with open(path) as file:
+            return int(file.read())
+    _invoke('echo {}|sudo tee {}'.format(int(level), path))
 
 def b(level):
-	'set brightness'
-	if level=='get': return (_brightness('get')-5000)/1000.0
-	_brightness(int(float(level)*1000+5000))
+    'set brightness'
+    if level == 'get': return (_brightness('get')-5000)/1000.0
+    _brightness(int(float(level)*1000+5000))
 
 def bu():
-	'brightness up'
-	b(b('get')*2)
+    'brightness up'
+    b(b('get')*2)
 
 def bd():
-	'brightness down'
-	b(b('get')//2)
+    'brightness down'
+    b(b('get')//2)
 
 def i(command):
-	'append a note of this command to Desktop/dan-install.txt'
-	with open(_home_path('Desktop/dan-install.txt'), 'a') as file:
-		file.write(timestamp(False)+'\n')
-		file.write(command+'\n')
-		file.write('\n')
-	_invoke(command)
+    'append a note of this command to Desktop/dan-install.txt'
+    with open(_home_path('Desktop/dan-install.txt'), 'a') as file:
+        file.write(timestamp(False)+'\n')
+        file.write(command+'\n')
+        file.write('\n')
+    _invoke(command)
 
 def kill_the_greedy():
-	while True:
-		if int(subprocess.check_output(['free']).decode().split()[12])<100000:
-			info=subprocess.check_output(['ps', '-e', '--sort', '%mem']).decode().split()[-4:] 
-			subprocess.check_call(['kill', info[0]])
-			print('killed {}'.format(info[-1]))
-		time.sleep(0.1)
+    while True:
+        if int(subprocess.check_output(['free']).decode().split()[12]) < 100000:
+            info = subprocess.check_output(['ps', '-e', '--sort', '%mem']).decode().split()[-4:] 
+            subprocess.check_call(['kill', info[0]])
+            print('killed {}'.format(info[-1]))
+        time.sleep(0.1)
 
-_convenience=_Section()
+_convenience = _Section()
 
 def timestamp(ambiguous=True, when=None):
-	if when==None: when=datetime.datetime.now()
-	format='{:%Y-%m'
-	if not ambiguous: format+='-%b'
-	format+='-%d %H:%M:%S.%f}'
-	return format.format(when).lower()
+    if when == None: when = datetime.datetime.now()
+    format = '{:%Y-%m'
+    if not ambiguous: format += '-%b'
+    format += '-%d %H:%M:%S.%f}'
+    return format.format(when).lower()
 
 def _put_in_clipboard(contents):
-	path=_this_path('.dan.tmp')
-	with open(path, 'w') as file: file.write(contents)
-	with open(path) as file: _platform_invoke(
-		darwin='pbcopy',
-		stdin=file,
-	)
+    path = _this_path('.dan.tmp')
+    with open(path, 'w') as file: file.write(contents)
+    with open(path) as file: _platform_invoke(
+        darwin='pbcopy',
+        stdin=file,
+    )
 
 def c(*args):
-	'copy stdin to clipboard'
-	_put_in_clipboard(stdin)
+    'copy stdin to clipboard'
+    _put_in_clipboard(stdin)
 
 def v():
-	'paste clipboard to stdout'
-	_clipboard_paste()
+    'paste clipboard to stdout'
+    _clipboard_paste()
 
-_snippet_prefix='dan-snippet-'
+_snippet_prefix = 'dan-snippet-'
 
 def snipw(name):
-	'take clipboard contents and save it as a snippet'
-	with open(_scripts_path(_snippet_prefix+name), 'w') as file:
-		file.write(subprocess.check_output('dan v', shell=True))
+    'take clipboard contents and save it as a snippet'
+    with open(_scripts_path(_snippet_prefix+name), 'w') as file:
+        file.write(subprocess.check_output('dan v', shell=True))
 
 def snipr(name):
-	'put snippet contents into clipboard'
-	with open(_scripts_path(_snippet_prefix+name)) as file:
-		_put_in_clipboard(file.read())
+    'put snippet contents into clipboard'
+    with open(_scripts_path(_snippet_prefix+name)) as file:
+        _put_in_clipboard(file.read())
 
 def snipl():
-	'list snippets'
-	snippets=[]
-	for i in sorted(os.listdir(_scripts_path())):
-		if i.startswith(_snippet_prefix):
-			with open(_scripts_path(i)) as file:
-				first_line=file.readlines()[0].strip()
-			snippets.append((i[len(_snippet_prefix):], first_line))
-	space=max([len(i[0]) for i in snippets])
-	for name, first_line in snippets:
-		print(('{:'+str(space)+'}: {}').format(name, first_line))
+    'list snippets'
+    snippets = []
+    for i in sorted(os.listdir(_scripts_path())):
+        if i.startswith(_snippet_prefix):
+            with open(_scripts_path(i)) as file:
+                first_line = file.readlines()[0].strip()
+            snippets.append((i[len(_snippet_prefix):], first_line))
+    space = max([len(i[0]) for i in snippets])
+    for name, first_line in snippets:
+        print(('{:'+str(space)+'}: {}').format(name, first_line))
 
 def wait(seconds):
-	'wait for specified number of seconds'
-	import time
-	time.sleep(float(seconds))
+    'wait for specified number of seconds'
+    import time
+    time.sleep(float(seconds))
 
 def print_hex(file_name):
-	'print specified file in hex'
-	with open(file_name, 'rb') as file: bytes=file.read()
-	for i in range(len(bytes)):
-		print('{:02x}'.format(ord(bytes[i])), end=' ')
-		if i%4==3: print(end=' ')
-		if i%16==15: print()
-	print()
+    'print specified file in hex'
+    with open(file_name, 'rb') as file: bytes = file.read()
+    for i in range(len(bytes)):
+        print('{:02x}'.format(ord(bytes[i])), end=' ')
+        if i%4 == 3: print(end=' ')
+        if i%16 == 15: print()
+    print()
 
 def find(regex, n=None, flags='i'):
-	'''\
+    '''\
 find files and directories matching regex within current directory
 if n is specified, print only the nth file that matches'''
-	if n!=None: n=int(n)
-	flags=functools.reduce(lambda a, b: a|b, [getattr(re, flag.upper()) for flag in flags])
-	count=0
-	for root, dirs, files in os.walk('.'):
-		for base in dirs+files:
-			path=os.path.join(root, base)
-			if re.search(regex, path, flags):
-				count+=1
-				if n==None or count==n:
-					print(path)
-					if count==n: break
-		else: continue
-		break
+    if n != None: n = int(n)
+    flags = functools.reduce(lambda a, b: a|b, [getattr(re, flag.upper()) for flag in flags])
+    count = 0
+    for root, dirs, files in os.walk('.'):
+        for base in dirs+files:
+            path = os.path.join(root, base)
+            if re.search(regex, path, flags):
+                count += 1
+                if n == None or count == n:
+                    print(path)
+                    if count == n: break
+        else: continue
+        break
 
 def walk(command):
-	'walk current path, invoking command on each file'
-	paths=[]
-	for dirpath, dirnames, filenames in os.walk('.'):
-		for filename in filenames:
-			paths.append(os.path.join(dirpath, filename))
-	for path in sorted(paths):
-		_invoke('{} "{}"'.format(command, path))
+    'walk current path, invoking command on each file'
+    paths = []
+    for dirpath, dirnames, filenames in os.walk('.'):
+        for filename in filenames:
+            paths.append(os.path.join(dirpath, filename))
+    for path in sorted(paths):
+        _invoke('{} "{}"'.format(command, path))
 
 def regex(pattern, file_name):
-	r'''find regex in file
+    r'''find regex in file
 use \\ to split pattern across lines'''
-	pattern=pattern.split(r'\\')
-	with open(file_name) as file: lines=file.readlines()
-	for i in range(len(lines)):
-		for j in range(len(pattern)):
-			if not re.search(pattern[j], lines[i+j]): break
-		else:
-			if len(pattern)==1:
-				print('{}@{}: {}'.format(file_name, i+1, lines[i].rstrip()))
-			else:
-				print('{}@{}:'.format(file_name, i+1))
-				for j in range(len(pattern)): print(lines[i+j].rstrip())
-				print('')
+    pattern = pattern.split(r'\\')
+    with open(file_name) as file: lines = file.readlines()
+    for i in range(len(lines)):
+        for j in range(len(pattern)):
+            if not re.search(pattern[j], lines[i+j]): break
+        else:
+            if len(pattern) == 1:
+                print('{}@{}: {}'.format(file_name, i+1, lines[i].rstrip()))
+            else:
+                print('{}@{}:'.format(file_name, i+1))
+                for j in range(len(pattern)): print(lines[i+j].rstrip())
+                print('')
 
 def last(index=1):
-	'print last item in stdin'
-	print(sorted([i.strip() for i in stdin.split()])[-int(index)])
+    'print last item in stdin'
+    print(sorted([i.strip() for i in stdin.split()])[-int(index)])
 
 def bookmark(name):
-	'bookmark current directory'
-	with open(_scripts_path('dan-bookmarks.txt'), 'a') as file:
-		file.write('{} {}\n'.format(name, os.getcwd()))
+    'bookmark current directory'
+    with open(_scripts_path('dan-bookmarks.txt'), 'a') as file:
+        file.write('{} {}\n'.format(name, os.getcwd()))
 
 def g(name):
-	'go to bookmark'
-	possibilities={}
-	all={}
-	with open(_scripts_path('dan-bookmarks.txt')) as file:
-		for line in file.readlines():
-			i, j=line.split()
-			if i.startswith(name): possibilities[i]=j
-			all[i]=j
-	if len(possibilities)==0: pprint.pprint(all); return
-	print(min(possibilities.items(), key=lambda i: len(i[0]))[1])
+    'go to bookmark'
+    possibilities = {}
+    all = {}
+    with open(_scripts_path('dan-bookmarks.txt')) as file:
+        for line in file.readlines():
+            i, j = line.split()
+            if i.startswith(name): possibilities[i] = j
+            all[i] = j
+    if len(possibilities) == 0: pprint.pprint(all); return
+    print(min(possibilities.items(), key=lambda i: len(i[0]))[1])
 
 def rename_tab(name):
-	print('\x1b]2;{}\a'.format(name))
+    print('\x1b]2;{}\a'.format(name))
 
 def rename_tab_and_open(program, path=''):
-	tab_name=os.path.basename(path)
-	if len(tab_name) > 12: tab_name = '{}..{}'.format(tab_name[:5], tab_name[-5:])
-	rename_tab(tab_name)
-	_invoke('{} {}'.format(program, path))
+    tab_name = os.path.basename(path)
+    if len(tab_name) > 12: tab_name = '{}..{}'.format(tab_name[:5], tab_name[-5:])
+    rename_tab(tab_name)
+    _invoke('{} {}'.format(program, path))
 
 def rename_tab_pwd():
-	rename_tab(os.path.basename(os.path.abspath(os.getcwd())))
+    rename_tab(os.path.basename(os.path.abspath(os.getcwd())))
 
 def link(link, linked):
-	'create symlink'
-	_invoke('ln -s {} {}'.format(linked, link))
+    'create symlink'
+    _invoke('ln -s {} {}'.format(linked, link))
 
 def disk_usage():
-	try:
-		_invoke('ncdu')
-		return
-	except Exception as e: print(e)
-	print('ncdu failed, resorting to df')
-	_invoke('df -h')
+    try:
+        _invoke('ncdu')
+        return
+    except Exception as e: print(e)
+    print('ncdu failed, resorting to df')
+    _invoke('df -h')
 
 def monitor(): _invoke('top')
 
 def network_discover(): _invoke('avahi-discover')
 
 def alias(name, command):
-	'create a semipermanent alias'
-	with open(_scripts_path('dan-aliases.txt'), 'a') as file:
-		file.write('alias {}={}\n'.format(name, command))
+    'create a semipermanent alias'
+    with open(_scripts_path('dan-aliases.txt'), 'a') as file:
+        file.write('alias {}={}\n'.format(name, command))
 
 def ssh_save(name):
-	shutil.copytree(_home_path('.ssh'), _home_path('.ssh-'+name))
+    shutil.copytree(_home_path('.ssh'), _home_path('.ssh-'+name))
 
 def ssh_list():
-	import glob
-	print([i.split('ssh-')[-1] for i in glob.glob(_home_path('.ssh-*'))])
+    import glob
+    print([i.split('ssh-')[-1] for i in glob.glob(_home_path('.ssh-*'))])
 
 def ssh_load(name):
-	shutil.rmtree(_home_path('.ssh'), True)
-	name=_home_path('.ssh-'+name)
-	shutil.copytree(name, _home_path('.ssh'))
+    shutil.rmtree(_home_path('.ssh'), True)
+    name = _home_path('.ssh-'+name)
+    shutil.copytree(name, _home_path('.ssh'))
 
 def gcaapf():
-	'git add and amend commit, then force push'
-	_invoke('git commit -a --amend --no-edit')
-	_invoke('git pf')
+    'git add and amend commit, then force push'
+    _invoke('git commit -a --amend --no-edit')
+    _invoke('git pf')
 
 def gsmu():
-	'git update submodules to latest, and sync their submodules'
-	_invoke('git submodule update --remote')
-	_invoke('git submodule foreach "git submodule update --init --recursive"')
+    'git update submodules to latest, and sync their submodules'
+    _invoke('git submodule update --remote')
+    _invoke('git submodule foreach "git submodule update --init --recursive"')
 
 def grbo():
-	'git remote branch owners (most recent committers)'
-	b=_invoke('git ls-remote -qh', stdout=True).splitlines()
-	b=[i.split()[1][len('refs/heads/'):] for i in b]
-	results=[]
-	for i in b:
-		rev='origin/'+i
-		split='vlkaeiwhvi4uhlksajhdvkausdhv'
-		author, date=_invoke('git show -q --pretty="format:%an{}%ai" {}'.format(split, rev), stdout=True).split(split)
-		results.append((rev, author, date))
-	results=sorted(results, key=lambda x: x[2])
-	a=str(max([len(i[0]) for i in results]))
-	b=str(max([len(i[1]) for i in results]))
-	for i in results:
-		print(('{:'+a+'} {:'+b+'} {}').format(*i))
+    'git remote branch owners (most recent committers)'
+    b = _invoke('git ls-remote -qh', stdout=True).splitlines()
+    b = [i.split()[1][len('refs/heads/'):] for i in b]
+    results = []
+    for i in b:
+        rev = 'origin/'+i
+        split = 'vlkaeiwhvi4uhlksajhdvkausdhv'
+        author, date = _invoke('git show -q --pretty="format:%an{}%ai" {}'.format(split, rev), stdout=True).split(split)
+        results.append((rev, author, date))
+    results = sorted(results, key=lambda x: x[2])
+    a = str(max([len(i[0]) for i in results]))
+    b = str(max([len(i[1]) for i in results]))
+    for i in results:
+        print(('{:'+a+'} {:'+b+'} {}').format(*i))
 
 def gfor(commit, invocation):
-	'run specified invocation on each commit from HEAD to specified commit'
-	log=_invoke('git log --graph --pretty="%h %an" {}..HEAD'.format(commit), stdout=True).splitlines()
-	for line in log:
-		print(line)
-		m=re.match('[| *]* ([^ ]+)', line)
-		if not m: continue
-		commit=m.group(1)
-		_invoke('git checkout {}'.format(commit))
-		_invoke(invocation)
+    'run specified invocation on each commit from HEAD to specified commit'
+    log = _invoke('git log --graph --pretty="%h %an" {}..HEAD'.format(commit), stdout=True).splitlines()
+    for line in log:
+        print(line)
+        m = re.match('[| *]* ([^ ]+)', line)
+        if not m: continue
+        commit = m.group(1)
+        _invoke('git checkout {}'.format(commit))
+        _invoke(invocation)
 
 def p(expression, should_print='1'):
-	'python exec expression'
-	if eval(should_print): expression='print({})'.format(expression)
-	exec(expression)
+    'python exec expression'
+    if eval(should_print): expression = 'print({})'.format(expression)
+    exec(expression)
 
 def py(format=None, *args):
-	'run python code from stdin; useful in vim `:w !dan py`'
-	with open(_scripts_path('tmp'), 'w') as f:
-		f.write(stdin)
-	_invoke('python3 {}'.format(_scripts_path('tmp')))
+    'run python code from stdin; useful in vim `:w !dan py`'
+    with open(_scripts_path('tmp'), 'w') as f:
+        f.write(stdin)
+    _invoke('python3 {}'.format(_scripts_path('tmp')))
 
 def php():
-	'run php code from stdin; useful in vim `:w !dan php`'
-	with open(_scripts_path('tmp'), 'w') as f:
-		f.write('<?php\n')
-		f.write(stdin)
-	_invoke('php -f {}'.format(_scripts_path('tmp')))
+    'run php code from stdin; useful in vim `:w !dan php`'
+    with open(_scripts_path('tmp'), 'w') as f:
+        f.write('<?php\n')
+        f.write(stdin)
+    _invoke('php -f {}'.format(_scripts_path('tmp')))
 
 def cpp():
-	'run c++ code from stdin; useful in vim `:w !dan cpp`'
-	obvious_path=os.path.expanduser('~/Desktop/repos/obvious/cpp/obvious.hpp')
-	with open(_scripts_path('tmp.cpp'), 'w') as f:
-		f.write('#include <iostream>\n')
-		f.write('#include <sstream>\n')
-		f.write('#include <vector>\n')
-		f.write('#include <map>\n')
-		f.write('#include <set>\n')
-		f.write('#include <cmath>\n')
-		f.write('#include <ctime>\n')
-		f.write('#include <cstdlib>\n')
-		if os.path.exists(obvious_path):
-			f.write('#include "{}"\n'.format(obvious_path))
-		f.write('using namespace std;\n')
-		if 'main' not in stdin: f.write('int main(){')
-		f.write(stdin)
-		if 'main' not in stdin: f.write('}')
-	_invoke('g++ -o {} {}'.format(_scripts_path('tmp'), _scripts_path('tmp.cpp')))
-	_invoke(_scripts_path('tmp'))
+    'run c++ code from stdin; useful in vim `:w !dan cpp`'
+    obvious_path = os.path.expanduser('~/Desktop/repos/obvious/cpp/obvious.hpp')
+    with open(_scripts_path('tmp.cpp'), 'w') as f:
+        f.write('#include <iostream>\n')
+        f.write('#include <sstream>\n')
+        f.write('#include <vector>\n')
+        f.write('#include <map>\n')
+        f.write('#include <set>\n')
+        f.write('#include <cmath>\n')
+        f.write('#include <ctime>\n')
+        f.write('#include <cstdlib>\n')
+        if os.path.exists(obvious_path):
+            f.write('#include "{}"\n'.format(obvious_path))
+        f.write('using namespace std;\n')
+        if 'main' not in stdin: f.write('int main(){')
+        f.write(stdin)
+        if 'main' not in stdin: f.write('}')
+    _invoke('g++ -o {} {}'.format(_scripts_path('tmp'), _scripts_path('tmp.cpp')))
+    _invoke(_scripts_path('tmp'))
 
 def browser(url):
-	webbrowser.open(url)
+    webbrowser.open(url)
 
 def dan(*args):
-	'invoke this script on each arg in order'
-	' -- useful for creating compound statements, for example in an alias'
-	for arg in args: _invoke('dan '+arg)
+    'invoke this script on each arg in order'
+    ' -- useful for creating compound statements, for example in an alias'
+    for arg in args: _invoke('dan '+arg)
 
 def pyre(pattern, repl):
-	'python regex'
-	print(re.sub(pattern, repl, stdin), end='')
+    'python regex'
+    print(re.sub(pattern, repl, stdin), end='')
 
 def hista():
-	'''\
+    '''\
 Print out a command that will immediately update history on mac.
 So you'd use it like `dan hista`.
 history doesn't work right, seemingly because it's a builtin.'''
-	print('history -w {}'.format(_home_path('.bash_history')))
+    print('history -w {}'.format(_home_path('.bash_history')))
 
 def json():
-	'take json from clipboard and pretty print'
-	j=_clipboard_paste(stdout=True)
-	import json
-	pprint.pprint(json.loads(j))
+    'take json from clipboard and pretty print'
+    j = _clipboard_paste(stdout=True)
+    import json
+    pprint.pprint(json.loads(j))
 
 def base64():
-	'take base64 from clipboard and print'
-	x=_clipboard_paste(stdout=True)
-	import base64
-	print(base64.b64decode(x))
+    'take base64 from clipboard and print'
+    x = _clipboard_paste(stdout=True)
+    import base64
+    print(base64.b64decode(x))
 
-_setup=_Section()
+_setup = _Section()
 
 def install_self():
-	'hook into bash init script'
-	#find bash init script
-	bash_init=None
-	if os.path.exists(_home_path('.bash_profile')): bash_init=_home_path('.bash_profile')
-	elif os.path.exists(_home_path('.bashrc')): bash_init=_home_path('.bashrc')
-	if not bash_init:
-		print("couldn't find a bash init script!")
-		sys.exit(1)
-	#append if not already done
-	header="#=====appended by dan from dansgithubuser's playground=====#"
-	already_done=False
-	with open(bash_init, 'r') as file:
-		for line in file.readlines():
-			if header in line:
-				already_done=True
-				break
-	if not already_done:
-		print('I will append to {} and make it use my bash command -- if that is OK, enter y'.format(bash_init))
-		if _input()!='y': sys.exit(1)
-		with open(bash_init, 'a') as file:
-			file.write("\n\n{}\n".format(header))
-			file.write('python3 {} bash\n'.format(this))
-			file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
-			file.write('#=====end dan=====#\n')
-	#other stuff
-	vi()
-	git()
+    'hook into bash init script'
+    #find bash init script
+    bash_init = None
+    if os.path.exists(_home_path('.bash_profile')): bash_init = _home_path('.bash_profile')
+    elif os.path.exists(_home_path('.bashrc')): bash_init = _home_path('.bashrc')
+    if not bash_init:
+        print("couldn't find a bash init script!")
+        sys.exit(1)
+    #append if not already done
+    header = "#=====appended by dan from dansgithubuser's playground=====#"
+    already_done = False
+    with open(bash_init, 'r') as file:
+        for line in file.readlines():
+            if header in line:
+                already_done = True
+                break
+    if not already_done:
+        print('I will append to {} and make it use my bash command -- if that is OK, enter y'.format(bash_init))
+        if _input() != 'y': sys.exit(1)
+        with open(bash_init, 'a') as file:
+            file.write("\n\n{}\n".format(header))
+            file.write('python3 {} bash\n'.format(this))
+            file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
+            file.write('#=====end dan=====#\n')
+    #other stuff
+    vi()
+    git()
 
 def bash():
-	'update bash setup, writes to ~/Desktop/scripts/'
-	try: os.makedirs(_scripts_path(''))
-	except: pass
-	shutil.copy(this, _scripts_path(''))
-	with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
-	try:
-		disable_capslock()
-	except:
-		pass
+    'update bash setup, writes to ~/Desktop/scripts/'
+    try: os.makedirs(_scripts_path(''))
+    except: pass
+    shutil.copy(this, _scripts_path(''))
+    with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
+    try:
+        disable_capslock()
+    except:
+        pass
 
-_vimrc='''\
+_vimrc = '''\
 set autoindent
 set number
 set tabstop=2
@@ -511,7 +511,7 @@ set noswapfile
 
 "substitution with non-insane syntax
 function DanFunctionSubstitute(pattern, replacement)
-	execute '.,$s/'.a:pattern.'/'.a:replacement.'/gc'
+    execute '.,$s/'.a:pattern.'/'.a:replacement.'/gc'
 endfunction
 command -nargs=* Substitute call DanFunctionSubstitute(<f-args>)
 
@@ -549,98 +549,98 @@ autocmd BufEnter * :syntax sync fromstart
 '''
 
 def vi():
-	'setup vi stuff'
-	p=_home_path('.vimrc')
-	print('I will create a .vimrc file, it requires package vim-gui-common.')
-	if os.path.exists(p): print('I will overwrite the existing one.')
-	print('If that is OK, enter y.')
-	if _input()!='y': sys.exit(1)
-	with open(p, 'w') as file: file.write(_vimrc)
+    'setup vi stuff'
+    p = _home_path('.vimrc')
+    print('I will create a .vimrc file, it requires package vim-gui-common.')
+    if os.path.exists(p): print('I will overwrite the existing one.')
+    print('If that is OK, enter y.')
+    if _input() != 'y': sys.exit(1)
+    with open(p, 'w') as file: file.write(_vimrc)
 
 def git():
-	'update git aliases, download git-completion.bash, set conflict style to diff3'
-	_invoke('sh '+_this_path('git-aliases.txt'))
-	_invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
-	_invoke('git config --global merge.conflictstyle diff3')
+    'update git aliases, download git-completion.bash, set conflict style to diff3'
+    _invoke('sh '+_this_path('git-aliases.txt'))
+    _invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
+    _invoke('git config --global merge.conflictstyle diff3')
 
 def disable_capslock():
-	_invoke('xmodmap -e "keycode 66 = Shift_L NoSymbol Shift_L"')
+    _invoke('xmodmap -e "keycode 66 = Shift_L NoSymbol Shift_L"')
 
-_esoteric=_Section()
+_esoteric = _Section()
 
 def _getmtime(path):
-	return timestamp(False, datetime.datetime.fromtimestamp(os.path.getmtime(path)))
+    return timestamp(False, datetime.datetime.fromtimestamp(os.path.getmtime(path)))
 
 def getmtime(path):
-	'get modified time of specified path'
-	print('{} {}'.format(_getmtime(path), path))
+    'get modified time of specified path'
+    print('{} {}'.format(_getmtime(path), path))
 
 def _exif(path, key):
-	import exifread
-	with open(path, 'rb') as file: tags=exifread.process_file(file)
-	if key=='*': return tags
-	return tags.get(key, None)
+    import exifread
+    with open(path, 'rb') as file: tags = exifread.process_file(file)
+    if key == '*': return tags
+    return tags.get(key, None)
 
 def exif(path, key='*'):
-	'get exif data from path'
-	if key=='*':
-		import pprint
-		pprint.pprint(_exif(path, '*'))
-	print('{} {}'.format(_exif(path, key), path))
+    'get exif data from path'
+    if key == '*':
+        import pprint
+        pprint.pprint(_exif(path, '*'))
+    print('{} {}'.format(_exif(path, key), path))
 
 def google_photos_time(path):
-	'get creation time of image downloaded from google photos (?)'
-	x=_exif(path, 'Image DateTime')
-	if x:
-		x=timestamp(False, datetime.datetime(*[int(i) for i in re.split(':| ', x.values)]))
-	else: x=_getmtime(path) or '?'
-	print('{}\t{}'.format(x, path))
+    'get creation time of image downloaded from google photos (?)'
+    x = _exif(path, 'Image DateTime')
+    if x:
+        x = timestamp(False, datetime.datetime(*[int(i) for i in re.split(':| ', x.values)]))
+    else: x = _getmtime(path) or '?'
+    print('{}\t{}'.format(x, path))
 
 def lines_run_length(pattern='.*'):
-	previous=None
-	body=[]
-	def p():
-		if not body: return
-		print('{:6} {}'.format(len(body), previous))
-		for i in body: print('\t'+i)
-	def e(l):
-		return re.match(pattern, l).group(0)
-	for line in lines:
-		line=line.strip()
-		if e(line)!=previous:
-			p()
-			body=[]
-		previous=e(line)
-		body.append(line)
-	p()
+    previous = None
+    body = []
+    def p():
+        if not body: return
+        print('{:6} {}'.format(len(body), previous))
+        for i in body: print('\t'+i)
+    def e(l):
+        return re.match(pattern, l).group(0)
+    for line in lines:
+        line = line.strip()
+        if e(line) != previous:
+            p()
+            body = []
+        previous = e(line)
+        body.append(line)
+    p()
 
-_conservative_logrotate_conf='''size 1M
+_conservative_logrotate_conf = '''size 1M
 rotate 0
 create
 include /etc/logrotate.d
 /var/log/wtmp {
-	missingok
-	monthly
-	create 0664 root utmp
-	rotate 1
+    missingok
+    monthly
+    create 0664 root utmp
+    rotate 1
 }
 
 /var/log/btmp {
-	missingok
-	monthly
-	create 0660 root utmp
-	rotate 1
+    missingok
+    monthly
+    create 0660 root utmp
+    rotate 1
 }
 '''
 
-_conservative_rsyslog='''/var/log/syslog
+_conservative_rsyslog = '''/var/log/syslog
 {
-	rotate 0
-	size 1M
-	missingok
-	postrotate
-		invoke-rc.d rsyslog rotate > /dev/null
-	endscript
+    rotate 0
+    size 1M
+    missingok
+    postrotate
+        invoke-rc.d rsyslog rotate > /dev/null
+    endscript
 }
 
 /var/log/mail.info
@@ -656,154 +656,154 @@ _conservative_rsyslog='''/var/log/syslog
 /var/log/debug
 /var/log/messages
 {
-	rotate 0
-	size 1M
-	missingok
-	sharedscripts
-	postrotate
-		invoke-rc.d rsyslog rotate > /dev/null
-	endscript
+    rotate 0
+    size 1M
+    missingok
+    sharedscripts
+    postrotate
+        invoke-rc.d rsyslog rotate > /dev/null
+    endscript
 }
 '''
 
 def conservative_logrotate():
-	with open('/etc/logrotate.conf') as file: file.write(_conservative_logrotate_conf)
-	with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
+    with open('/etc/logrotate.conf') as file: file.write(_conservative_logrotate_conf)
+    with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
 
 def tdcc():
-	'analyze td credit card statement, PDF content copied into clipboard'
-	content=_clipboard_paste(stdout=True)
-	date=r'[A-Z]{3}\d\d?'
-	predictable=date+date+r'\$(\d+\.\d\d)'
-	txns=re.findall('{0}(.*?)((?={0})|$)'.format(predictable), content)
-	pprint.pprint(txns)
-	txns=[(float(i[0]), i[1]) for i in txns]
-	categories={
-		'transport': [
-			'presto',
-		],
-		'groceries': [
-			'foodbasics',
-			'freshco',
-			'bulkbarn',
-			'nationsfreshfoods',
-			'organicgarage',
-			'rabba',
-			'mr.convenience',
-			'macsconv',
-			'loblaws',
-		],
-		'social': [
-			'snakes&lattes',
-			'greenbeanery',
-			'eventbrite',
-			'lockhart',
-			'torontoultimatec',
-			'hotblack',
-			'aromaespresso',
-			'paintnite',
-			'h bar',
-			'riddle',
-			'timhorton',
-			'starbuck',
-		],
-		'fast food': [
-			'mcdonald',
-			'jimmythegreek',
-			'muncheez',
-			'subway',
-			'swisschalet',
-		],
-		'eat social': [
-			'burgerfactory',
-			'umamipoke',
-			'sansotei',
-			'paappasito',
-			'burger',
-			'pizza',
-			"fran's",
-		],
-	}
-	txns_by_category={i: [] for i in categories.keys()}
-	txns_by_category['other']=[]
-	for txn in txns:
-		for category, v in categories.items():
-			if [i for i in v if i in txn[1].lower()]:
-				txns_by_category[category].append(txn)
-				break
-		else:
-			txns_by_category['other'].append(txn)
-	for category, category_txns in txns_by_category.items():
-		print(category)
-		for txn in category_txns:
-			print('\t{:>6.2f} {}'.format(txn[0], txn[1]))
-		print('\t{:>6.2f}'.format(sum(i[0] for i in category_txns)))
-	print('{:.2f}'.format(sum(i[0] for i in txns)))
+    'analyze td credit card statement, PDF content copied into clipboard'
+    content = _clipboard_paste(stdout=True)
+    date = r'[A-Z]{3}\d\d?'
+    predictable = date+date+r'\$(\d+\.\d\d)'
+    txns = re.findall('{0}(.*?)((?={0})|$)'.format(predictable), content)
+    pprint.pprint(txns)
+    txns = [(float(i[0]), i[1]) for i in txns]
+    categories = {
+        'transport': [
+            'presto',
+        ],
+        'groceries': [
+            'foodbasics',
+            'freshco',
+            'bulkbarn',
+            'nationsfreshfoods',
+            'organicgarage',
+            'rabba',
+            'mr.convenience',
+            'macsconv',
+            'loblaws',
+        ],
+        'social': [
+            'snakes&lattes',
+            'greenbeanery',
+            'eventbrite',
+            'lockhart',
+            'torontoultimatec',
+            'hotblack',
+            'aromaespresso',
+            'paintnite',
+            'h bar',
+            'riddle',
+            'timhorton',
+            'starbuck',
+        ],
+        'fast food': [
+            'mcdonald',
+            'jimmythegreek',
+            'muncheez',
+            'subway',
+            'swisschalet',
+        ],
+        'eat social': [
+            'burgerfactory',
+            'umamipoke',
+            'sansotei',
+            'paappasito',
+            'burger',
+            'pizza',
+            "fran's",
+        ],
+    }
+    txns_by_category = {i: [] for i in categories.keys()}
+    txns_by_category['other'] = []
+    for txn in txns:
+        for category, v in categories.items():
+            if [i for i in v if i in txn[1].lower()]:
+                txns_by_category[category].append(txn)
+                break
+        else:
+            txns_by_category['other'].append(txn)
+    for category, category_txns in txns_by_category.items():
+        print(category)
+        for txn in category_txns:
+            print('\t{:>6.2f} {}'.format(txn[0], txn[1]))
+        print('\t{:>6.2f}'.format(sum(i[0] for i in category_txns)))
+    print('{:.2f}'.format(sum(i[0] for i in txns)))
 
 def rm_crash_dumps():
-	'remove files that cause ubuntu to ask you if you want to report a detected problem'
-	_invoke('sudo rm /var/crash/*')
+    'remove files that cause ubuntu to ask you if you want to report a detected problem'
+    _invoke('sudo rm /var/crash/*')
 
-_help=_Section()
+_help = _Section()
 
 def h(command=None):
-	'help'
-	if command==None:
-		sections=sorted(
-			[i for i in globals() if isinstance(eval(i), _Section)],
-			key=lambda x: eval(x).line
-		)
-		section=0
-		commands=sorted(
-			[i for i in globals() if callable(eval(i)) and not i.startswith('_')],
-			key=lambda x: inspect.getsourcelines(eval(x))[1]
-		)
-		max_len_command=max([len(i) for i in commands])
-		print('list of commands:')
-		for command in commands:
-			if section<len(sections) and inspect.getsourcelines(eval(command))[1]>eval(sections[section]).line:
-				print('\n'+'='*max_len_command+sections[section][1:]+'='*max_len_command)
-				section+=1
-			full_help=inspect.getdoc(eval(command))
-			if full_help:
-				full_help=full_help.splitlines()
-				short_help=full_help[0]
-				if len(full_help)>1: short_help+='...'
-			else: short_help=''
-			print(('{:>'+str(max_len_command)+'}  {}').format(command, short_help))
-	else:
-		print(inspect.getdoc(eval(command)))
-		print(inspect.getargspec(eval(command)))
+    'help'
+    if command == None:
+        sections = sorted(
+            [i for i in globals() if isinstance(eval(i), _Section)],
+            key=lambda x: eval(x).line
+        )
+        section = 0
+        commands = sorted(
+            [i for i in globals() if callable(eval(i)) and not i.startswith('_')],
+            key=lambda x: inspect.getsourcelines(eval(x))[1]
+        )
+        max_len_command = max([len(i) for i in commands])
+        print('list of commands:')
+        for command in commands:
+            if section < len(sections) and inspect.getsourcelines(eval(command))[1] > eval(sections[section]).line:
+                print('\n' + '='*max_len_command + sections[section][1:] + '='*max_len_command)
+                section += 1
+            full_help = inspect.getdoc(eval(command))
+            if full_help:
+                full_help = full_help.splitlines()
+                short_help = full_help[0]
+                if len(full_help) > 1: short_help += '...'
+            else: short_help = ''
+            print(('{:>'+str(max_len_command)+'}  {}').format(command, short_help))
+    else:
+        print(inspect.getdoc(eval(command)))
+        print(inspect.getargspec(eval(command)))
 
 #=====main=====#
-parser=argparse.ArgumentParser(description='`dan h` to list commands, `dan h command` for help with specific command')
+parser = argparse.ArgumentParser(description='`dan h` to list commands, `dan h command` for help with specific command')
 parser.add_argument('--dry', action='store_true', help='only print invocations')
 parser.add_argument('-l', action='store_true',
-	help='take a Python iterable from stdin and run command on each item')
+    help='take a Python iterable from stdin and run command on each item')
 parser.add_argument('--quiet', '-q', action='store_true')
 parser.add_argument('command')
 parser.add_argument('args', nargs='*', help='use {} to sub stdin')
-if len(sys.argv)==1: h()
-args=parser.parse_args()
+if len(sys.argv) == 1: h()
+args = parser.parse_args()
 
 if not args.quiet:
-	sys.stderr.write('invoked with: {}\n'.format(sys.argv))
+    sys.stderr.write('invoked with: {}\n'.format(sys.argv))
 
 if args.command not in locals(): h(); raise Exception('no such command "{}"'.format(args.command))
 try:
-	#if you read from stdin with no input, run blocks for input
-	#this is the best way I could find to check for input
-	if not sys.stdin.isatty():
-		stdin=sys.stdin.read()
-	else:
-		stdin=''
-	def _ex(args, stdin):
-		f=eval(args.command)
-		f(*[i.format(stdin) for i in args.args])
-	if args.l:
-		outer_stdin=stdin
-		del stdin
-		for stdin in eval(outer_stdin):
-			_ex(args, stdin)
-	else: _ex(args, stdin)
+    #if you read from stdin with no input, run blocks for input
+    #this is the best way I could find to check for input
+    if not sys.stdin.isatty():
+        stdin = sys.stdin.read()
+    else:
+        stdin = ''
+    def _ex(args, stdin):
+        f = eval(args.command)
+        f(*[i.format(stdin) for i in args.args])
+    if args.l:
+        outer_stdin = stdin
+        del stdin
+        for stdin in eval(outer_stdin):
+            _ex(args, stdin)
+    else: _ex(args, stdin)
 except TypeError: h(args.command); raise
