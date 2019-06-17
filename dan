@@ -672,10 +672,14 @@ def conservative_logrotate():
 
 def tdcc():
     'analyze td credit card statement, PDF content copied into clipboard'
-    content = _clipboard_paste(stdout=True)
+    if stdin:
+        print('STDIN')
+        content = stdin
+    else:
+        content = _clipboard_paste(stdout=True)
     date = r'[A-Z]{3}\d\d?'
     predictable = date+date+r'\$(\d+\.\d\d)'
-    txns = re.findall('{0}(.*?)((?={0})|$)'.format(predictable), content)
+    txns = [i[:2] for i in re.findall(r'{0}(.*?)(?=(?={0})|$|\n)'.format(predictable), content)]
     pprint.pprint(txns)
     txns = [(float(i[0]), i[1]) for i in txns]
     categories = {
@@ -706,6 +710,8 @@ def tdcc():
             'riddle',
             'timhorton',
             'starbuck',
+            'fringe',
+            'spielhaus',
         ],
         'fast food': [
             'mcdonald',
@@ -713,6 +719,8 @@ def tdcc():
             'muncheez',
             'subway',
             'swisschalet',
+            'shycoffee',
+            'pitachoice',
         ],
         'eat social': [
             'burgerfactory',
@@ -722,6 +730,8 @@ def tdcc():
             'burger',
             'pizza',
             "fran's",
+            'moxie',
+            'z-teca',
         ],
     }
     txns_by_category = {i: [] for i in categories.keys()}
