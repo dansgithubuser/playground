@@ -746,6 +746,12 @@ def rm_crash_dumps():
 
 _help = _Section()
 
+def _get_commands():
+    return sorted(
+        [i for i in globals() if callable(eval(i)) and not i.startswith('_')],
+        key=lambda x: inspect.getsourcelines(eval(x))[1],
+    )
+
 def h(command=None):
     'help'
     if command == None:
@@ -754,10 +760,7 @@ def h(command=None):
             key=lambda x: eval(x).line
         )
         section = 0
-        commands = sorted(
-            [i for i in globals() if callable(eval(i)) and not i.startswith('_')],
-            key=lambda x: inspect.getsourcelines(eval(x))[1]
-        )
+        commands = _get_commands()
         max_len_command = max([len(i) for i in commands])
         print('list of commands:')
         for command in commands:
@@ -789,7 +792,21 @@ args = parser.parse_args()
 if not args.quiet:
     sys.stderr.write('invoked with: {}\n'.format(sys.argv))
 
-if args.command not in locals(): h(); raise Exception('no such command "{}"'.format(args.command))
+def _translate_lazy(lazy, possibilities):
+    candidates = []
+    for i in possibilities:
+        if re.search('.*'.join(lazy), i):
+            candidates.append(i)
+    def reduce(ls, f):
+        x = [i for i in candidates if f(i)]
+        return x if x else ls
+    candidates = reduce(candidates, lambda i: i.startswith(lazy[0]))
+    candidates = reduce(candidates, lambda i: i.endswith(lazy[-1]))
+    if len(candidates) == 1: return possibilities[candidates[0]]
+    raise AttributeError("couldn't resolve {}, candidates:\n{}".format(
+        lazy, '\n'.join(candidates),
+    ))
+
 try:
     #if you read from stdin with no input, run blocks for input
     #this is the best way I could find to check for input
@@ -798,7 +815,8 @@ try:
     else:
         stdin = ''
     def _ex(args, stdin):
-        f = eval(args.command)
+        commands = _get_commands()
+        f = _translate_lazy(args.command, {i: eval(i) for i in commands})
         f(*[i.format(stdin) for i in args.args])
     if args.l:
         outer_stdin = stdin
