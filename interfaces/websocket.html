@@ -1,13 +1,17 @@
 <script>
 
 var gSocket;
+var gLastEvent;
 
 function e(name){ return document.getElementById(name) }
 function v(name){ return e(name).value }
 
 function connect(){
 	gSocket=new WebSocket(v('url'));
-	gSocket.onmessage=function(event){ console.log(event.data); };
+	gSocket.onmessage=function(event){
+		gLastEvent=event;
+		console.log(event.data);
+	};
 }
 
 function send(){
