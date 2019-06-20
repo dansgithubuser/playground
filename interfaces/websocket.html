@@ -6,7 +6,7 @@ function e(name){ return document.getElementById(name) }
 function v(name){ return e(name).value }
 
 function connect(){
-	gSocket=new WebSocket('ws://localhost:'+v('port'));
+	gSocket=new WebSocket(v('url'));
 	gSocket.onmessage=function(event){ console.log(event.data); };
 }
 
@@ -21,7 +21,7 @@ function log_state(){
 </script>
 
 <div>
-	port: <input type='text' id='port'/>
+	URL: <input type='text' id='url' size=40 value='ws://localhost:8000'/>
 	<button onclick='connect()'>connect</button>
 </div>
 <div>
