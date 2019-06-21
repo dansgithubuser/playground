@@ -683,6 +683,14 @@ def rm_crash_dumps():
     'remove files that cause ubuntu to ask you if you want to report a detected problem'
     _invoke('sudo rm /var/crash/*')
 
+def static_ip():
+    '''\
+Useful for connecting to wrt54gl running openwrt 
+in failsafe mode (hold reset, power on, wait ~10s until dmz lights up, let go, see power and dmz lights flash, connect with `telnet 192.168.1.1`) 
+or if its DHCP is disabled and its IP is x.x.1.x. 
+If the IP is something else, make sure the 3rd numbers match in the command below.'''
+    _invoke('sudo ifconfig enp1s0 192.168.1.3 netmask 255.255.255.0')
+
 _help = _Section()
 
 def _get_commands():
