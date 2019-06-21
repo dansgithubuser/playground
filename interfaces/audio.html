@@ -1,0 +1,15 @@
+<html>
+  <button>Play song</button>
+  <script>
+    const context = new AudioContext();
+    const processor = context.createScriptProcessor(4096, 0, 1);
+    processor.onaudioprocess = function(e) {
+      const audio = e.outputBuffer.getChannelData(0);
+      for (var i = 0; i < audio.length; i++)
+        audio[i] = ((Math.random() * 2) - 1) * 0.2;
+    }
+    document.querySelector('button').onclick = function() {
+      processor.connect(context.destination);
+    }
+  </script>
+</html>
