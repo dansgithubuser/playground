@@ -58,9 +58,11 @@ def _clipboard_paste(**kwargs):
     )
 
 opener = None
-if   not subprocess.call('which xdg-open>/dev/null', shell=True): opener = 'xdg-open'
-elif not subprocess.call('which open    >/dev/null', shell=True): opener = 'open'
-if not opener and platform.system() == 'Windows': opener = 'explorer'
+if platform.system() == 'Windows':
+    opener = 'explorer'
+else:
+    if   not subprocess.call('which xdg-open>/dev/null', shell=True): opener = 'xdg-open'
+    elif not subprocess.call('which open    >/dev/null', shell=True): opener = 'open'
 
 _dan_bash = '''
 force_color_prompt=yes
@@ -467,29 +469,39 @@ _setup = _Section()
 
 def install_self():
     'hook into bash init script'
-    #find bash init script
-    bash_init = None
-    if os.path.exists(_home_path('.bash_profile')): bash_init = _home_path('.bash_profile')
-    elif os.path.exists(_home_path('.bashrc')): bash_init = _home_path('.bashrc')
-    if not bash_init:
-        print("couldn't find a bash init script!")
-        sys.exit(1)
-    #append if not already done
-    header = "#=====appended by dan from dansgithubuser's playground=====#"
-    already_done = False
-    with open(bash_init, 'r') as file:
-        for line in file.readlines():
-            if header in line:
-                already_done = True
-                break
-    if not already_done:
-        print('I will append to {} and make it use my bash command -- if that is OK, enter y'.format(bash_init))
-        if _input() != 'y': sys.exit(1)
-        with open(bash_init, 'a') as file:
-            file.write("\n\n{}\n".format(header))
-            file.write('python3 {} bash\n'.format(this))
-            file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
-            file.write('#=====end dan=====#\n')
+    if platform.system() != 'Windows':
+        #find bash init script
+        bash_init = None
+        if os.path.exists(_home_path('.bash_profile')): bash_init = _home_path('.bash_profile')
+        elif os.path.exists(_home_path('.bashrc')): bash_init = _home_path('.bashrc')
+        if not bash_init:
+            print("couldn't find a bash init script!")
+            sys.exit(1)
+        #append if not already done
+        header = "#=====appended by dan from dansgithubuser's playground=====#"
+        already_done = False
+        with open(bash_init, 'r') as file:
+            for line in file.readlines():
+                if header in line:
+                    already_done = True
+                    break
+        if not already_done:
+            print('I will append to {} and make it use my bash command -- if that is OK, enter y'.format(bash_init))
+            if _input() != 'y': sys.exit(1)
+            with open(bash_init, 'a') as file:
+                file.write("\n\n{}\n".format(header))
+                file.write('python3 {} bash\n'.format(this))
+                file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
+                file.write('#=====end dan=====#\n')
+    else:
+        _invoke('reg add "HKCU\Software\Microsoft\Command Processor"'
+            ' /v AutoRun ^'
+            ' /t REG_EXPAND_SZ'
+            f''' /d "{_scripts_path('init.bat')}"'''
+            ' /f'
+        )
+        with open(_scripts_path('init.bat')) as file: file.write(r'@PATH=%PATH%;C:\users\viler\desktop\scripts')
+        with open(_scripts_path('dan.bat')) as file: file.write(f'python {this} %*')
     #other stuff
     vi()
     git()
@@ -558,17 +570,28 @@ autocmd BufEnter * :syntax sync fromstart
 
 def vi():
     'setup vi stuff'
-    p = _home_path('.vimrc')
-    print('I will create a .vimrc file, it requires package vim-gui-common.')
+    if platform.system() != 'Windows':
+        p = _home_path('.vimrc')
+    else:
+        p = r'C:\Program Files\Git\etc\vimrc'
+    print('I will create a vimrc file, it requires package vim-gui-common.')
     if os.path.exists(p): print('I will overwrite the existing one.')
     print('If that is OK, enter y.')
     if _input() != 'y': sys.exit(1)
     with open(p, 'w') as file: file.write(_vimrc)
+    if platform.system() == 'Windows':
+        with open(_scripts_path('vi.bat'), 'w') as file:
+                file.write(r'"C:\Program Files\Git\usr\bin\vim" %j')
 
 def git():
     'update git aliases, download git-completion.bash, set conflict style to diff3'
-    _invoke('sh '+_this_path('git-aliases.txt'))
-    _invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
+    with open(_this_path('git-aliases.txt')) as file:
+        for line in file.readlines():
+            if platform.system() == 'Windows':
+                if 'alias.sf' in line: continue
+            _invoke(line)
+    if platform.system() != 'Windows':
+        _invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
     _invoke('git config --global merge.conflictstyle diff3')
 
 def disable_capslock():
