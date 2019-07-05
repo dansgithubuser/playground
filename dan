@@ -570,10 +570,7 @@ autocmd BufEnter * :syntax sync fromstart
 
 def vi():
     'setup vi stuff'
-    if platform.system() != 'Windows':
-        p = _home_path('.vimrc')
-    else:
-        p = r'C:\Program Files\Git\etc\vimrc'
+    p = _home_path('.vimrc')
     print('I will create a vimrc file, it requires package vim-gui-common.')
     if os.path.exists(p): print('I will overwrite the existing one.')
     print('If that is OK, enter y.')
