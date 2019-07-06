@@ -16,19 +16,19 @@ parser.add_argument('database')
 parser.add_argument('--dbms', choices=['postgres', 'mysql'], default='postgres')
 parser.add_argument('--user', '-u')
 parser.add_argument('--password', '-p')
+parser.add_argument('--host', default='localhost:5432')
 args=parser.parse_args()
 
 #=====infrastructure=====#
-engine=sqlalchemy.create_engine(
-    {
-        'postgres': 'postgres:///{database}',
-        'mysql': 'mysql://{user}{password}@localhost:5432/{database}',
-    }[args.dbms].format(
-        database=args.database,
-        user=args.user or subprocess.check_output('whoami').decode().strip(),
-        password=':'+args.password if args.password else '',
-    )
+connection_string = '{dbms}://{user}{password}@{host}/{database}'.format(
+    dbms=args.dbms,
+    database=args.database,
+    host=args.host,
+    user=args.user or subprocess.check_output('whoami').decode().strip(),
+    password=':'+args.password if args.password else '',
 )
+print(connection_string)
+engine = sqlalchemy.create_engine(connection_string)
 table_names = engine.table_names()
 connection = engine.connect()
 
