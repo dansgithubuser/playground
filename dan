@@ -494,6 +494,10 @@ def install_self():
                 file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
                 file.write('#=====end dan=====#\n')
     else:
+        for root, dirs, files in os.walk(_this_path('windows-portable')):
+            for file in files:
+                path = os.path.join(root, file)
+                shutil.copy(path, path[:-len('.disguise')])
         with open(_scripts_path('init.bat'), 'w') as file: file.write(rf'@PATH=%PATH%;{_scripts_path()};{_this_path("windows-portable")}')
         with open(_scripts_path('dan.bat'), 'w') as file: file.write(f'python {this} %*')
         _invoke('reg add "HKCU\Software\Microsoft\Command Processor"'
