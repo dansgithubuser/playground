@@ -50,6 +50,17 @@ def _platform_invoke(linux=None, darwin=None, windows=None, **kwargs):
     elif platform.system() == 'Darwin' : return _invoke(darwin , **kwargs)
     elif platform.system() == 'Windows': return _invoke(windows, **kwargs)
 
+def _check():
+    if args.force: return
+    import traceback
+    traceback.print_stack()
+    print('confirm action (y/n)')
+    if input().lower() != 'y':
+        print('aborting')
+        sys.exit(0)
+    else:
+        print('confirmed')
+
 def _clipboard_paste(**kwargs):
     return _platform_invoke(
         linux='xclip -selection clipboard -o',
@@ -125,10 +136,12 @@ def sleep(type=None):
 
 def reboot():
     'reboot computer'
+    _check()
     _invoke('reboot')
 
 def off():
     'turn computer off'
+    _check()
     _platform_invoke('sudo poweroff', 'sudo halt')
 
 def vu():
@@ -699,9 +712,9 @@ _conservative_rsyslog = '''/var/log/syslog
 '''
 
 def conservative_logrotate():
+    _check()
     with open('/etc/logrotate.conf') as file: file.write(_conservative_logrotate_conf)
     with open('/etc/logrotate.d/rsyslog') as file: file.write(_conservative_rsyslog)
-
 
 def rm_crash_dumps():
     'remove files that cause ubuntu to ask you if you want to report a detected problem'
@@ -713,6 +726,7 @@ Useful for connecting to wrt54gl running openwrt
 in failsafe mode (hold reset, power on, wait ~10s until dmz lights up, let go, see power and dmz lights flash, connect with `telnet 192.168.1.1`) 
 or if its DHCP is disabled and its IP is x.x.1.x. 
 If the IP is something else, make sure the 3rd numbers match in the command below.'''
+    _check()
     _invoke('sudo ifconfig enp1s0 192.168.1.3 netmask 255.255.255.0')
 
 _help = _Section()
@@ -754,6 +768,7 @@ parser.add_argument('--dry', action='store_true', help='only print invocations')
 parser.add_argument('-l', action='store_true',
     help='take a Python iterable from stdin and run command on each item')
 parser.add_argument('--quiet', '-q', action='store_true')
+parser.add_argument('--force', '-f', action='store_true', help='bypass checks for system-altering commands')
 parser.add_argument('command')
 parser.add_argument('args', nargs='*', help='use {} to sub stdin')
 if len(sys.argv) == 1: h()
