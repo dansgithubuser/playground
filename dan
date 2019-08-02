@@ -529,10 +529,8 @@ def bash():
     except: pass
     shutil.copy(this, _scripts_path(''))
     with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
-    try:
+    if platform.system() == 'Linux':
         disable_capslock()
-    except:
-        pass
 
 _vimrc = '''\
 set autoindent
