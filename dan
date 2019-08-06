@@ -78,7 +78,7 @@ else:
 _dan_bash = '''
 force_color_prompt=yes
 PATH=$PATH:~/Desktop/scripts
-PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\t \\w$ '
+PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\D{{%Y-%m-%d}} \\t \\w$ '
 
 alias o="{} ."
 alias ds="dan dan \\"wait 3600\\" \\"sleep\\""
