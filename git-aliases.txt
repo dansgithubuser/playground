@@ -36,7 +36,7 @@ git config --global alias.fpa "fetch --prune --all"
 
 echo log
 git config --global alias.l "log --graph --oneline"
-git config --global alias.ld "log --graph --pretty=\"%h %ad %s\""
+git config --global alias.ld "log --graph --pretty=\"%h a:%ai c:%ci %s\""
 git config --global alias.lau "log --graph --pretty=\"%h %cn %s\""
 git config --global alias.la "log --graph --oneline --decorate --all"
 
