@@ -33,3 +33,11 @@ $func$ LANGUAGE plpgsql;
 --check existance of a field in another table
 SELECT <selection> FROM <table_a> WHERE EXISTS (SELECT * FROM <table_b> as b WHERE b.id=id);
 SELECT COUNT(*) FROM table_a WHERE EXISTS (SELECT * FROM table_b as b WHERE b.id=id);
+
+===== mysql vs psql =====
+semantics        | mysql              | psql
+------------------------------------------------------
+list databases   | show databases;    | \l
+list tables      | show tables;       | \d
+list columns     | describe <table>;  | \d <table>
+extended display | <query>\G          | \x
