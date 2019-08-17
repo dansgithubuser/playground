@@ -15,6 +15,7 @@ import shutil
 import string
 import subprocess
 import sys
+import tempfile
 import time
 import webbrowser
 
@@ -46,9 +47,13 @@ def _invoke(invocation, stdin=None, stdout=None):
         subprocess.check_call(invocation, shell=True, stdin=stdin)
 
 def _platform_invoke(linux=None, darwin=None, windows=None, **kwargs):
-    if   platform.system() == 'Linux'  : return _invoke(linux  , **kwargs)
-    elif platform.system() == 'Darwin' : return _invoke(darwin , **kwargs)
-    elif platform.system() == 'Windows': return _invoke(windows, **kwargs)
+    invocation = {
+        'Linux': linux,
+        'Darwin': darwin,
+        'Windows': windows,
+    }[platform.system()]
+    if invocation == None: raise Exception('unimplemented')
+    return _invoke(invocation, **kwargs)
 
 def _check():
     if args.force: return
@@ -203,11 +208,13 @@ def timestamp(ambiguous=True, when=None):
     return format.format(when).lower()
 
 def _put_in_clipboard(contents):
-    path = _this_path('.dan.tmp')
-    with open(path, 'w') as file: file.write(contents)
-    with open(path) as file: _platform_invoke(
+    stdin = tempfile.TemporaryFile(mode='w')
+    stdin.write(contents)
+    stdin.seek(0)
+    _platform_invoke(
+        linux='xclip -selection clipboard',
         darwin='pbcopy',
-        stdin=file,
+        stdin=stdin,
     )
 
 def c(*args):
@@ -222,7 +229,7 @@ _snippet_prefix = 'dan-snippet-'
 
 def snipw(name):
     'take clipboard contents and save it as a snippet'
-    with open(_scripts_path(_snippet_prefix+name), 'w') as file:
+    with open(_scripts_path(_snippet_prefix+name), 'wb') as file:
         file.write(subprocess.check_output('dan v', shell=True))
 
 def snipr(name):
