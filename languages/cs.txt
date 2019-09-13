@@ -1,0 +1,2 @@
+// write to visual studio console
+System.Diagnostics.Debug.WriteLine("your message here");
