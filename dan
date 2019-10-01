@@ -87,7 +87,8 @@ PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\D{{%Y-%m-%d}} \\t
 
 alias o="{} ."
 alias ds="dan dan \\"wait 3600\\" \\"sleep\\""
-alias dss="dan sleep deep"
+alias dss="dan sleep"
+alias dsd="dan sleep deep"
 alias p3=python3
 alias bb="dan b 500"
 alias b="dan b 40"
