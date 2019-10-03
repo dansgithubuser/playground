@@ -99,6 +99,7 @@ alias ruste="source $HOME/.cargo/env"
 alias vi="dan rename_tab_and_open vi"
 alias tp="dan rename_tab_pwd"
 alias pg="cd ~/Desktop/repos/playground"
+alias dpv="source venv/bin/activate"
 
 function rbe {{
     eval "$(rbenv init -)"
