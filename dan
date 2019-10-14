@@ -489,9 +489,9 @@ def base64():
     import base64
     print(base64.b64decode(x))
 
-def password():
+def password(special_chars='!@#$%&*'):
     print(''.join(
-        random.choice(string.ascii_letters + string.digits + '!@#$%&*')
+        random.choice(string.ascii_letters + string.digits + special_chars)
         for i in range(32)
     ))
 
@@ -775,7 +775,7 @@ def h(command=None):
             print(('{:>'+str(max_len_command)+'}  {}').format(command, short_help))
     else:
         print(inspect.getdoc(eval(command)))
-        print(inspect.getargspec(eval(command)))
+        print(inspect.getfullargspec(eval(command)))
 
 #=====main=====#
 parser = argparse.ArgumentParser(description='`dan h` to list commands, `dan h command` for help with specific command')
