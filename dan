@@ -9,8 +9,8 @@ import inspect
 import os
 import platform
 import pprint
-import random
 import re
+import secrets
 import shutil
 import string
 import subprocess
@@ -491,7 +491,7 @@ def base64():
 
 def password(special_chars='!@#$%&*'):
     print(''.join(
-        random.choice(string.ascii_letters + string.digits + special_chars)
+        secrets.choice(string.ascii_letters + string.digits + special_chars)
         for i in range(32)
     ))
 
