@@ -553,6 +553,7 @@ _vimrc = '''\
 set autoindent
 set number
 set tabstop=2
+set shiftwidth=2
 set list
 set nocompatible
 syntax on
@@ -560,12 +561,6 @@ set pastetoggle=<F2>
 set ignorecase
 set backspace=indent,eol,start
 set noswapfile
-
-"substitution with non-insane syntax
-function DanFunctionSubstitute(pattern, replacement)
-    execute '.,$s/'.a:pattern.'/'.a:replacement.'/gc'
-endfunction
-command -nargs=* Substitute call DanFunctionSubstitute(<f-args>)
 
 colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
@@ -587,9 +582,11 @@ function TabsOrSpaces()
         if num2Spaces > 0
             setlocal tabstop=2
             setlocal softtabstop=2
+            setlocal shiftwidth=2
         else
             setlocal tabstop=4
             setlocal softtabstop=4
+            setlocal shiftwidth=4
         endif
     endif
 endfunction
