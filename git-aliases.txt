@@ -12,6 +12,9 @@ echo checkout
 git config --global alias.co "checkout"
 git config --global alias.cb "checkout -b"
 
+echo clone
+git config --global alias.cl "clone --recurse-submodules"
+
 echo commit
 git config --global alias.ca "commit --amend"
 git config --global alias.caa "commit -a --amend"
