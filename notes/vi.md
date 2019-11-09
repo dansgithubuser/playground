@@ -27,6 +27,7 @@ y -- yank
 "+y -- yank to clipboard (" means register, + is clipboard register)
 p -- put
 <, > -- unindent, indent
+. -- repeat last edit
 
 :echo has('visualextra')
 ctrl-v -- block selection
