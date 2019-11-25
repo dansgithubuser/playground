@@ -561,6 +561,7 @@ set pastetoggle=<F2>
 set ignorecase
 set backspace=indent,eol,start
 set noswapfile
+set relativenumber
 
 colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
