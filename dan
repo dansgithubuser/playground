@@ -565,6 +565,7 @@ set noswapfile
 set relativenumber
 nnoremap / /\\v
 vnoremap / /\\v
+set gdefault
 
 colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
