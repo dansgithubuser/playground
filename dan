@@ -559,6 +559,7 @@ set nocompatible
 syntax on
 set pastetoggle=<F2>
 set ignorecase
+set smartcase
 set backspace=indent,eol,start
 set noswapfile
 set relativenumber
