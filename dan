@@ -562,6 +562,8 @@ set ignorecase
 set backspace=indent,eol,start
 set noswapfile
 set relativenumber
+nnoremap / /\\v
+vnoremap / /\\v
 
 colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
@@ -574,7 +576,7 @@ function TabsOrSpaces()
         return
     endif
 
-    let numTabs=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^\t"'))
+    let numTabs=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^\\t"'))
     let num2Spaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^  [^ ]"'))
     let num4Spaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^    [^ ]"'))
 
