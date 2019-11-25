@@ -600,6 +600,7 @@ endfunction
 autocmd BufReadPost * call TabsOrSpaces()
 
 autocmd BufEnter * :syntax sync fromstart
+autocmd BufEnter * :let g:semanticUseBackground = 1
 '''
 
 def vi():
