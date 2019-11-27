@@ -93,3 +93,15 @@ zt, zz, zb -- move screen so current line is in top, middle, or bottom of screen
 m<c> -- set bookmark <c>
 `<c> -- go to bookmark <c>
 </pre>
+
+### mapping
+Mapping is most useful in your `.vimrc`, so let's look at an example in that context.
+
+`nnoremap ,s :SemanticHighlightToggle<cr>`
+- Semantically, the `nnoremap` splits into:
+	- `n` normal mode
+	- `nore` no recursion (stop looking for further maps once this one is evaluated)
+	- `map` map
+- comma followed by a letter is a fairly uncluttered namespace
+- the command here is from github.com/jaxbot/semantic-highlight.vim
+- the `<cr>` executes the command (literal carriage return)
