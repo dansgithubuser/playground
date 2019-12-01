@@ -19,6 +19,10 @@ import tempfile
 import time
 import webbrowser
 
+class Emoji:
+    explode = '\U0001f4a5'
+    neutral = '\U0001f610'
+
 try: _input = raw_input
 except: _input = input
 
@@ -494,6 +498,18 @@ def password(special_chars='!@#$%&*'):
         secrets.choice(string.ascii_letters + string.digits + special_chars)
         for i in range(32)
     ))
+
+def eol():
+    for root, dirs, file_names in os.walk(os.getcwd()):
+        for file_name in file_names:
+            path = os.path.join(root, file_name)
+            print(path)
+            with open(path) as file:
+                try:
+                    if '\r\n' in file.read():
+                        print(Emoji.neutral+'DOS line endings detected!')
+                except:
+                    print(Emoji.explode+'Exception while checking')
 
 _setup = _Section()
 
