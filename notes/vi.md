@@ -41,11 +41,13 @@ ctrl-R -- redo
 :s/<b>pattern</b>/<b>replacement</b> -- replace <b>pattern</b> with <b>replacement</b> on current line
 :.,$s/<b>pattern</b>/<b>replacement</b>/gc -- replace all (g) <b>pattern</b> with <b>replacement</b> on
 	lines from current (.) to last ($), ask for confirmation (c)
+n -- next match
+N -- previous match
 
-on regexes:
-	- groups are done with parens, but you need to escape them with \
-		- example: :.,$s/- \(.*\) -- \(.*\)/- \2: \1/gc
-	- + must be escaped with \, unlike *
+on search:
+	- use \v to enable "very magic" mode, which makes regexes feel like regexes in other languages
+	- use /\v&lt;<b>word</b>&gt; to search for whole-words only (word, not swords)
+	- use \C to force case-sensitive
 
 @: -- repeat last command
 q: -- interactive command history
@@ -76,6 +78,12 @@ J -- join lines
 
 V -- visual selection by line
 </pre>
+
+## .vimrc
+Use a .vimrc file to customize your experience. Keep it in version control and make note of which plugins it depends on. Be careful about alienating yourself from vanilla vim. You can see my .vimrc file [here](https://github.com/dansgithubuser/playground/blob/master/dan), search for `_vimrc`.
+
+## plugins
+Vim 8 introduced easy plugin support. Installing a plugin should be no more complicated than cloning it into the correct spot. Plugins are especially useful for custom syntax highlighting.
 
 ## uncommon convenience
 for when the rest is muscle memory

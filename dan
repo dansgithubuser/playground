@@ -582,6 +582,7 @@ set relativenumber
 nnoremap / /\\v
 vnoremap / /\\v
 set gdefault
+set smartcase
 
 colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
