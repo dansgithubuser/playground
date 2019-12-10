@@ -48,6 +48,8 @@ on search:
 	- use \v to enable "very magic" mode, which makes regexes feel like regexes in other languages
 	- use /\v&lt;<b>word</b>&gt; to search for whole-words only (word, not swords)
 	- use \C to force case-sensitive
+on regexes:
+	- + must be escaped with \, unlike *
 
 @: -- repeat last command
 q: -- interactive command history
