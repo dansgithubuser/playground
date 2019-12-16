@@ -19,7 +19,7 @@ import tempfile
 import time
 import webbrowser
 
-class Emoji:
+class _Emoji:
     explode = '\U0001f4a5'
     neutral = '\U0001f610'
 
@@ -507,9 +507,9 @@ def eol():
             with open(path) as file:
                 try:
                     if '\r\n' in file.read():
-                        print(Emoji.neutral+'DOS line endings detected!')
+                        print(_Emoji.neutral+'DOS line endings detected!')
                 except:
-                    print(Emoji.explode+'Exception while checking')
+                    print(_Emoji.explode+'Exception while checking')
 
 _crypto = _Section()
 
