@@ -511,6 +511,20 @@ def eol():
                 except:
                     print(Emoji.explode+'Exception while checking')
 
+_crypto = _Section()
+
+def crypto_import(file_name):
+    _invoke(['gpg', '--import', file_name])
+
+def crypto_list_public_keys(file_name):
+    _invoke(['gpg', '-k'])
+
+def crypto_encrypt(file_name):
+    _invoke(['gpg', '-e', file_name])
+
+def crypto_decrypt(file_name):
+    _invoke(['gpg', file_name])
+
 _setup = _Section()
 
 def install_self():
