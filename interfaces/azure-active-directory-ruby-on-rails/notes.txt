@@ -1,0 +1,34 @@
+goals:
+	sign in to ror app with azure
+		ror auth gem: devise
+	enumerate users in an Azure Active Directory
+
+auth protocols that azure supports?
+	SAML - some empirical evidence this is the correct choice
+	oauth2 - deals with authorization, but we only want authentication
+	LDAP (lightweight directory access protocol) - only for directories?
+
+links
+	search: azure active directory ruby on rails
+		https://stackoverflow.com/questions/22643250/ruby-on-rails-4-how-to-authenticate-to-azure-ad-from-rails-application
+		https://github.com/AzureAD/azure-activedirectory-library-for-ruby
+		https://stackoverflow.com/questions/13492183/rails-authentication-with-active-directory
+	search: azure active directory saml
+		https://docs.microsoft.com/en-us/azure/active-directory/develop/single-sign-on-saml-protocol
+	search: azure saml sso vs oauth
+		https://www.ubisecure.com/uncategorized/difference-between-saml-and-oauth/
+	search: azure active directory list users api
+		https://stackoverflow.com/questions/53881002/list-all-groups-of-a-user-in-azure-active-directory-using-the-azure-api-call
+	gem for aad oauth2 sso
+		https://github.com/AzureAD/omniauth-azure-activedirectory
+	gem for aad including saml auth
+		https://github.com/AzureAD/azure-activedirectory-library-for-ruby
+		https://github.com/AzureAD/azure-activedirectory-library-for-ruby/search?q=saml&unscoped_q=saml
+		https://github.com/AzureAD/azure-activedirectory-library-for-ruby/blob/5d2f2530298a2545ca8caf688eabcd1143ffa304/lib/adal/wstrust_request.rb#L34
+	azure adfs
+		https://docs.microsoft.com/en-us/windows-server/identity/ad-fs/deployment/how-to-connect-fed-azure-adfs
+	azure active directory setup
+		https://docs.microsoft.com/en-us/azure/devops/organizations/security/setup-ad-aad?view=azure-devops
+			https://docs.microsoft.com/en-gb/azure/active-directory/fundamentals/active-directory-whatis
+	pdf on identity in msft cloud
+		https://www.microsoft.com/en-us/download/confirmation.aspx?id=54431&6B49FDFB-8E5B-4B07-BC31-15695C5A2143=1
