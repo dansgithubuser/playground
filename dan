@@ -446,6 +446,7 @@ def cpp():
     obvious_path = os.path.expanduser('~/Desktop/repos/obvious/cpp/obvious.hpp')
     with open(_scripts_path('tmp.cpp'), 'w') as f:
         f.write('#include <iostream>\n')
+        f.write('#include <fstream>\n')
         f.write('#include <sstream>\n')
         f.write('#include <vector>\n')
         f.write('#include <map>\n')
