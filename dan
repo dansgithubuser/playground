@@ -603,10 +603,12 @@ colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
 match Whitespace /\s/
 
-function TabsOrSpaces()
+function AfterBufRead()
     " Determines whether to use spaces or tabs on the current buffer.
     if getfsize(bufname("%")) > 256000
         " File is very large, just use the default.
+        " Turn off syntax highlighting too!
+        setlocal syntax=off
         return
     endif
 
@@ -629,11 +631,13 @@ function TabsOrSpaces()
 endfunction
 
 " Call the function after opening a buffer
-autocmd BufReadPost * call TabsOrSpaces()
+autocmd BufReadPost * call AfterBufRead()
 
+" semantic highlighting -- setup
 autocmd BufEnter * :syntax sync fromstart
 autocmd BufEnter * :let g:semanticUseBackground = 1
 
+" semantic highlighting -- press comma s to toggle
 nnoremap ,s :SemanticHighlightToggle<cr>
 '''
 
