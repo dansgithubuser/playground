@@ -330,14 +330,14 @@ def bookmark(name):
     with open(_scripts_path('dan-bookmarks.txt'), 'a') as file:
         file.write('{} {}\n'.format(name, os.getcwd()))
 
-def g(name):
+def g(name=None):
     'go to bookmark'
     possibilities = {}
     all = {}
     with open(_scripts_path('dan-bookmarks.txt')) as file:
         for line in file.readlines():
             i, j = line.split()
-            if i.startswith(name): possibilities[i] = j
+            if name and i.startswith(name): possibilities[i] = j
             all[i] = j
     if len(possibilities) == 0: pprint.pprint(all); return
     print(min(possibilities.items(), key=lambda i: len(i[0]))[1])
