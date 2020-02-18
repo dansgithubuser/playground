@@ -102,6 +102,7 @@ alias sd="sudo docker"
 alias ruste="source $HOME/.cargo/env"
 alias vi="dan rename_tab_and_open vi"
 alias tp="dan rename_tab_pwd"
+alias repos="cd ~/Desktop/repos"
 alias pg="cd ~/Desktop/repos/playground"
 
 function dpv {{
