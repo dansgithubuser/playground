@@ -85,26 +85,28 @@ else:
     elif not subprocess.call('which open    >/dev/null', shell=True): opener = 'open'
 
 _dan_bash = '''
+#===== config =====#
 force_color_prompt=yes
 PATH=$PATH:~/Desktop/scripts
 PS1='\\e[0;37;44m               $?               \\e[m \n\\h \\D{{%Y-%m-%d}} \\t \\w$ '
 
-alias o="{} ."
+#===== aliases =====#
+#----- folders -----#
+alias pg="cd ~/Desktop/repos/playground"
+alias repos="cd ~/Desktop/repos"
+
+#----- sleep -----#
 alias ds="dan dan \\"wait 3600\\" \\"sleep\\""
-alias dss="dan sleep"
 alias dsd="dan sleep deep"
-alias p3=python3
-alias bb="dan b 500"
+alias dss="dan sleep"
+
+#----- brightness -----#
 alias b="dan b 40"
+alias bb="dan b 500"
 alias bn="dan b 4"
 alias bnn="dan b -4"
-alias sd="sudo docker"
-alias ruste="source $HOME/.cargo/env"
-alias vi="dan rename_tab_and_open vi"
-alias tp="dan rename_tab_pwd"
-alias repos="cd ~/Desktop/repos"
-alias pg="cd ~/Desktop/repos/playground"
 
+#----- envs -----#
 function dpv {{
     env | grep VIRTUAL_ENV > /dev/null
     if [ $? -eq 0 ]; then
@@ -113,6 +115,8 @@ function dpv {{
         source venv/bin/activate;
     fi
 }}
+
+alias ruste="source $HOME/.cargo/env"
 
 function rbe {{
     eval "$(rbenv init -)"
@@ -124,10 +128,30 @@ function pye {{
     eval "$(pyenv virtualenv-init -)"
 }}
 
+#----- sourcing -----#
+function dg {{
+    if [ -n "$1" ]; then
+        cd `dan bookmark_get $1`
+    else
+        dan bookmark_get
+    fi
+}}
+
+#----- shortcuts -----#
+alias o="{opener} ."
+alias p3=python3
+alias sd="sudo docker"
+alias tp="dan rename_tab_pwd"
+
+#----- overrides -----#
+alias vi="dan rename_tab_and_open vi"
+
+#===== external scripts =====#
 if [ -f ~/git-completion.bash ]; then source ~/git-completion.bash; fi
 
+#===== breadcrumb =====#
 echo "dan bash ran"
-'''.format(opener)
+'''.format(opener=opener)
 
 if os.path.exists(_scripts_path('dan-aliases.txt')):
     with open(_scripts_path('dan-aliases.txt')) as file:
@@ -325,13 +349,15 @@ def last(index=1):
     'print last item in stdin'
     print(sorted([i.strip() for i in stdin.split()])[-int(index)])
 
-def bookmark(name):
-    'bookmark current directory'
+def bookmark_set(name):
+    'bookmark current directory under specified name'
     with open(_scripts_path('dan-bookmarks.txt'), 'a') as file:
         file.write('{} {}\n'.format(name, os.getcwd()))
 
-def g(name=None):
-    'go to bookmark'
+def bookmark_get(name=None):
+    '''\
+print bookmark corresponding to specified name
+leave args empty to see list of bookmarks'''
     possibilities = {}
     all = {}
     with open(_scripts_path('dan-bookmarks.txt')) as file:
