@@ -611,9 +611,8 @@ def bash():
 _vimrc = '''\
 set autoindent
 set number
-set tabstop=2
-set shiftwidth=2
 set list
+set listchars=tab:>-
 set nocompatible
 syntax on
 set pastetoggle=<F2>
@@ -627,11 +626,21 @@ vnoremap / /\\v
 set gdefault
 set smartcase
 
+" color scheme
 colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
 match Whitespace /\s/
 
-function AfterBufRead()
+" helpers
+function SpacesForIndent(n)
+    setlocal expandtab
+    let &tabstop=a:n
+    let &softtabstop=a:n
+    let &shiftwidth=a:n
+endfunction
+
+" infer particular settings from contents of file
+function SettingsForContent()
     " Determines whether to use spaces or tabs on the current buffer.
     if getfsize(bufname("%")) > 256000
         " File is very large, just use the default.
@@ -645,28 +654,33 @@ function AfterBufRead()
     let num4Spaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^    [^ ]"'))
 
     if max([num2Spaces, num4Spaces]) > numTabs
-        setlocal expandtab
         if num2Spaces > 0
-            setlocal tabstop=2
-            setlocal softtabstop=2
-            setlocal shiftwidth=2
+            call SpacesForIndent(2)
         else
-            setlocal tabstop=4
-            setlocal softtabstop=4
-            setlocal shiftwidth=4
+            call SpacesForIndent(4)
         endif
+    else
+        setlocal noexpandtab
     endif
 endfunction
+autocmd BufReadPost * call SettingsForContent()
 
-" Call the function after opening a buffer
-autocmd BufReadPost * call AfterBufRead()
-
-" semantic highlighting -- setup
+" semantic highlighting
 autocmd BufEnter * :syntax sync fromstart
 autocmd BufEnter * :let g:semanticUseBackground = 1
-
-" semantic highlighting -- press comma s to toggle
+" press comma s to toggle semantic highlighting
 nnoremap ,s :SemanticHighlightToggle<cr>
+
+" settings for file types
+let ext=expand('%:e')
+if index(["py", "md"], ext)!=-1
+    call SpacesForIndent(4)
+elseif index(["html", "css", "js"], ext)!=-1
+    call SpacesForIndent(2)
+elseif index(["c", "h", "cpp", "hpp"], ext)!=-1
+    setlocal tabstop=2
+    setlocal shiftwidth=2
+endif
 '''
 
 def vi():
