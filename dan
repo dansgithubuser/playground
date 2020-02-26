@@ -673,7 +673,7 @@ nnoremap ,s :SemanticHighlightToggle<cr>
 
 " settings for file types
 let ext=expand('%:e')
-if index(["py", "md"], ext)!=-1
+if index(["py", "md", "rs"], ext)!=-1
     call SpacesForIndent(4)
 elseif index(["html", "css", "js"], ext)!=-1
     call SpacesForIndent(2)
