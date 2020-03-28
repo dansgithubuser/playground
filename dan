@@ -543,16 +543,16 @@ def eol():
 _crypto = _Section()
 
 def crypto_import(file_name):
-    _invoke(['gpg', '--import', file_name])
+    subprocess.run(['gpg', '--import', file_name])
 
-def crypto_list_public_keys(file_name):
-    _invoke(['gpg', '-k'])
+def crypto_list_public_keys():
+    subprocess.run(['gpg', '-k'])
 
 def crypto_encrypt(file_name):
-    _invoke(['gpg', '-e', file_name])
+    subprocess.run(['gpg', '-e', file_name])
 
 def crypto_decrypt(file_name):
-    _invoke(['gpg', file_name])
+    subprocess.run(['gpg', file_name])
 
 _setup = _Section()
 
