@@ -659,7 +659,7 @@ function SettingsForContent()
         else
             call SpacesForIndent(4)
         endif
-    else
+    elseif numTabs > 0
         setlocal noexpandtab
     endif
 endfunction
