@@ -37,6 +37,8 @@ class _Section:
     def __init__(self):
         self.line = inspect.stack()[1][2]
 
+class _SubSection(_Section): pass
+
 def _home_path(path=''): return os.path.join(os.path.expanduser('~'), *path.split('/'))
 def _this_path(path=''): return os.path.join(os.path.split(this)[0], *path.split('/'))
 def _scripts_path(path=''): return _home_path('Desktop/scripts/'+path)
@@ -238,13 +240,7 @@ def kill_the_greedy():
         time.sleep(0.1)
 
 _convenience = _Section()
-
-def timestamp(ambiguous=True, when=None):
-    if when == None: when = datetime.datetime.now()
-    format = '{:%Y-%m'
-    if not ambiguous: format += '-%b'
-    format += '-%d %H:%M:%S.%f}'
-    return format.format(when).lower()
+_convenience_text = _SubSection()
 
 def _put_in_clipboard(contents):
     stdin = tempfile.TemporaryFile(mode='w')
@@ -288,10 +284,21 @@ def snipl():
     for name, first_line in snippets:
         print(('{:'+str(space)+'}: {}').format(name, first_line))
 
+_convenience_time = _SubSection()
+
+def timestamp(ambiguous=True, when=None):
+    if when == None: when = datetime.datetime.now()
+    format = '{:%Y-%m'
+    if not ambiguous: format += '-%b'
+    format += '-%d %H:%M:%S.%f}'
+    return format.format(when).lower()
+
 def wait(seconds):
     'wait for specified number of seconds'
     import time
     time.sleep(float(seconds))
+
+_convenience_encoding = _SubSection()
 
 def print_hex(file_name):
     'print specified file in hex'
@@ -301,6 +308,20 @@ def print_hex(file_name):
         if i%4 == 3: print(end=' ')
         if i%16 == 15: print()
     print()
+
+def json():
+    'take json from clipboard and pretty print'
+    j = _clipboard_paste(stdout=True)
+    import json
+    pprint.pprint(json.loads(j))
+
+def base64():
+    'take base64 from clipboard and print'
+    x = _clipboard_paste(stdout=True)
+    import base64
+    print(base64.b64decode(x))
+
+_convenience_navigation = _SubSection()
 
 def find(regex, n=None, flags='i'):
     '''\
@@ -385,6 +406,13 @@ def link(link, linked):
     'create symlink'
     _invoke('ln -s {} {}'.format(linked, link))
 
+def alias(name, command):
+    'create a semipermanent alias'
+    with open(_scripts_path('dan-aliases.txt'), 'a') as file:
+        file.write('alias {}={}\n'.format(name, command))
+
+_convenience_useful_forgettable_tools = _SubSection()
+
 def disk_usage():
     try:
         _invoke('ncdu')
@@ -397,10 +425,7 @@ def monitor(): _invoke('top')
 
 def network_discover(): _invoke('avahi-discover')
 
-def alias(name, command):
-    'create a semipermanent alias'
-    with open(_scripts_path('dan-aliases.txt'), 'a') as file:
-        file.write('alias {}={}\n'.format(name, command))
+_convenience_ssh = _SubSection()
 
 def ssh_save(name):
     shutil.copytree(_home_path('.ssh'), _home_path('.ssh-'+name))
@@ -413,6 +438,8 @@ def ssh_load(name):
     shutil.rmtree(_home_path('.ssh'), True)
     name = _home_path('.ssh-'+name)
     shutil.copytree(name, _home_path('.ssh'))
+
+_convenience_git = _SubSection()
 
 def gcaapf():
     'git add and amend commit, then force push'
@@ -450,6 +477,8 @@ def gfor(commit, invocation):
         commit = m.group(1)
         _invoke('git checkout {}'.format(commit))
         _invoke(invocation)
+
+_convenience_inlining = _SubSection()
 
 def p(expression, should_print='1'):
     'python exec expression'
@@ -492,6 +521,8 @@ def cpp():
     _invoke('g++ -o {} {}'.format(_scripts_path('tmp'), _scripts_path('tmp.cpp')))
     _invoke(_scripts_path('tmp'))
 
+_convenience_misc = _SubSection()
+
 def browser(url):
     webbrowser.open(url)
 
@@ -510,18 +541,6 @@ Print out a command that will immediately update history on mac.
 So you'd use it like `dan hista`.
 history doesn't work right, seemingly because it's a builtin.'''
     print('history -w {}'.format(_home_path('.bash_history')))
-
-def json():
-    'take json from clipboard and pretty print'
-    j = _clipboard_paste(stdout=True)
-    import json
-    pprint.pprint(json.loads(j))
-
-def base64():
-    'take base64 from clipboard and print'
-    x = _clipboard_paste(stdout=True)
-    import base64
-    print(base64.b64decode(x))
 
 def password(special_chars='!@#$%&*'):
     print(''.join(
@@ -847,8 +866,15 @@ def h(command=None):
         commands = _get_commands()
         max_len_command = max([len(i) for i in commands])
         for command in commands:
-            if section < len(sections) and inspect.getsourcelines(eval(command))[1] > eval(sections[section]).line:
-                print('\n' + '='*max_len_command + sections[section][1:] + '='*max_len_command)
+            while section < len(sections) and inspect.getsourcelines(eval(command))[1] > eval(sections[section]).line:
+                title = sections[section][1:]
+                if isinstance(eval(sections[section]), _SubSection):
+                    line_char = '-'
+                    title = ' '.join(title.split('_')[1:])
+                else:
+                    line_char = '='
+                line = line_char * max_len_command
+                print(f'\n{line} {title} {line}')
                 section += 1
             full_help = inspect.getdoc(eval(command))
             if full_help:
