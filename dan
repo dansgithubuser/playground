@@ -560,6 +560,12 @@ def eol():
                 except:
                     print(_Emoji.explode+'Exception while checking')
 
+def lint():
+    'Lint whatever is in the current directory.'
+    if os.path.exists('Cargo.toml'):
+        _invoke('cargo fmt')
+        _invoke('cargo clippy')
+
 _crypto = _Section()
 
 def crypto_import(file_name):
