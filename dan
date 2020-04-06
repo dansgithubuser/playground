@@ -141,7 +141,7 @@ function dg {{
 alias o="{opener} ."
 alias p3=python3
 alias sd="sudo docker"
-alias tp="dan rename_tab_pwd"
+alias tp="dan rename_tab_pwd; export DAN_TAB_NAME_KEEP=1"
 
 #----- overrides -----#
 alias vi="dan rename_tab_and_open vi"
@@ -372,9 +372,10 @@ def rename_tab(name):
     print('\x1b]2;{}\a'.format(name))
 
 def rename_tab_and_open(program, path=''):
-    tab_name = path
-    if len(tab_name) > 12: tab_name = '{}..{}'.format(tab_name[:5], tab_name[-5:])
-    rename_tab(tab_name)
+    if not int(os.environ.get('DAN_TAB_NAME_KEEP', 0)):
+        tab_name = path
+        if len(tab_name) > 12: tab_name = '{}..{}'.format(tab_name[:5], tab_name[-5:])
+        rename_tab(tab_name)
     _invoke('{} {}'.format(program, path))
 
 def rename_tab_pwd():
