@@ -372,7 +372,7 @@ def rename_tab(name):
     print('\x1b]2;{}\a'.format(name))
 
 def rename_tab_and_open(program, path=''):
-    tab_name = os.path.basename(path)
+    tab_name = path
     if len(tab_name) > 12: tab_name = '{}..{}'.format(tab_name[:5], tab_name[-5:])
     rename_tab(tab_name)
     _invoke('{} {}'.format(program, path))
