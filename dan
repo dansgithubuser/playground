@@ -425,6 +425,8 @@ def monitor(): _invoke('top')
 
 def network_discover(): _invoke('avahi-discover')
 
+def user_bin_path(): _invoke('systemd-path user-binaries')
+
 _convenience_ssh = _SubSection()
 
 def ssh_save(name):
