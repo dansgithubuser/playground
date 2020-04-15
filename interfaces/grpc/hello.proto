@@ -5,6 +5,13 @@ service Monkey {
 	rpc Hello (Name) returns (Msg);
 }
 
+service Bird {
+	rpc Listen (None) returns (stream Msg);
+}
+
+message None {
+}
+
 message Name {
 	string first = 1;
 	string last = 2;
