@@ -1,30 +1,28 @@
 use tonic::{transport::Server, Request, Response, Status};
 
-use hello::world_server::{World, WorldServer};
-use hello::{HelloRep, HelloReq};
-
-pub mod hello {
-    tonic::include_proto!("hello");
+pub mod zoo {
+    tonic::include_proto!("zoo");
 }
 
 #[derive(Debug, Default)]
-pub struct WorldConcrete {}
+pub struct Monkey {}
 
 #[tonic::async_trait]
-impl World for WorldConcrete {
-    async fn hello(&self, request: Request<HelloReq>) -> Result<Response<HelloRep>, Status> {
-        println!("WorldConcrete {:?}", request);
-        let request = request.into_inner();
-        Ok(Response::new(HelloRep {
-            message: format!("Hello {}!", request.name),
+impl zoo::monkey_server::Monkey for Monkey {
+    async fn hello(&self, req: Request<zoo::Name>) -> Result<Response<zoo::Msg>, Status> {
+        println!("server {:?}", req);
+        let name = req.into_inner();
+        Ok(Response::new(zoo::Msg {
+            msg: format!("Ooh ooh ah {} ah!", name.first),
         }))
     }
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("server starting");
     Server::builder()
-        .add_service(WorldServer::new(WorldConcrete::default()))
+        .add_service(zoo::monkey_server::MonkeyServer::new(Monkey::default()))
         .serve("[::1]:8000".parse()?)
         .await?;
     Ok(())

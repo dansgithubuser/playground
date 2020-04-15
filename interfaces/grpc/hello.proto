@@ -1,14 +1,15 @@
 syntax = "proto3";
-package hello;
+package Zoo;
 
-service World {
-	rpc Hello (HelloReq) returns (HelloRep);
+service Monkey {
+	rpc Hello (Name) returns (Msg);
 }
 
-message HelloReq {
-	string name = 1;
+message Name {
+	string first = 1;
+	string last = 2;
 }
 
-message HelloRep {
-	string message = 1;
+message Msg {
+	string msg = 1;
 }

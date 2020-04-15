@@ -1,17 +1,18 @@
-use hello::{world_client::WorldClient, HelloReq};
-
-pub mod hello {
-    tonic::include_proto!("hello");
+pub mod zoo {
+    tonic::include_proto!("zoo");
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut client = WorldClient::connect("http://[::1]:8000").await?;
+    println!("client connecting");
+    let mut client = zoo::monkey_client::MonkeyClient::connect("http://[::1]:8000").await?;
+    println!("client requesting");
     println!(
-        "WorldClient {:?}",
+        "client {:?}",
         client
-            .hello(tonic::Request::new(HelloReq {
-                name: "Clarence".into(),
+            .hello(tonic::Request::new(zoo::Name {
+                first: "Clarence".into(),
+                last: "Clearwater".into(),
             }))
             .await?,
     );
