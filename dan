@@ -231,6 +231,25 @@ def i(command):
         file.write('\n')
     _invoke(command)
 
+def kill(name):
+    'kill a process by name'
+    lines = [
+        i
+        for i in _invoke('ps -e', stdout=True).splitlines()
+        if name in i
+    ]
+    if len(lines) > 1:
+        print('multiple matches')
+        for line in lines: print(line)
+    elif not lines:
+        print('no matches')
+    else:
+        line = lines[0]
+        print(line)
+        proc = line.split()[0]
+        print('killing', proc)
+        _invoke(f'kill -9 {proc}')
+
 def kill_the_greedy():
     while True:
         if int(subprocess.check_output(['free']).decode().split()[12]) < 100000:
