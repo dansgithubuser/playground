@@ -939,7 +939,11 @@ def _translate_lazy(lazy, possibilities):
         return x if x else ls
     candidates = reduce(candidates, lambda i: i.startswith(lazy[0]))
     candidates = reduce(candidates, lambda i: i.endswith(lazy[-1]))
-    if len(candidates) == 1: return possibilities[candidates[0]]
+    if len(candidates) == 1:
+        result = possibilities[candidates[0]]
+        if lazy != result.__name__:
+            print(f'{lazy} interpreted as {result.__name__}')
+        return result
     h()
     raise AttributeError("couldn't resolve {}, candidates:\n{}".format(
         lazy, '\n'.join(candidates),
@@ -955,7 +959,8 @@ try:
     def _ex(args, stdin):
         commands = _get_commands()
         f = _translate_lazy(args.command, {i: eval(i) for i in commands})
-        f(*[i.format(stdin) for i in args.args])
+        result = f(*[i.format(stdin) for i in args.args])
+        if result: print(result)
     if args.l:
         outer_stdin = stdin
         del stdin
