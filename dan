@@ -553,6 +553,34 @@ def rust():
     _invoke('rustc -o {} {}'.format(_tmp_path('tmp'), _tmp_path('tmp.rs')))
     _invoke(_tmp_path('tmp'))
 
+def cargo():
+    'like `rust` but allows crate dependencies to be specified as well'
+    os.chdir(_tmp_path())
+    if not os.path.exists('cargo'):
+        _invoke('cargo new cargo')
+    os.chdir('cargo')
+    with open('Cargo.toml') as f:
+        cargo = f.read()
+    deps = []
+    for line in stdin.splitlines():
+        if line.startswith('///cargo-deps'):
+            deps.extend(line.split()[1:])
+    cargo = re.sub(
+        r'\[dependencies\].*',
+        '\n'.join(
+            ['[dependencies]']
+            +
+            [i + ' = "*"' for i in deps]
+        ),
+        cargo,
+        flags=re.DOTALL,
+    )
+    with open('Cargo.toml', 'w') as f:
+        f.write(cargo)
+    with open(os.path.join('src', 'main.rs'), 'w') as f:
+        f.write(stdin)
+    _invoke('cargo run')
+
 _convenience_misc = _SubSection()
 
 def browser(url):
