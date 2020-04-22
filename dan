@@ -42,6 +42,10 @@ class _SubSection(_Section): pass
 def _home_path(path=''): return os.path.join(os.path.expanduser('~'), *path.split('/'))
 def _this_path(path=''): return os.path.join(os.path.split(this)[0], *path.split('/'))
 def _scripts_path(path=''): return _home_path('Desktop/scripts/'+path)
+def _tmp_path(path=''):
+    tmp = _this_path('tmp')
+    os.makedirs(tmp, exist_ok=True)
+    return os.path.join(tmp, path)
 
 def _invoke(invocation, stdin=None, stdout=None):
     if args.dry:
@@ -508,21 +512,21 @@ def p(expression, should_print='1'):
 
 def py(format=None, *args):
     'run python code from stdin; useful in vim `:w !dan py`'
-    with open(_scripts_path('tmp'), 'w') as f:
+    with open(_tmp_path('tmp.py'), 'w') as f:
         f.write(stdin)
-    _invoke('python3 {}'.format(_scripts_path('tmp')))
+    _invoke('python3 {}'.format(_tmp_path('tmp.py')))
 
 def php():
     'run php code from stdin; useful in vim `:w !dan php`'
-    with open(_scripts_path('tmp'), 'w') as f:
+    with open(_tmp_path('tmp.php'), 'w') as f:
         f.write('<?php\n')
         f.write(stdin)
-    _invoke('php -f {}'.format(_scripts_path('tmp')))
+    _invoke('php -f {}'.format(_tmp_path('tmp.php')))
 
 def cpp():
     'run c++ code from stdin; useful in vim `:w !dan cpp`'
     obvious_path = os.path.expanduser('~/Desktop/repos/obvious/cpp/obvious.hpp')
-    with open(_scripts_path('tmp.cpp'), 'w') as f:
+    with open(_tmp_path('tmp.cpp'), 'w') as f:
         f.write('#include <cmath>\n')
         f.write('#include <cstdlib>\n')
         f.write('#include <ctime>\n')
@@ -539,8 +543,15 @@ def cpp():
         if 'main' not in stdin: f.write('int main(){')
         f.write(stdin)
         if 'main' not in stdin: f.write('}')
-    _invoke('g++ -o {} {}'.format(_scripts_path('tmp'), _scripts_path('tmp.cpp')))
-    _invoke(_scripts_path('tmp'))
+    _invoke('g++ -o {} {}'.format(_tmp_path('tmp'), _scripts_path('tmp.cpp')))
+    _invoke(_tmp_path('tmp'))
+
+def rust():
+    'run rust code from stdin; useful in vim `:w !dan rust`'
+    with open(_tmp_path('tmp.rs'), 'w') as f:
+        f.write(stdin)
+    _invoke('rustc -o {} {}'.format(_tmp_path('tmp'), _tmp_path('tmp.rs')))
+    _invoke(_tmp_path('tmp'))
 
 _convenience_misc = _SubSection()
 
