@@ -548,6 +548,9 @@ def cpp():
 
 def rust():
     'run rust code from stdin; useful in vim `:w !dan rust`'
+    global stdin
+    if 'fn main(' not in stdin:
+        stdin = 'fn main() {' + stdin + '}'
     with open(_tmp_path('tmp.rs'), 'w') as f:
         f.write(stdin)
     _invoke('rustc -o {} {}'.format(_tmp_path('tmp'), _tmp_path('tmp.rs')))
