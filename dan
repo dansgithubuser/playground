@@ -133,11 +133,24 @@ function dpv {{
 #----- shortcuts -----#
 alias o="{opener} ."
 alias p3=python3
-alias docker="sudo docker"
+alias dkr="sudo docker"
 alias tp="dan rename_tab_pwd; export DAN_TAB_NAME_KEEP=1"
 
 #----- overrides -----#
 alias vi="dan rename_tab_and_open vi"
+
+#----- docker -----#
+alias dkril="sudo docker image ls"
+alias dkrcl="sudo docker container ls --all"
+function dkrb {{
+    sudo docker build -t $1 .
+}}
+function dkrr {{
+    sudo docker run --name $1 --detach ${{@:2}} $1:latest
+}}
+function dkrsh {{
+    sudo docker exec -it $1 /bin/bash
+}}
 
 #===== external scripts =====#
 if [ -f ~/git-completion.bash ]; then source ~/git-completion.bash; fi
