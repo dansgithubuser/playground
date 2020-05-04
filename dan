@@ -112,28 +112,6 @@ alias bb="dan b 500"
 alias bn="dan b 4"
 alias bnn="dan b -4"
 
-#----- envs -----#
-function dpv {{
-    env | grep VIRTUAL_ENV > /dev/null
-    if [ $? -eq 0 ]; then
-        deactivate;
-    else
-        source venv/bin/activate;
-    fi
-}}
-
-alias ruste="source $HOME/.cargo/env"
-
-function rbe {{
-    eval "$(rbenv init -)"
-}}
-
-function pye {{
-    export PATH="~/.pyenv/bin:$PATH"
-    eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
-}}
-
 #----- sourcing -----#
 function dg {{
     if [ -n "$1" ]; then
@@ -143,10 +121,19 @@ function dg {{
     fi
 }}
 
+function dpv {{
+    env | grep VIRTUAL_ENV > /dev/null
+    if [ $? -eq 0 ]; then
+        deactivate;
+    else
+        source venv/bin/activate;
+    fi
+}}
+
 #----- shortcuts -----#
 alias o="{opener} ."
 alias p3=python3
-alias sd="sudo docker"
+alias docker="sudo docker"
 alias tp="dan rename_tab_pwd; export DAN_TAB_NAME_KEEP=1"
 
 #----- overrides -----#
@@ -656,7 +643,7 @@ def install_self():
             print("couldn't find a bash init script!")
             sys.exit(1)
         #append if not already done
-        header = "#=====appended by dan from dansgithubuser's playground=====#"
+        header = "#===== appended by dan from dansgithubuser's playground =====#"
         already_done = False
         with open(bash_init, 'r') as file:
             for line in file.readlines():
@@ -667,10 +654,23 @@ def install_self():
             print('I will append to {} and make it use my bash command -- if that is OK, enter y'.format(bash_init))
             if _input() != 'y': sys.exit(1)
             with open(bash_init, 'a') as file:
-                file.write("\n\n{}\n".format(header))
-                file.write('python3 {} bash\n'.format(this))
-                file.write('source {}\n'.format(_home_path('Desktop/scripts/dan-bash.sh')))
-                file.write('#=====end dan=====#\n')
+                file.write('\n'.join([
+                    '',
+                    '',
+                    header,
+                    f'python3 {this} bash',
+                    f'source {_home_path("Desktop/scripts/dan-bash.sh")}',
+                    '',
+                    '# pyenv',
+                    'export PYENV_VERSION=3.7.4',
+                    'export PYENV_ROOT="$HOME/.pyenv"',
+                    'export PATH="$PYENV_ROOT/bin:$PATH"',
+                    '#eval "$(pyenv init -)"',
+                    '',
+                    '# rust',
+                    '#source ~/.cargo/env',
+                    '#===== end dan =====#',
+                ]))
     else:
         for root, dirs, files in os.walk(_this_path('windows-portable')):
             for file in files:
