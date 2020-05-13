@@ -1,0 +1,5 @@
+`python --version` to figure out what version you have.
+If you have version 2, try `python3 --version`.
+If you don't have Python 3, you don't have Python.
+If you are on Linux and already have Python, be careful how you install -- prefer using pyenv.
+We'll be using 3.7 because it's _stable_ and _new_.
