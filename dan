@@ -307,6 +307,17 @@ def snipl():
     for name, first_line in snippets:
         print(('{:'+str(space)+'}: {}').format(name, first_line))
 
+def replace(pattern, replacement, file_pattern='.*'):
+    for root, dirs, files in os.walk('.'):
+        for i in files:
+            path = os.path.relpath(os.path.join(root, i))
+            if re.match(file_pattern, path):
+                with open(path) as file: contents = file.read()
+                contents, replacements = re.subn(pattern, replacement, contents)
+                if not replacements: continue
+                with open(path, 'w') as file: file.write(contents)
+                print(f'made {replacements} replacement(s) in {path}')
+
 _convenience_time = _SubSection()
 
 def timestamp(ambiguous=True, when=None):
