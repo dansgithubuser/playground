@@ -115,3 +115,9 @@ Mapping is most useful in your `.vimrc`, so let's look at an example in that con
 - comma followed by a letter is a fairly uncluttered namespace
 - the command here is from github.com/jaxbot/semantic-highlight.vim
 - the `<cr>` executes the command (literal carriage return)
+
+## uncommon needs
+<pre>
+:g/<b>pattern</n>/<b>command</b> -- apply <b>command</b> to all lines that match <b>pattern</b>
+:g!/<b>pattern</n>/<b>command</b> -- apply <b>command</b> to all lines that do not match <b>pattern</b>
+</pre>
