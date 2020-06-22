@@ -118,6 +118,6 @@ Mapping is most useful in your `.vimrc`, so let's look at an example in that con
 
 ## uncommon needs
 <pre>
-:g/<b>pattern</n>/<b>command</b> -- apply <b>command</b> to all lines that match <b>pattern</b>
-:g!/<b>pattern</n>/<b>command</b> -- apply <b>command</b> to all lines that do not match <b>pattern</b>
+:g/<b>pattern</b>/<b>command</b> -- apply <b>command</b> to all lines that match <b>pattern</b>
+:g!/<b>pattern</b>/<b>command</b> -- apply <b>command</b> to all lines that do not match <b>pattern</b>
 </pre>
