@@ -120,5 +120,7 @@ Mapping is most useful in your `.vimrc`, so let's look at an example in that con
 <pre>
 :g/<b>pattern</b>/<b>command</b> -- apply <b>command</b> to all lines that match <b>pattern</b>
 :g!/<b>pattern</b>/<b>command</b> -- apply <b>command</b> to all lines that do not match <b>pattern</b>
-:'<,'>g/./m<b>line_number</b> -- use visual mode to select lines, then : for command mode; move selected lines to <b>line_number</b> effectively reversing them.
+:'<,'>g/./m<b>line_number</b>
+	- move selected lines to <b>line_number</b>, effectively reversing them.
+	- use visual mode to select lines, then : for command mode.
 </pre>
