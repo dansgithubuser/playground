@@ -24,7 +24,7 @@ def timestamp():
 def invoke(*args, popen=False, **kwargs):
     print('-'*40)
     print(timestamp())
-    print(args, kwargs, 'popen' if popen else '')
+    print(os.getcwd(), args, kwargs, 'popen' if popen else '')
     print()
     if popen:
         return subprocess.Popen(args, **kwargs)
