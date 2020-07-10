@@ -135,6 +135,7 @@ alias o="{opener} ."
 alias p3=python3
 alias dkr="sudo docker"
 alias tp="dan rename_tab_pwd; export DAN_TAB_NAME_KEEP=1"
+alias d="python3 do.py"
 
 function tn {{
     dan rename_tab "$1"
