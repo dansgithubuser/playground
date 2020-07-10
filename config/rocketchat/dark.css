@@ -29,6 +29,7 @@
     --tags-background: var(--color-dark);
     --tags-border-color: var(--color-dark-medium);
     --tags-text-color: var(--color-gray-medium);
+    --custom-scrollbar-color: grey !important;
 }
 
 .rc-old .code-colors {
@@ -176,4 +177,8 @@ textarea {
 
 .role-tag {
     color: var(--color-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: grey;
 }
