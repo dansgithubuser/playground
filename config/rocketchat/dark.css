@@ -1,0 +1,180 @@
+:root {
+    /* Custom variables */
+    --selected-row-background: #295392;
+    --link-color: #1788e1;
+    --link-color-hover: #1788e1b8;
+    --mention-link-background: var(--link-color);
+
+    /* Rocket.Chat built-in variables */
+    --button-disabled-background: var(--color-dark);
+    --button-disabled-text-color: var(--color-gray);
+    --button-secondary-background: var(--color-dark-medium);
+    --create-channel-title-color: var(--color-gray-medium);
+    --header-background-color: var(--color-darkest);
+    --header-title-username-color-darker: var(--color-white);
+    --input-border-color: var(--color-dark-medium);
+    --input-icon-color: var(--color-gray-medium);
+    --message-box-editing-color: #1788e11a;
+    --popover-background: var(--color-darkest);
+    --popover-title-color: var(--color-white);
+    --popover-item-color: var(--color-gray-medium);
+    --popover-divider-color: var(--color-dark-medium);
+    --popup-list-background: var(--color-dark);
+    --popup-list-selected-background: var(--color-dark);
+    --popup-list-background-hover: var(--color-darkest);
+    --popup-list-name-color: var(--color-gray-medium);
+    --rc-color-alert-message-primary-background: #1d74f515;
+    --rc-color-alert-message-secondary-background: #7ca52b15;
+    --sidebar-background-light: var(--color-dark);
+    --sidebar-background-light-hover: var(--color-darkest);
+    --tags-background: var(--color-dark);
+    --tags-border-color: var(--color-dark-medium);
+    --tags-text-color: var(--color-gray-medium);
+}
+
+.rc-old .code-colors {
+    color: var(--color-gray-medium);
+    background: var(--color-darkest);
+    border-color: var(--color-dark);
+}
+
+.rc-header__wrap {
+    color: var(--header-title-status-color);
+}
+
+.rc-user-info__name {
+    margin-bottom: 5px;
+}
+
+.rc-user-info__username {
+    margin-bottom: 20px;
+}
+
+.rc-message-box__container {
+    border-color: var(--color-dark-medium);
+}
+
+.rc-message-box__typing-user {
+    color: var(--color-gray-light);
+}
+
+.rc-button:not(.rc-button--primary) {
+    color: var(--color-gray-medium);
+    border-color: var(--color-dark-medium);
+}
+
+.rc-popover__content {
+    box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.3);
+}
+
+.rc-select__arrow {
+    margin: 0 5px;
+}
+
+.rc-form-legend {
+    color: var(--color-gray);
+}
+
+.rc-input__element,
+.rc-member-list__counter,
+.rc-message-box__typing__user,
+.rc-switch__text,
+.rc-switch-double,
+.rc-table-title,
+.rc-user-info-details__info,
+.attachments__name,
+.attachments-menu,
+.color-primary-font-color,
+.sidebar-light .sidebar-item,
+.message a i,
+.flex-tab a i,
+.message a[class^="icon-"],
+.flex-tab a[class^="icon-"],
+input,
+select,
+textarea {
+    color: var(--color-gray-medium);
+}
+
+.rc-form-label,
+.message-actions,
+.message a i:hover,
+.flex-tab a i:hover,
+.message a[class^="icon-"]:hover,
+.flex-tab a[class^="icon-"]:hover {
+    color: var(--color-dark-light);
+}
+
+.rc-old .rc-message-box .reply-preview,
+.rc-member-list__user.active,
+.rc-member-list__user:hover,
+.rc-user-info-details,
+.rc-table tbody tr:not(.table-no-click):not(.table-no-pointer):hover,
+.attachments__item.active,
+.attachments__item:hover,
+.secondary-background-color,
+.emoji-picker .emojis .emoji-list li:hover {
+    background: var(--color-dark);
+}
+
+.rc-modal,
+.rc-modal__footer,
+.rc-old .messages-container-wrapper,
+.rc-old .messages-container .footer,
+.rc-user-info-container,
+.content-background-color {
+    background: var(--color-darkest);
+}
+
+.rc-modal__title {
+    color: var(--color-gray-medium);
+}
+
+.message.new-day::before,
+.flex-tab .message.new-day::before {
+    background-color: var(--color-darkest);
+    color: var(--color-gray-medium);
+}
+
+.rc-user-info__row--separator,
+.rc-old .page-settings .section,
+.border-component-color,
+.message.new-day::after {
+    border-color: var(--color-dark-medium);
+}
+
+.message a {
+    color: var(--link-color);
+}
+
+.message a:hover {
+    color: var(--link-color-hover);
+}
+
+.message .reactions > li,
+.message .reactions > li.selected {
+    border-color: var(--color-dark-medium);
+    background-color: var(--color-dark);
+}
+
+.message.editing {
+    background: var(--message-box-editing-color);
+}
+
+.messages-box.selectable .selected {
+    background: var(--selected-row-background);
+}
+
+.mention-link.mention-link-me,
+.message .mention-link.mention-link-me {
+    background: var(--mention-link-background);
+}
+
+.contextual-bar__header {
+    background: var(--color-darkest);
+    box-shadow: 0 3px 1px 2px rgba(255, 255, 255, 0.1);
+}
+
+.role-tag {
+    color: var(--color-dark);
+}
