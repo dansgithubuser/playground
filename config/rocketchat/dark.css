@@ -14,7 +14,6 @@
     --header-title-username-color-darker: var(--color-white);
     --input-border-color: var(--color-dark-medium);
     --input-icon-color: var(--color-gray-medium);
-    --message-box-editing-color: #1788e11a;
     --popover-background: var(--color-darkest);
     --popover-title-color: var(--color-white);
     --popover-item-color: var(--color-gray-medium);
@@ -157,8 +156,8 @@ textarea {
     background-color: var(--color-dark);
 }
 
-.message.editing {
-    background: var(--message-box-editing-color);
+.editing, .message.editing {
+    background: darkblue !important;
 }
 
 .messages-box.selectable .selected {
