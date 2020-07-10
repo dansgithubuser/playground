@@ -182,3 +182,7 @@ textarea {
 ::-webkit-scrollbar-thumb {
     background-color: grey;
 }
+
+.hljs-keyword {
+    color: #888 !important;
+}
