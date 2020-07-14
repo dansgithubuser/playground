@@ -233,7 +233,7 @@ def bd():
     'brightness down'
     b(b('get')//2)
 
-def i(command):
+def install(command):
     'append a note of this command to Desktop/dan-install.txt'
     with open(_home_path('Desktop/dan-install.txt'), 'a') as file:
         file.write(timestamp(False)+'\n')
@@ -531,6 +531,10 @@ def grecent():
         os.chdir('..')
 
 _convenience_inlining = _SubSection()
+
+def invoke(invocation, *args):
+    'invocation with python-style substitutions'
+    _invoke(invocation.format(*args))
 
 def p(expression, should_print='1'):
     'python exec expression'
@@ -1035,6 +1039,8 @@ if not args.quiet:
     sys.stderr.write('invoked with: {}\n'.format(sys.argv))
 
 def _translate_lazy(lazy, possibilities):
+    if lazy in possibilities:
+        return possibilities[lazy]
     candidates = []
     for i in possibilities:
         if re.search('.*'.join(lazy), i):
@@ -1064,7 +1070,10 @@ try:
     def _ex(args, stdin):
         commands = _get_commands()
         f = _translate_lazy(args.command, {i: eval(i) for i in commands})
-        result = f(*[i.format(stdin) for i in args.args])
+        if stdin:
+            result = f(*[i.format(stdin) for i in args.args])
+        else:
+            result = f(*args.args)
         if result: print(result)
     if args.l:
         outer_stdin = stdin
