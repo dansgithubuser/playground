@@ -21,10 +21,17 @@ os.chdir(DIR)
 def timestamp():
     return '{:%Y-%m-%d %H:%M:%S.%f}'.format(datetime.datetime.now())
 
-def invoke(*args, popen=False, **kwargs):
-    print('-'*40)
+def invoke(*args, popen=False, no_split=False, **kwargs):
+    if len(args) == 1 and not no_split:
+        args = args[0].split()
+    print('\x1b[34m'+'-'*40+'\x1b[0m')
     print(timestamp())
-    print(os.getcwd(), args, kwargs, 'popen' if popen else '')
+    print(
+        os.getcwd()+'$',
+        ' '.join([i.replace(' ', '\\ ') for i in args])+';',
+    )
+    if kwargs: print(kwargs)
+    if popen: print('popen')
     print()
     if popen:
         return subprocess.Popen(args, **kwargs)
