@@ -183,6 +183,6 @@ textarea {
     background-color: grey;
 }
 
-.hljs-keyword {
+.hljs-keyword, .hljs-name {
     color: #888 !important;
 }
