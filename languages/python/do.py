@@ -18,18 +18,27 @@ DIR = os.path.dirname(os.path.realpath(__file__))
 os.chdir(DIR)
 
 #===== helpers =====#
+def blue(text):
+    return '\x1b[34m' + text + '\x1b[0m'
+
 def timestamp():
     return '{:%Y-%m-%d %H:%M:%S.%f}'.format(datetime.datetime.now())
 
 def invoke(*args, popen=False, no_split=False, **kwargs):
     if len(args) == 1 and not no_split:
         args = args[0].split()
-    print('\x1b[34m'+'-'*40+'\x1b[0m')
+    print(blue('-'*40))
     print(timestamp())
-    print(
-        os.getcwd()+'$',
-        ' '.join([i.replace(' ', '\\ ') for i in args])+';',
-    )
+    print(os.getcwd()+'$', end=' ')
+    for i, v in enumerate(args):
+        if re.search(r'\s', v):
+            v = v.replace("'", """ '"'"' """.strip())
+            v = f"'{v}'"
+        if i != len(args)-1:
+            end = ' '
+        else:
+            end = ';\n'
+        print(v, end=end)
     if kwargs: print(kwargs)
     if popen: print('popen')
     print()
