@@ -155,7 +155,7 @@ function dkrr {{
     sudo docker run --name $1 --detach ${{@:2}} $1:latest
 }}
 function dkrsh {{
-    sudo docker exec -it $1 /bin/bash
+    sudo docker exec -it $1 /bin/sh
 }}
 
 #===== external scripts =====#
