@@ -25,29 +25,34 @@ def blue(text):
 def timestamp():
     return '{:%Y-%m-%d %H:%M:%S.%f}'.format(datetime.datetime.now())
 
-def invoke(*args, popen=False, no_split=False, **kwargs):
+def invoke(*args, popen=False, no_split=False, stdout=False, quiet=False, **kwargs):
     if len(args) == 1 and not no_split:
         args = args[0].split()
-    print(blue('-'*40))
-    print(timestamp())
-    print(os.getcwd()+'$', end=' ')
-    for i, v in enumerate(args):
-        if re.search(r'\s', v):
-            v = v.replace("'", """ '"'"' """.strip())
-            v = f"'{v}'"
-        if i != len(args)-1:
-            end = ' '
-        else:
-            end = ';\n'
-        print(v, end=end)
-    if kwargs: print(kwargs)
-    if popen: print('popen')
-    print()
+    if not quiet:
+        print(blue('-'*40))
+        print(timestamp())
+        print(os.getcwd()+'$', end=' ')
+        for i, v in enumerate(args):
+            if re.search(r'\s', v):
+                v = v.replace("'", """ '"'"' """.strip())
+                v = f"'{v}'"
+            if i != len(args)-1:
+                end = ' '
+            else:
+                end = ';\n'
+            print(v, end=end)
+        if kwargs: print(kwargs)
+        if popen: print('popen')
+        print()
     if popen:
         return subprocess.Popen(args, **kwargs)
     else:
         if 'check' not in kwargs: kwargs['check'] = True
-        return subprocess.run(args, **kwargs)
+        if stdout: kwargs['capture_stdout'] = True
+        result = subprocess.run(args, **kwargs)
+        if stdout:
+            result = result.stdout.decode('utf-8').strip()
+        return result
 
 #===== main =====#
 if len(sys.argv) == 1:
