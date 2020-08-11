@@ -529,10 +529,11 @@ def grecent():
     'show recent commits in repos in current directory'
     for i in os.listdir('.'):
         os.chdir(i)
-        log = _invoke('git log --graph --pretty="%h a:%ai c:%ci %s" --since="1 day ago"', stdout=True)
-        if log:
-            print(i)
-            print(log)
+        if os.path.exists('.git'):
+            log = _invoke('git log --graph --pretty="%h a:%ai c:%ci %s" --since="1 day ago"', stdout=True)
+            if log:
+                print(i)
+                print(log)
         os.chdir('..')
 
 _convenience_inlining = _SubSection()
