@@ -143,7 +143,10 @@ function tn {{
 }}
 
 function tt {{
-    dan rename_tab "|| $1 ||"
+    if [ $# -eq 0 ]
+    then dan rename_tab_pwd "||"
+    else dan rename_tab "|| $1 ||"
+    fi
     export DAN_TAB_NAME_KEEP=1
 }}
 
@@ -444,8 +447,11 @@ def rename_tab_and_open(program, path=''):
         rename_tab(tab_name)
     _invoke('{} {}'.format(program, path))
 
-def rename_tab_pwd():
-    rename_tab(os.path.basename(os.path.abspath(os.getcwd())))
+def rename_tab_pwd(sides=None, separator=' '):
+    name = os.path.basename(os.path.abspath(os.getcwd()))
+    if sides:
+        name = sides + separator + name + separator + sides
+    rename_tab(name)
 
 def link(link, linked):
     'create symlink'
