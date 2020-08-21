@@ -123,4 +123,9 @@ Mapping is most useful in your `.vimrc`, so let's look at an example in that con
 :'<,'>g/./m<b>line_number</b>
 	- move selected lines to <b>line_number</b>, effectively reversing them.
 	- use visual mode to select lines, then : for command mode.
+
+:set fdm=indent -- fold the file based on indentation
+zR -- unfold everything
+zc -- fold a block
+zo -- unfold a block
 </pre>
