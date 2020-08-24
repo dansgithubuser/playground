@@ -1,0 +1,4 @@
+- `show collections` shows collections in db
+- `db[collection].find({...constraints}, {...projection}).sort({field: direction}).limit(4).pretty()`
+- `db[collection].count({...constraints})`
+- `db[collection].deleteMany({})`
