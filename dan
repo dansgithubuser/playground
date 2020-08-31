@@ -770,6 +770,8 @@ nnoremap / /\\v
 vnoremap / /\\v
 set gdefault
 set smartcase
+set fdm=indent " set fold method and fold everything
+autocmd BufWinEnter * normal zR " unfold everything
 
 " color scheme
 colorscheme darkblue
