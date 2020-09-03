@@ -2,6 +2,7 @@
 
 #===== imports =====#
 import argparse
+import copy
 import datetime
 import os
 import re
@@ -25,7 +26,14 @@ def blue(text):
 def timestamp():
     return '{:%Y-%m-%d %H:%M:%S.%f}'.format(datetime.datetime.now())
 
-def invoke(*args, popen=False, no_split=False, stdout=False, quiet=False, **kwargs):
+def invoke(
+    *args,
+    popen=False,
+    no_split=False,
+    stdout=False,
+    quiet=False,
+    **kwargs,
+):
     if len(args) == 1 and not no_split:
         args = args[0].split()
     if not quiet:
@@ -44,6 +52,10 @@ def invoke(*args, popen=False, no_split=False, stdout=False, quiet=False, **kwar
         if kwargs: print(kwargs)
         if popen: print('popen')
         print()
+    if kwargs.get('env'):
+        env = copy.copy(os.environ)
+        env.update(kwargs['env'])
+        kwargs['env'] = env
     if popen:
         return subprocess.Popen(args, **kwargs)
     else:
