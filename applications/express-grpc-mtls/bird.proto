@@ -1,0 +1,41 @@
+syntax = "proto3";
+package bird;
+
+service Bird {
+	rpc Sing(Visitor) returns (stream Song);
+	rpc Chirp(Valuable) returns (None);
+	rpc Tweet(Weather) returns (None);
+	rpc Warble(Mood) returns (None);
+	rpc Squawk(Threat) returns (None);
+}
+
+message None {}
+
+message Visitor {
+	string name = 1;
+}
+
+message Song {
+	oneof body {
+		Valuable chirp = 1;
+		Weather tweet = 2;
+		Mood warble = 3;
+		Threat squawk = 4;
+	}
+}
+
+message Valuable {
+	string description = 1;
+}
+
+message Weather {
+	string description = 1;
+}
+
+message Mood {
+	string description = 1;
+}
+
+message Threat {
+	string description = 1;
+}

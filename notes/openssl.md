@@ -12,7 +12,7 @@ openssl req -x509 -new -nodes -key ca.key -sha256 -out ca.pem -subj /C=CA/ST=Ont
 
 # create server.key
 openssl genrsa -out server.key 2048
-# create server.pem from server.key, signed by ca.key
+# create server.pem from server.key, sign with ca.key
 openssl req -new -key server.key -out server.csr -subj /C=CA/ST=Ontario/L=Toronto/CN=www.test.com
 echo 'authorityKeyIdentifier = keyid,issuer
 	basicConstraints = CA:FALSE
@@ -24,7 +24,7 @@ openssl x509 -in server.crt -out server.pem -outform PEM
 
 # create client.key
 openssl genrsa -out client.key 2048
-# create client.pem from client.key, signed by ca.key
+# create client.pem from client.key, sign with ca.key
 openssl req -new -key client.key -out client.csr -subj /C=CA/ST=Ontario/L=Toronto/CN=www.test.com
 echo 'authorityKeyIdentifier=keyid,issuer
 	basicConstraints=CA:FALSE

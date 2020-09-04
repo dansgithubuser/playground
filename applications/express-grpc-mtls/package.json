@@ -1,0 +1,19 @@
+{
+  "name": "express-grpc-mtls",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "@grpc/grpc-js": "^1.1.6",
+    "@grpc/proto-loader": "^0.5.5",
+    "express": "^4.17.1",
+    "lodash": "^4.17.20"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "server": "node server.js",
+    "client": "node client.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
