@@ -52,7 +52,7 @@ def invoke(
         if kwargs: print(kwargs)
         if popen: print('popen')
         print()
-    if kwargs.get('env'):
+    if kwargs.get('env') != None:
         env = copy.copy(os.environ)
         env.update(kwargs['env'])
         kwargs['env'] = env
