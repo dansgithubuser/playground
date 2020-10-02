@@ -60,7 +60,7 @@ def invoke(
         return subprocess.Popen(args, **kwargs)
     else:
         if 'check' not in kwargs: kwargs['check'] = True
-        if stdout: kwargs['capture_stdout'] = True
+        if stdout: kwargs['capture_output'] = True
         result = subprocess.run(args, **kwargs)
         if stdout:
             result = result.stdout.decode('utf-8').strip()
