@@ -369,6 +369,17 @@ def base64():
     import base64
     print(base64.b64decode(x))
 
+def unix_timestamp():
+    'take unix timestamp from clipboard and print human-readable'
+    t = _clipboard_paste(stdout=True)
+    try:
+        t = datetime.datetime.fromtimestamp(int(t))
+    except:
+        t = datetime.datetime.fromtimestamp(int(t) / 1000)
+    print(t.isoformat())
+    t = t.astimezone(datetime.timezone.utc)
+    print(t.isoformat())
+
 _convenience_navigation = _SubSection()
 
 def find(regex, n=None, flags='i'):
