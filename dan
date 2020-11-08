@@ -766,7 +766,7 @@ def bash():
     except: pass
     shutil.copy(this, _scripts_path(''))
     with open(_scripts_path('dan-bash.sh'), 'w') as file: file.write(_dan_bash)
-    if platform.system() == 'Linux':
+    if platform.system() == 'Linux' and int(os.environ.get('DAN_DISABLE_CAPSLOCK', '1')):
         disable_capslock()
 
 _vimrc = '''\
