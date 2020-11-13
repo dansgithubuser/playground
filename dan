@@ -6,6 +6,7 @@ import argparse
 import datetime
 import functools
 import inspect
+import math
 import os
 import platform
 import pprint
@@ -1012,6 +1013,16 @@ def naive_bracket_format(indent_size=2):
         else:
             print(i, end='')
             print_spaces = True
+
+def lat_lon_distance(lat_0, lon_0, *lat_lon_i):
+    lat_to_meters = 2 * math.pi / 360 * 6378000;
+    lat_0 = float(lat_0)
+    lon_0 = float(lon_0)
+    aspect = math.cos(lat_0 / 360 * 2 * math.pi)
+    for i in range(0, len(lat_lon_i), 2):
+        dy = (lat_0 - float(lat_lon_i[i+0])) * lat_to_meters
+        dx = (lon_0 - float(lat_lon_i[i+1])) * lat_to_meters * aspect
+        print(math.sqrt(dy * dy + dx * dx))
 
 _help = _Section()
 
