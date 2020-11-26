@@ -30,7 +30,7 @@ def invoke(
     *args,
     popen=False,
     no_split=False,
-    stdout=False,
+    out=True,
     quiet=False,
     **kwargs,
 ):
@@ -60,9 +60,9 @@ def invoke(
         return subprocess.Popen(args, **kwargs)
     else:
         if 'check' not in kwargs: kwargs['check'] = True
-        if stdout: kwargs['capture_output'] = True
+        if out: kwargs['capture_output'] = True
         result = subprocess.run(args, **kwargs)
-        if stdout:
+        if out:
             result = result.stdout.decode('utf-8').strip()
         return result
 
