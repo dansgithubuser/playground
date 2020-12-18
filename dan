@@ -170,6 +170,9 @@ function dkrsh {{
 #===== external scripts =====#
 if [ -f ~/git-completion.bash ]; then source ~/git-completion.bash; fi
 
+#===== start command =====#
+eval $DAN_START_CMD
+
 #===== breadcrumb =====#
 echo "dan bash ran"
 '''.format(opener=opener)
@@ -645,6 +648,10 @@ def cargo():
     _invoke('cargo run')
 
 _convenience_misc = _SubSection()
+
+def tab(cmd='echo hello'):
+    'create a terminal tab and run supplied command'
+    _invoke(f"DAN_START_CMD='{cmd}' gnome-terminal --tab")
 
 def browser(url):
     webbrowser.open(url)
