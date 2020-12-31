@@ -32,4 +32,12 @@ fn main() {
     for i in obj {
         println!("{}: {}", i.0, i.1);
     }
+
+    // println!("{:?}", json!({ "a": None })); // doesn't compile
+    {
+        let x: Option<String> = None;
+        println!("{:?}", json!({ "a": x }));
+    }
+    println!("{:?}", json!({ "b": Some(3) }));
+    println!("{:?}", json!({ "c": null }));
 }
