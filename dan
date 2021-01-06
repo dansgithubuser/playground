@@ -463,7 +463,7 @@ def rename_tab(name):
 def rename_tab_and_open(program, path=''):
     if not int(os.environ.get('DAN_TAB_NAME_KEEP', 0)):
         tab_name = path
-        if len(tab_name) > 12: tab_name = os.path.basename(tab_name)
+        if len(tab_name) > 24: tab_name = os.path.basename(tab_name)
         rename_tab(tab_name)
     _invoke('{} {}'.format(program, path))
 
