@@ -40,4 +40,10 @@ fn main() {
     }
     println!("{:?}", json!({ "b": Some(3) }));
     println!("{:?}", json!({ "c": null }));
+
+    {
+        let mut j = json!({});
+        j["a"] = json!(1);
+        println!("{:?}", j);
+    }
 }
