@@ -852,6 +852,10 @@ elseif index(["c", "h", "cpp", "hpp"], ext)!=-1
     setlocal tabstop=2
     setlocal shiftwidth=2
 endif
+
+" navigating splits without ctrl-w
+nnoremap ,h :wincmd h<CR>
+nnoremap ,l :wincmd l<CR>
 '''
 
 def vi():

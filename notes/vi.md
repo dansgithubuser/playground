@@ -16,7 +16,7 @@ h, j, k, l -- move by character
 </pre>
 
 ## essential
-cannot be built out of basics
+common and cannot be built out of basics
 
 <pre>
 :<b>n</b> -- move to <b>n</b>th line of file
@@ -128,4 +128,11 @@ Mapping is most useful in your `.vimrc`, so let's look at an example in that con
 zR -- unfold everything
 zc -- fold a block
 zo -- unfold a block
+
+:vsp -- vertical split
+:q -- close split
+in vimrc:
+" navigating splits without ctrl-w
+nnoremap ,h :wincmd h<CR>
+nnoremap ,l :wincmd l<CR>
 </pre>
