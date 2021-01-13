@@ -30,7 +30,7 @@ def invoke(
     *args,
     popen=False,
     no_split=False,
-    out=True,
+    out=False,
     quiet=False,
     **kwargs,
 ):
