@@ -40,15 +40,16 @@ def invoke(
         print(blue('-'*40))
         print(timestamp())
         print(os.getcwd()+'$', end=' ')
-        for i, v in enumerate(args):
-            if re.search(r'\s', v):
-                v = v.replace("'", """ '"'"' """.strip())
-                v = f"'{v}'"
-            if i != len(args)-1:
-                end = ' '
-            else:
-                end = ';\n'
-            print(v, end=end)
+        if any([re.search(r'\s', i) for i in args]):
+            print()
+            for i in args: print(f'\t{i} \\')
+        else:
+            for i, v in enumerate(args):
+                if i != len(args)-1:
+                    end = ' '
+                else:
+                    end = ';\n'
+                print(v, end=end)
         if kwargs: print(kwargs)
         if popen: print('popen')
         print()
