@@ -372,6 +372,39 @@ def json():
     import json
     pprint.pprint(json.loads(j))
 
+def sql():
+    'take sql from clipboard and pretty print'
+    split = _clipboard_paste(stdout=True).strip().split()
+    breaks = {
+        'SELECT': 0,
+        'FROM': 0,
+        'JOIN': 1,
+        'LEFT': 1,
+        'RIGHT': 1,
+        'FULL': 1,
+        'INNER': 1,
+        'OUTER': 1,
+        'WHERE': 0,
+        'AND': 1,
+        'GROUP': 0,
+        'ORDER': 0,
+        'LIMIT': 0,
+    }
+    result = []
+    broke = False
+    for token in split:
+        if token.upper() in breaks:
+            if not broke:
+                result.append('\n'+'\t'*breaks[token.upper()])
+            else:
+                result.append(' ')
+            broke = True
+        else:
+            result.append(' ')
+            broke = False
+        result.append(token)
+    print(''.join(result))
+
 def base64():
     'take base64 from clipboard and print'
     x = _clipboard_paste(stdout=True)
