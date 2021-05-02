@@ -813,6 +813,7 @@ autocmd BufWinEnter * normal zR " unfold everything
 colorscheme darkblue
 hi Whitespace ctermfg=DarkBlue
 match Whitespace /\s/
+hi MatchParen cterm=none ctermbg=DarkGrey ctermfg=none
 
 " helpers
 function SpacesForIndent(n)
