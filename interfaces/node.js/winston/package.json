@@ -1,0 +1,6 @@
+{
+  "name": "playground",
+  "dependencies": {
+    "winston": "3.3.3"
+  }
+}
