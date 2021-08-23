@@ -1,6 +1,7 @@
 import cv2
 
 import argparse
+import datetime
 import subprocess
 import sys
 
@@ -13,6 +14,9 @@ parser.add_argument('--width', type=int)
 parser.add_argument('--height', type=int)
 parser.add_argument('--fps', type=int)
 args = parser.parse_args()
+
+def timestamp():
+    return '{:%Y-%m-%d_%H-%M-%S}'.format(datetime.datetime.now())
 
 if args.list:
     for i in range(10):
@@ -36,7 +40,7 @@ if args.file:
     cod = cv2.VideoWriter_fourcc(*'H264')
     fps = cap.get(cv2.CAP_PROP_FPS)
     ret, frame = cap.read()
-    writer = cv2.VideoWriter('rec.mp4', cod, fps, frame.shape[:2])
+    writer = cv2.VideoWriter(f'rec-{timestamp()}.mp4', cod, fps, frame.shape[:2])
 print('Hit escape to exit.')
 while True:
     ret, frame = cap.read()
