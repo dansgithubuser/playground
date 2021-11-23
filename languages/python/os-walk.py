@@ -1,4 +1,7 @@
 import os
 
-for i in os.walk('.'):
-    print(i)
+for root, dirs, files in os.walk('.'):
+    print('root:', root)
+    print('dirs:', dirs)
+    print('files:', files)
+    print()
