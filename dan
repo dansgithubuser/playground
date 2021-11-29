@@ -450,6 +450,13 @@ def last(index=1):
     'print last item in stdin'
     print(sorted([i.strip() for i in stdin.split()])[-int(index)])
 
+def lasta(cmd, path='.'):
+    'apply cmd to last item in path'
+    _invoke('{} {}'.format(
+        cmd,
+        os.path.join(path, sorted(os.listdir(path))[-1]),
+    ))
+
 def bookmark_set(name):
     'bookmark current directory under specified name'
     with open(_scripts_path('dan-bookmarks.txt'), 'a') as file:
