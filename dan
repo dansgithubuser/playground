@@ -717,6 +717,15 @@ def lint():
 
 _crypto = _Section()
 
+def crypto_generate_key_pair():
+    subprocess.run(['gpg', '--generate-key'])
+
+def crypto_export_public():
+    subprocess.run(['gpg', '--export', '--armor', '-o', 'dan_pub.pgp'])
+
+def crypto_export_private():
+    subprocess.run(['gpg', '--export-secret-key', '--armor', '-o', 'dan_priv.pgp'])
+
 def crypto_import(file_name):
     subprocess.run(['gpg', '--import', file_name])
 
