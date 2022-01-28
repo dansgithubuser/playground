@@ -1,5 +1,4 @@
 import collections
-import pprint
 
 ANSWERS = [
     'CIGAR', 'REBUT', 'SISSY', 'HUMPH', 'AWAKE', 'BLUSH', 'FOCAL', 'EVADE', 'NAVAL',
@@ -355,27 +354,17 @@ def is_possible(answer, clues, word):
 is_possible.clue_counts = collections.defaultdict(int)
 is_possible.word_counts = collections.defaultdict(int)
 
-best_first_guesses = collections.defaultdict(int)
-for answer in ANSWERS:
-    print(answer, end=' ', flush=True)
-    best_first_guess = None
-    best_first_guess_possibilities = None
-    for first_guess in SOWPODS:
-        if first_guess == answer: continue
+best_first_guess = None
+best_first_guess_score = None
+for first_guess in SOWPODS:
+    print(f'"{first_guess}": ', end=' ', flush=True)
+    score = 0
+    for answer in ANSWERS:
         clues = get_clues(answer, first_guess)
-        possibilities = 0
         for word in SOWPODS:
-            if is_possible(answer, clues, word):
-                possibilities += 1
-        if best_first_guess == None or possibilities < best_first_guess_possibilities:
-            best_first_guess = first_guess
-            best_first_guess_possibilities = possibilities
-    best_first_guesses[best_first_guess] += 1
-    print(best_first_guess)
-
-pprint.pprint(
-    sorted(
-        best_first_guesses.items(),
-        key=lambda i: -i[1]
-    ),
-)
+            if not is_possible(answer, clues, word):
+                score += 1
+    if best_first_guess == None or score > best_first_guess_score:
+        best_first_guess = first_guess
+        best_first_guess_score = score
+    print(f'{score},')
