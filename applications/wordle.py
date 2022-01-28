@@ -340,18 +340,20 @@ def get_clues(answer, guess):
     return clues
 
 def is_possible(answer, clues, word):
-    clue_counts = collections.defaultdict(int)
-    word_counts = collections.defaultdict(int)
+    is_possible.clue_counts.clear()
+    is_possible.word_counts.clear()
     for i in range(5):
         if clues[i] == '🟩':
             if word[i] != answer[i]: return False
         if clues[i] != '⬜':
-            clue_counts[answer[i]] += 1
-        word_counts[word[i]] += 1
-    for letter, count in clue_counts.items():
-        if word_counts[letter] < count:
+            is_possible.clue_counts[answer[i]] += 1
+        is_possible.word_counts[word[i]] += 1
+    for letter, count in is_possible.clue_counts.items():
+        if is_possible.word_counts[letter] < count:
             return False
     return True
+is_possible.clue_counts = collections.defaultdict(int)
+is_possible.word_counts = collections.defaultdict(int)
 
 best_first_guesses = collections.defaultdict(int)
 for answer in ANSWERS:
