@@ -417,7 +417,7 @@ is_possible.word_counts = collections.defaultdict(int)
 
 best_first_guess = None
 best_first_guess_score = None
-for first_guess in WORDS:
+for first_guess in ['CRANE', 'IRATE', 'ADIEU', 'ROATE']:
     print(f'"{first_guess}": ', end=' ', flush=True)
     score = 0
     for answer in ANSWERS:
