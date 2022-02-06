@@ -399,14 +399,14 @@ def get_clues(answer, guess):
                 clues[i] = '🟨'
     return clues
 
-def is_possible(answer, clues, word):
+def is_possible(guess, clues, word):
     is_possible.clue_counts.clear()
     is_possible.word_counts.clear()
     for i in range(5):
         if clues[i] == '🟩':
-            if word[i] != answer[i]: return False
+            if word[i] != guess[i]: return False
         if clues[i] != '⬜':
-            is_possible.clue_counts[answer[i]] += 1
+            is_possible.clue_counts[guess[i]] += 1
         is_possible.word_counts[word[i]] += 1
     for letter, count in is_possible.clue_counts.items():
         if is_possible.word_counts[letter] < count:
@@ -423,7 +423,7 @@ for first_guess in WORDS:
     for answer in ANSWERS:
         clues = get_clues(answer, first_guess)
         for word in WORDS:
-            if not is_possible(answer, clues, word):
+            if not is_possible(first_guess, clues, word):
                 score += 1
     if best_first_guess == None or score > best_first_guess_score:
         best_first_guess = first_guess
