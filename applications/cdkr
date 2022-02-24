@@ -12,11 +12,10 @@ args = parser.parse_args()
 
 #===== helpers =====#
 def invoke(invocation, out=False):
-    kwargs = {'check': True}
-    if out: kwargs['capture_output'] = True
-    r = subprocess.run(invocation.split(), **kwargs)
-    if out: r = r.stdout.decode('utf-8')
-    return r
+    if out:
+        return subprocess.check_output(invocation.split()).decode('utf-8')
+    else:
+        return subprocess.run(invocation.split(), check=True)
 
 #===== main =====#
 #----- get container -----#
@@ -24,7 +23,7 @@ lines = invoke('docker ps', out=True).splitlines()
 containers = sorted([i.split()[-1] for i in lines[1:]])
 print('Number Name')
 for i, container in enumerate(containers):
-    print(f'{i+1:6} {container}')
+    print('{:6} {}'.format(i+1, container))
 print()
 print('Number of container to enter:', end=' ')
 if args.number != None:
@@ -38,21 +37,21 @@ print()
 container = containers[i - 1]
 
 def invoke_container(invocation, **kwargs):
-    return invoke(f'docker exec -it {container} {invocation}', **kwargs)
+    return invoke('docker exec -it {} {}'.format(container, invocation), **kwargs)
 
 if args.command:
     pwd = invoke_container('pwd', out=True).strip()
     command = ' '.join(args.command)
-    print(f'{container}:{pwd}$ {command}')
+    print('{}:{}$ {}'.format(container, pwd, command))
     invoke_container(command)
 else:
     for shell in ['/bin/bash', '/bin/sh']:
-        print(f'Trying {shell}.')
+        print('Trying {}.'.format(shell))
         try:
             invoke_container(shell)
         except Exception as e:
             if getattr(e, 'returncode', None) == 126:
-                print(f"{shell} doesn't seem to be available.")
+                print("{} doesn't seem to be available.".format(shell))
                 continue
         break
     else:
