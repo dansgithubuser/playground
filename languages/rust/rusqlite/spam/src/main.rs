@@ -51,7 +51,7 @@ fn main() {
                 2 => {
                     conn.query_row::<String, _, _>(
                         &format!("SELECT * FROM vars WHERE name = '{}'", i),
-                        rusqlite::NO_PARAMS,
+                        [],
                         |row| row.get(0),
                     )?;
                     thread::sleep(Duration::from_secs_f32(0.01));
