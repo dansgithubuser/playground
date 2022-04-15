@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import cv2
 
 import argparse
@@ -9,11 +11,18 @@ parser = argparse.ArgumentParser()
 parser.add_argument('camera_index', nargs='?', default=0, type=int)
 parser.add_argument('--file', '-f', action='store_true')
 parser.add_argument('--list', '-l', action='store_true')
+parser.add_argument('--list-formats', '--lf', action='store_true')
 parser.add_argument('--pixel-format')
 parser.add_argument('--width', type=int)
 parser.add_argument('--height', type=int)
+parser.add_argument('--dim', '-d', help='<width>x<height>')
 parser.add_argument('--fps', type=int)
 args = parser.parse_args()
+
+if args.dim:
+    w, h = args.dim.split('x')
+    args.width = int(w)
+    args.height = int(h)
 
 def timestamp():
     return '{:%Y-%m-%d_%H-%M-%S}'.format(datetime.datetime.now())
@@ -29,6 +38,14 @@ if args.list:
         cap.release()
     try: subprocess.run(['uvcdynctrl', '-l'])
     except: pass
+    sys.exit()
+
+if args.list_formats:
+    subprocess.run([
+        'v4l2-ctl',
+        '-d', f'/dev/video{args.camera_index}',
+        '--list-formats-ext',
+    ])
     sys.exit()
 
 cap = cv2.VideoCapture(args.camera_index)
