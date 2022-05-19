@@ -1,0 +1,14 @@
+NODE_ENV=development
+
+DB_USER=u_{{{project_name.replace('-', '_')}}}
+DB_PW=dev
+DB=db_{{{project_name.replace('-', '_')}}}
+DB_HOST=localhost
+DB_PORT=5432
+
+SESSION_SECRET=session_secret_12
+
+#DEBUG=express:*,sequelize:sql*
+#DEBUG=sequelize:sql*
+
+#LOG_LEVEL=info

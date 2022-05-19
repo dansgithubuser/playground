@@ -1,0 +1,6 @@
+.DS_Store  # mac OS
+.tmp.sql
+env/env
+git-state.txt
+logs
+node_modules

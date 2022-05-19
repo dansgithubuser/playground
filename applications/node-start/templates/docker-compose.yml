@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:{{{postgres_image_tag}}}
+    container_name: {{{project_name}}}-db
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: {{{postgres_password}}}
+    volumes:
+      - ${POSTGRES_DATA_PATH}:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+  main:
+    image: ${DOCKER_TAG}
+    container_name: {{{project_name}}}-main
+    volumes:
+      - ${ENV_PATH}:/{{{project_name}}}/env:ro
+      - ${STATIC_PATH}:/{{{project_name}}}/static:ro
+      - /root/{{{project_name}}}/letsencrypt:/{{{project_name}}}/letsencrypt:ro
+      - /root/{{{project_name}}}/logs:/{{{project_name}}}/logs
+    restart: always
+    ports:
+      - 443:443
+      - 80:80
