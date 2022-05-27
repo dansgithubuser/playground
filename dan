@@ -720,8 +720,11 @@ _crypto = _Section()
 def crypto_generate_key_pair():
     subprocess.run(['gpg', '--generate-key'])
 
-def crypto_export_public():
-    subprocess.run(['gpg', '--export', '--armor', '-o', 'dan_pub.pgp'])
+def crypto_export_public(user=None):
+    if not user:
+        subprocess.run(['gpg', '--export', '--armor', '-o', 'dan_pub.pgp'])
+    else:
+        subprocess.run(['gpg', '--export', '--armor', '-o', f'{user}_pub.pgp', user])
 
 def crypto_export_private():
     subprocess.run(['gpg', '--export-secret-key', '--armor', '-o', 'dan_priv.pgp'])

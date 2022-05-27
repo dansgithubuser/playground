@@ -64,7 +64,8 @@ def invoke(
         if out: kwargs['capture_output'] = True
         result = subprocess.run(args, **kwargs)
         if out:
-            result = result.stdout.decode('utf-8').strip()
+            result = result.stdout.decode('utf-8')
+            if out != 'exact': result = result.strip()
         return result
 
 #===== main =====#
