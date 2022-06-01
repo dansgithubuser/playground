@@ -363,7 +363,9 @@ if args.full_dev_setup or args.db_fresh:
     invoke('npm run sequelize-cli db:migrate')
 
 if args.certbot:
-    if invoke('certbot --version', check=False).returncode:
+    try:
+        invoke('certbot --version')
+    except:
         invoke('snap install core')
         invoke('snap refresh core')
         invoke('snap install --classic certbot')
