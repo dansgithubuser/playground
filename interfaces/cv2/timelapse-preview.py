@@ -11,6 +11,7 @@ paths = sorted([
 i = 0
 done = False
 while not done:
+    print(paths[i], end='\r')
     im = cv2.imread(paths[i])
     cv2.imshow('timelapse-preview', im)
     k = -1
@@ -20,20 +21,27 @@ while not done:
             done = True
             break
     if k in [
-        108,  # j
-        106,  # l
-         83,  # right
-         84,  # down
-         13,  # enter
-         32,  # space
+        ord('j'),
+        83,  # right
+        13,  # enter
+        ord(' '),
     ]:
-        if i < len(paths) - 1:
-            i += 1
+        i += 1
     elif k in [
-        104,  # h
-        107,  # k
-         81,  # left
-         82,  # up
+        ord('k'),
+        81,  # left
     ]:
-        if i > 0:
-            i -= 1
+        i -= 1
+    elif k == 84:  # down
+        i += 10
+    elif k == 82:  # up
+        i -= 10
+    elif k == ord('l'):
+        i += 100
+    elif k == ord('h'):
+        i -= 100
+    elif k == ord(';'):
+        i += 10_000
+    elif k  == ord('g'):
+        i -= 10_000
+    i = max(0, min(len(paths)-1, i))
