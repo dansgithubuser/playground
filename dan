@@ -639,6 +639,14 @@ def rust():
     _invoke('rustc -o {} {}'.format(_tmp_path('tmp'), _tmp_path('tmp.rs')))
     _invoke(_tmp_path('tmp'))
 
+def rustex():
+    'print rust expression from stdin; useful in vim `:w !dan rust`'
+    global stdin
+    with open(_tmp_path('tmp.rs'), 'w') as f:
+        f.write('fn main() { println!("{:?}", ' + stdin + '); }')
+    _invoke('rustc -o {} {}'.format(_tmp_path('tmp'), _tmp_path('tmp.rs')))
+    _invoke(_tmp_path('tmp'))
+
 def cargo():
     'like `rust` but allows crate dependencies to be specified as well'
     os.chdir(_tmp_path())
