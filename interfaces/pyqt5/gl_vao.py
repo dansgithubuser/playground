@@ -120,15 +120,20 @@ class Vao:
 class Window(QtGui.QOpenGLWindow):
     def __init__(self):
         super().__init__()
-        self.profile = QtGui.QOpenGLVersionProfile()
-        self.profile.setVersion(2, 1)
         self.vaos = []
         self.pos = [0.0, 0.0, 1.0]
         self.mouse_pos = None
 
     #===== qt methods =====#
     def initializeGL(self):
-        gl = self.context().versionFunctions(self.profile)
+        self.profile = QtGui.QOpenGLVersionProfile()
+        for i in range(20, 100):
+            self.profile.setVersion(i // 10, i % 10)
+            try:
+                gl = self.context().versionFunctions(self.profile)
+            except ModuleNotFoundError:
+                continue
+            if gl: break
         self.gl = gl
         gl.glEnable(gl.GL_BLEND)
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_DST_ALPHA)
