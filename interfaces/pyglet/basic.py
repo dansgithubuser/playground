@@ -1,10 +1,9 @@
 import pyglet
 from pyglet.gl import *
-from ctypes import create_string_buffer, cast, sizeof, c_int, c_char, pointer, byref, POINTER
+from ctypes import create_string_buffer, cast, c_int, c_char, pointer, byref, POINTER
 
 width = 800
 height = 600
-ratio = float(width) / float(height)
 window = pyglet.window.Window(width=width, height=height, vsync=True)
 program = glCreateProgram()
 vertex_shader = b'''
@@ -32,20 +31,12 @@ vao = GLuint(0)
 
 @window.event
 def on_draw():
-    glViewport(0, 0, width, height)
-    glClearColor(0.0, 0.0, 0.0, 1.0)
-    glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    glOrtho(-ratio, ratio, -1.0, 1.0, 1.0, -1.0)
-    glMatrixMode(GL_MODELVIEW)
+    glClear(gl.GL_COLOR_BUFFER_BIT)
 
     glUseProgram(program)
 
     # render the triangle
-    #glBindVertexArray(vao)
     glDrawArrays(GL_TRIANGLES, 0, 3)
-    #glBindVertexArray(0)
 
 
 def compile_shader(shader_type, shader_source):
@@ -64,9 +55,6 @@ def init():
     glAttachShader(program, compile_shader(GL_FRAGMENT_SHADER, fragment_shader))
     # link program
     glLinkProgram(program)
-
-    # setup vao
-    #glBindVertexArray(vao)
 
     # generate the vert buffer
     glGenBuffers(1, vbuf)
