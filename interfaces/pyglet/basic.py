@@ -43,9 +43,9 @@ def on_draw():
     glUseProgram(program)
 
     # render the triangle
-    glBindVertexArray(vao)
+    #glBindVertexArray(vao)
     glDrawArrays(GL_TRIANGLES, 0, 3)
-    glBindVertexArray(0)
+    #glBindVertexArray(0)
 
 
 def compile_shader(shader_type, shader_source):
@@ -66,7 +66,7 @@ def init():
     glLinkProgram(program)
 
     # setup vao
-    glBindVertexArray(vao)
+    #glBindVertexArray(vao)
 
     # generate the vert buffer
     glGenBuffers(1, vbuf)
