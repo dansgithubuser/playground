@@ -1,73 +1,76 @@
+#===== imports =====#
 import pyglet
-from pyglet.gl import *
-from ctypes import create_string_buffer, cast, c_int, c_char, pointer, byref, POINTER
+from pyglet import gl
 
-width = 800
-height = 600
-window = pyglet.window.Window(width=width, height=height, vsync=True)
-program = glCreateProgram()
-vertex_shader = b'''
-    attribute vec2 position;
-    void main()
-    {
-        gl_Position = vec4(position, 0.0, 1.0);
-    }
+import ctypes
+
+#===== consts =====#
+vert_shader_src = b'''\
+attribute vec2 aPosition;
+
+void main()
+{
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+}
 '''
-fragment_shader = b'''
-    void main()
-    {
-        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-    }
+
+frag_shader_src = b'''\
+void main()
+{
+    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+}
 '''
-vertex_data = [
-    0.0, 0.5, 0.0,
-    -0.5, -0.5, 0.0,
-    0.5, -0.5, 0.0
+
+verts = [
+     0.0,  0.5,
+    -0.5, -0.5,
+     0.5, -0.5,
 ]
-vertex_data_gl = (GLfloat * len(vertex_data))(*vertex_data)
-vbuf = GLuint(0)
-vao = GLuint(0)
 
+#===== helpers =====#
+def compile_shader(type_, src):
+    shader = gl.glCreateShader(type_)
+    gl.glShaderSource(
+        shader,
+        1,
+        ctypes.cast(
+            ctypes.pointer(ctypes.pointer(ctypes.create_string_buffer(src))),
+            ctypes.POINTER(ctypes.POINTER(ctypes.c_char)),
+        ),
+        ctypes.byref(ctypes.c_int(len(src) + 1)),
+    )
+    gl.glCompileShader(shader)
+    return shader
+
+#===== main =====#
+# shader
+program = gl.glCreateProgram()
+gl.glAttachShader(program, compile_shader(gl.GL_VERTEX_SHADER, vert_shader_src))
+gl.glAttachShader(program, compile_shader(gl.GL_FRAGMENT_SHADER, frag_shader_src))
+gl.glLinkProgram(program)
+
+# window
+window = pyglet.window.Window(width=640, height=480, vsync=True)
 
 @window.event
 def on_draw():
-    glClear(gl.GL_COLOR_BUFFER_BIT)
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+    gl.glUseProgram(program)
+    gl.glDrawArrays(gl.GL_TRIANGLES, 0, 3)
 
-    glUseProgram(program)
+# attribute array
+buffer = gl.GLuint()
+gl.glGenBuffers(1, buffer)
+gl.glBindBuffer(gl.GL_ARRAY_BUFFER, buffer)
+gl.glBufferData(
+    gl.GL_ARRAY_BUFFER,
+    len(verts)*4,
+    (gl.GLfloat * len(verts))(*verts),
+    gl.GL_STATIC_DRAW,
+)
+a_position = gl.glGetAttribLocation(gl.GLuint(program), ctypes.create_string_buffer(b'aPosition'))
+gl.glVertexAttribPointer(a_position, 2, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
+gl.glEnableVertexAttribArray(a_position)
 
-    # render the triangle
-    glDrawArrays(GL_TRIANGLES, 0, 3)
-
-
-def compile_shader(shader_type, shader_source):
-    shader_name = glCreateShader(shader_type)
-    src_buffer = create_string_buffer(shader_source)
-    buf_pointer = cast(pointer(pointer(src_buffer)), POINTER(POINTER(c_char)))
-    length = c_int(len(shader_source) + 1)
-    glShaderSource(shader_name, 1, buf_pointer, byref(length))
-    glCompileShader(shader_name)
-    return shader_name
-
-
-def init():
-    # compile + attach
-    glAttachShader(program, compile_shader(GL_VERTEX_SHADER, vertex_shader))
-    glAttachShader(program, compile_shader(GL_FRAGMENT_SHADER, fragment_shader))
-    # link program
-    glLinkProgram(program)
-
-    # generate the vert buffer
-    glGenBuffers(1, vbuf)
-    # use the buffer
-    glBindBuffer(GL_ARRAY_BUFFER, vbuf)
-    # allocate memory in the buffer and populate with data
-    glBufferData(GL_ARRAY_BUFFER, len(vertex_data_gl)*4, vertex_data_gl, GL_STATIC_DRAW)
-    # tell opengl how data is packed in buffer
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0)
-    # enable vertexattrib array at position 0 so shader can read it
-    glEnableVertexAttribArray(0)
-
-
-if __name__ == '__main__':
-    init()
-    pyglet.app.run()
+# run
+pyglet.app.run()
