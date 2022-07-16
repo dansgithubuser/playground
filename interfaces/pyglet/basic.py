@@ -17,8 +17,8 @@ varying vec4 vColor;
 
 void main() {
     gl_Position = vec4(
-        (aPosition.x - uOrigin.x) / uZoom.x,
-        (aPosition.y - uOrigin.y) / uZoom.y,
+        (aPosition.x - uOrigin.x) * uZoom.x,
+        (aPosition.y - uOrigin.y) * uZoom.y,
         0.0,
         1.0
     );
@@ -66,6 +66,9 @@ gl.glLinkProgram(program)
 u_origin = gl.glGetUniformLocation(program, ctypes.create_string_buffer(b'uOrigin'))
 u_zoom = gl.glGetUniformLocation(program, ctypes.create_string_buffer(b'uZoom'))
 
+origin = [0, 0]
+zoom = [1, 1]
+
 # window
 window = pyglet.window.Window(width=640, height=480, vsync=True)
 
@@ -73,9 +76,23 @@ window = pyglet.window.Window(width=640, height=480, vsync=True)
 def on_draw():
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
     gl.glUseProgram(program)
-    gl.glUniform2f(u_origin, ctypes.c_float(0), ctypes.c_float(0))
-    gl.glUniform2f(u_zoom, ctypes.c_float(1), ctypes.c_float(1))
+    gl.glUniform2f(u_origin, *[ctypes.c_float(i) for i in origin])
+    gl.glUniform2f(u_zoom, *[ctypes.c_float(i) for i in zoom])
     gl.glDrawArrays(gl.GL_LINES, 0, len(verts))
+
+@window.event
+def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
+    origin[0] -= dx / window.width  / zoom[0] * 2
+    origin[1] -= dy / window.height / zoom[1] * 2
+
+@window.event
+def on_mouse_scroll(x, y, scroll_x, scroll_y):
+    if scroll_y > 0:
+        factor = 2 ** (-1/2)
+    else:
+        factor = 2 ** (1/2)
+    zoom[0] *= factor
+    zoom[1] *= factor
 
 # vertices
 verts = []
