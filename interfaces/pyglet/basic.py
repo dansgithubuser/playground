@@ -3,29 +3,38 @@ import pyglet
 from pyglet import gl
 
 import ctypes
+import random
 
 #===== consts =====#
 vert_shader_src = b'''\
-attribute vec2 aPosition;
+//uniform vec2 uOrigin;
+//uniform vec2 uZoom;
 
-void main()
-{
-    gl_Position = vec4(aPosition, 0.0, 1.0);
+attribute vec2 aPosition;
+attribute vec4 aColor;
+
+varying vec4 vColor;
+
+void main() {
+    gl_Position = vec4(
+        //(aPosition.x - uOrigin.x) / uZoom.x,
+        //(aPosition.y - uOrigin.y) / uZoom.y,
+        aPosition.x,
+        aPosition.y,
+        0.0,
+        1.0
+    );
+    vColor = aColor;
 }
 '''
 
 frag_shader_src = b'''\
-void main()
-{
-    gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+varying vec4 vColor;
+
+void main() {
+    gl_FragColor = vColor;
 }
 '''
-
-verts = [
-     0.0,  0.5,
-    -0.5, -0.5,
-     0.5, -0.5,
-]
 
 #===== helpers =====#
 def compile_shader(type_, src):
@@ -40,6 +49,12 @@ def compile_shader(type_, src):
         ctypes.byref(ctypes.c_int(len(src) + 1)),
     )
     gl.glCompileShader(shader)
+    status = ctypes.c_int(0)
+    gl.glGetShaderiv(shader, gl.GL_COMPILE_STATUS, ctypes.byref(status))
+    if not status.value:
+        log = ctypes.create_string_buffer(4096)
+        gl.glGetShaderInfoLog(shader, ctypes.c_int(len(log)), None, log)
+        raise Exception('Error compiling shader: ' + log.value.decode('utf8'))
     return shader
 
 #===== main =====#
@@ -56,9 +71,20 @@ window = pyglet.window.Window(width=640, height=480, vsync=True)
 def on_draw():
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
     gl.glUseProgram(program)
-    gl.glDrawArrays(gl.GL_TRIANGLES, 0, 3)
+    gl.glDrawArrays(gl.GL_LINES, 0, len(verts))
 
-# attribute array
+# vertices
+verts = []
+for i in range(10000):
+    x = random.random()
+    y = random.random()
+    r = (x + random.random()) / 2
+    g = (y + random.random()) / 2
+    b = random.random()
+    a = random.random()
+    verts.extend([x, y, r, g, b, a])
+
+# attributes
 buffer = gl.GLuint()
 gl.glGenBuffers(1, buffer)
 gl.glBindBuffer(gl.GL_ARRAY_BUFFER, buffer)
@@ -69,8 +95,11 @@ gl.glBufferData(
     gl.GL_STATIC_DRAW,
 )
 a_position = gl.glGetAttribLocation(gl.GLuint(program), ctypes.create_string_buffer(b'aPosition'))
-gl.glVertexAttribPointer(a_position, 2, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
+a_color = gl.glGetAttribLocation(gl.GLuint(program), ctypes.create_string_buffer(b'aColor'))
+gl.glVertexAttribPointer(a_position, 2, gl.GL_FLOAT, gl.GL_FALSE, 6*4, 0)
+gl.glVertexAttribPointer(a_color, 4, gl.GL_FLOAT, gl.GL_FALSE, 6*4, 2*4)
 gl.glEnableVertexAttribArray(a_position)
+gl.glEnableVertexAttribArray(a_color)
 
 # run
 pyglet.app.run()
