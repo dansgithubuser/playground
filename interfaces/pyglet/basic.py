@@ -5,7 +5,7 @@ from ctypes import create_string_buffer, cast, sizeof, c_int, c_char, pointer, b
 width = 800
 height = 600
 ratio = float(width) / float(height)
-window = pyglet.window.Window(config=Config(major_version=2, minor_version=2), width=width, height=height, vsync=True)
+window = pyglet.window.Window(width=width, height=height, vsync=True)
 program = glCreateProgram()
 vertex_shader = b'''
     attribute vec2 position;
