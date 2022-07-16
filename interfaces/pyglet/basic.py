@@ -7,8 +7,8 @@ import random
 
 #===== consts =====#
 vert_shader_src = b'''\
-//uniform vec2 uOrigin;
-//uniform vec2 uZoom;
+uniform vec2 uOrigin;
+uniform vec2 uZoom;
 
 attribute vec2 aPosition;
 attribute vec4 aColor;
@@ -17,10 +17,8 @@ varying vec4 vColor;
 
 void main() {
     gl_Position = vec4(
-        //(aPosition.x - uOrigin.x) / uZoom.x,
-        //(aPosition.y - uOrigin.y) / uZoom.y,
-        aPosition.x,
-        aPosition.y,
+        (aPosition.x - uOrigin.x) / uZoom.x,
+        (aPosition.y - uOrigin.y) / uZoom.y,
         0.0,
         1.0
     );
@@ -64,6 +62,10 @@ gl.glAttachShader(program, compile_shader(gl.GL_VERTEX_SHADER, vert_shader_src))
 gl.glAttachShader(program, compile_shader(gl.GL_FRAGMENT_SHADER, frag_shader_src))
 gl.glLinkProgram(program)
 
+# uniforms
+u_origin = gl.glGetUniformLocation(program, ctypes.create_string_buffer(b'uOrigin'))
+u_zoom = gl.glGetUniformLocation(program, ctypes.create_string_buffer(b'uZoom'))
+
 # window
 window = pyglet.window.Window(width=640, height=480, vsync=True)
 
@@ -71,6 +73,8 @@ window = pyglet.window.Window(width=640, height=480, vsync=True)
 def on_draw():
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
     gl.glUseProgram(program)
+    gl.glUniform2f(u_origin, ctypes.c_float(0), ctypes.c_float(0))
+    gl.glUniform2f(u_zoom, ctypes.c_float(1), ctypes.c_float(1))
     gl.glDrawArrays(gl.GL_LINES, 0, len(verts))
 
 # vertices
