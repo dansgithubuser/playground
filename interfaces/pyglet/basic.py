@@ -81,7 +81,7 @@ for i in range(10000):
     r = (x + random.random()) / 2
     g = (y + random.random()) / 2
     b = random.random()
-    a = random.random()
+    a = random.random() / 10
     verts.extend([x, y, r, g, b, a])
 
 # attributes
@@ -100,6 +100,10 @@ gl.glVertexAttribPointer(a_position, 2, gl.GL_FLOAT, gl.GL_FALSE, 6*4, 0)
 gl.glVertexAttribPointer(a_color, 4, gl.GL_FLOAT, gl.GL_FALSE, 6*4, 2*4)
 gl.glEnableVertexAttribArray(a_position)
 gl.glEnableVertexAttribArray(a_color)
+
+# alpha
+gl.glEnable(gl.GL_BLEND);
+gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE);
 
 # run
 pyglet.app.run()
