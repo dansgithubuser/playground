@@ -51,11 +51,14 @@ def compile_shader(type_, src):
     gl.glGetShaderiv(shader, gl.GL_COMPILE_STATUS, ctypes.byref(status))
     if not status.value:
         log = ctypes.create_string_buffer(4096)
-        gl.glGetShaderInfoLog(shader, ctypes.c_int(len(log)), None, log)
+        gl.glGetShaderInfoLog(shader, len(log), None, log)
         raise Exception('Error compiling shader: ' + log.value.decode('utf8'))
     return shader
 
 #===== main =====#
+# window
+window = pyglet.window.Window(width=640, height=480, vsync=True)
+
 # shader
 program = gl.glCreateProgram()
 gl.glAttachShader(program, compile_shader(gl.GL_VERTEX_SHADER, vert_shader_src))
@@ -63,21 +66,24 @@ gl.glAttachShader(program, compile_shader(gl.GL_FRAGMENT_SHADER, frag_shader_src
 gl.glLinkProgram(program)
 
 # uniforms
-u_origin = gl.glGetUniformLocation(program, ctypes.create_string_buffer(b'uOrigin'))
-u_zoom = gl.glGetUniformLocation(program, ctypes.create_string_buffer(b'uZoom'))
+u_origin = gl.glGetUniformLocation(program, b'uOrigin')
+u_zoom = gl.glGetUniformLocation(program, b'uZoom')
 
 origin = [0, 0]
 zoom = [1, 1]
 
-# window
-window = pyglet.window.Window(width=640, height=480, vsync=True)
+# attributes
+a_position = gl.glGetAttribLocation(program, b'aPosition')
+a_color = gl.glGetAttribLocation(program, b'aColor')
+gl.glEnableVertexAttribArray(a_position)
+gl.glEnableVertexAttribArray(a_color)
 
 @window.event
 def on_draw():
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
     gl.glUseProgram(program)
-    gl.glUniform2f(u_origin, *[ctypes.c_float(i) for i in origin])
-    gl.glUniform2f(u_zoom, *[ctypes.c_float(i) for i in zoom])
+    gl.glUniform2f(u_origin, *origin)
+    gl.glUniform2f(u_zoom, *zoom)
     gl.glDrawArrays(gl.GL_LINES, 0, len(verts))
 
 @window.event
@@ -105,7 +111,7 @@ for i in range(10000):
     a = random.random() / 10
     verts.extend([x, y, r, g, b, a])
 
-# attributes
+# data
 buffer = gl.GLuint()
 gl.glGenBuffers(1, buffer)
 gl.glBindBuffer(gl.GL_ARRAY_BUFFER, buffer)
@@ -115,12 +121,8 @@ gl.glBufferData(
     (gl.GLfloat * len(verts))(*verts),
     gl.GL_STATIC_DRAW,
 )
-a_position = gl.glGetAttribLocation(gl.GLuint(program), ctypes.create_string_buffer(b'aPosition'))
-a_color = gl.glGetAttribLocation(gl.GLuint(program), ctypes.create_string_buffer(b'aColor'))
 gl.glVertexAttribPointer(a_position, 2, gl.GL_FLOAT, gl.GL_FALSE, 6*4, 0)
 gl.glVertexAttribPointer(a_color, 4, gl.GL_FLOAT, gl.GL_FALSE, 6*4, 2*4)
-gl.glEnableVertexAttribArray(a_position)
-gl.glEnableVertexAttribArray(a_color)
 
 # alpha
 gl.glEnable(gl.GL_BLEND);
