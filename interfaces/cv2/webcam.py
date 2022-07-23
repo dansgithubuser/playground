@@ -6,6 +6,7 @@ import argparse
 import datetime
 import subprocess
 import sys
+import traceback
 
 parser = argparse.ArgumentParser()
 parser.add_argument('camera_index', nargs='?', default=0, type=int)
@@ -60,9 +61,16 @@ if args.file:
     writer = cv2.VideoWriter(f'rec-{timestamp()}.mp4', cod, fps, frame.shape[:2])
 print('Hit escape to exit.')
 while True:
-    ret, frame = cap.read()
-    cv2.imshow('Input', frame)
-    if args.file: writer.write(frame)
+    try:
+        ret, frame = cap.read()
+        cv2.imshow('Input', frame)
+        if args.file: writer.write(frame)
+    except:
+        traceback.print_exc()
+        try:
+            cap = cv2.VideoCapture(args.camera_index)
+        except:
+            traceback.print_exc()
     c = cv2.waitKey(1)
     if c == 27:
         break
