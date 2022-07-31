@@ -135,4 +135,9 @@ in vimrc:
 " navigating splits without ctrl-w
 nnoremap ,h :wincmd h<CR>
 nnoremap ,l :wincmd l<CR>
+
+## personal .vimrc remaps
+,s -- toggle semantic highlighting
+,h -- go to left split
+,l -- go to right split
 </pre>
