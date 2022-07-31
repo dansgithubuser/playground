@@ -821,7 +821,7 @@ def bash():
     ]):
         disable_capslock()
 
-_vimrc = '''\
+_vimrc = r'''
 set autoindent
 set number
 set list
@@ -834,8 +834,8 @@ set smartcase
 set backspace=indent,eol,start
 set noswapfile
 set relativenumber
-nnoremap / /\\v
-vnoremap / /\\v
+nnoremap / /\v
+vnoremap / /\v
 set smartcase
 set fdm=indent " set fold method and fold everything
 autocmd BufWinEnter * normal zR " unfold everything
@@ -864,7 +864,7 @@ function SettingsForContent()
         return
     endif
 
-    let numTabs=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^\\t"'))
+    let numTabs=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^\t"'))
     let num2Spaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^  [^ ]"'))
     let num4Spaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^    [^ ]"'))
 
@@ -900,6 +900,21 @@ endif
 " navigating splits without ctrl-w
 nnoremap ,h :wincmd h<CR>
 nnoremap ,l :wincmd l<CR>
+
+" vim-plug
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+call plug#end()
+filetype indent off
+
+nnoremap ,d :LspDef<CR>
 '''
 
 def vi():

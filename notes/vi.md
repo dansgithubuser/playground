@@ -140,4 +140,11 @@ nnoremap ,l :wincmd l<CR>
 ,s -- toggle semantic highlighting
 ,h -- go to left split
 ,l -- go to right split
+,d -- go to definition
+	- ctrl-o to get back out
+	- ctrl-i to go back in again
+
+## personal plugins
+:PlugInstall -- install vim-plug plugins (https://github.com/junegunn/vim-plug)
+:LspInstallServer -- install language server for opened file type (https://github.com/mattn/vim-lsp-settings)
 </pre>
