@@ -913,6 +913,9 @@ def vi():
     if platform.system() == 'Windows':
         with open(_scripts_path('vi.bat'), 'w') as file:
                 file.write(r'"C:\Program Files\Git\usr\bin\vim" %*')
+    plugins_path = _home_path('.vim/pack/vendor/start')
+    os.makedirs(plugins_path, exist_ok=True)
+    invoke(f'git clone https://github.com/jaxbot/semantic-highlight.vim.git {plugins_path}/semantic-highlight.vim')
 
 def git():
     'update git aliases, download git-completion.bash, set conflict style to diff3'
