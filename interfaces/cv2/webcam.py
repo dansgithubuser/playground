@@ -11,6 +11,7 @@ import traceback
 parser = argparse.ArgumentParser()
 parser.add_argument('camera_index', nargs='?', default=0, type=int)
 parser.add_argument('--file', '-f', action='store_true')
+parser.add_argument('--file-ext', default='avi')
 parser.add_argument('--list', '-l', action='store_true')
 parser.add_argument('--list-formats', '--lf', action='store_true')
 parser.add_argument('--pixel-format')
@@ -55,10 +56,13 @@ if args.width: cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
 if args.height: cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.height)
 if args.fps: cap.set(cv2.CAP_PROP_FPS, args.fps)
 if args.file:
-    cod = cv2.VideoWriter_fourcc(*'H264')
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    ret, frame = cap.read()
-    writer = cv2.VideoWriter(f'rec-{timestamp()}.mp4', cod, fps, frame.shape[:2])
+    shape = cap.read()[1].shape
+    writer = cv2.VideoWriter(
+        f'rec-{timestamp()}.{args.file_ext}',
+        cv2.VideoWriter_fourcc(*args.pixel_format),
+        cap.get(cv2.CAP_PROP_FPS),
+        (shape[1], shape[0]),
+    )
 print('Hit escape to exit.')
 while True:
     try:
