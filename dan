@@ -1119,6 +1119,11 @@ def h(command=None):
         print(inspect.getdoc(eval(command)))
         print(inspect.getfullargspec(eval(command)))
 
+help = h
+
+def vi_notes():
+    invoke(f'vi {_home_path("Desktop/repos/playground/notes/vi.md")}')
+
 #=====main=====#
 parser = argparse.ArgumentParser(description='`dan h` to list commands, `dan h command` for help with specific command')
 parser.add_argument('--dry', action='store_true', help='only print invocations')
