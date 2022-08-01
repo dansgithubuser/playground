@@ -102,6 +102,8 @@ H, M, L -- move cursor to top, middle, low line of screen
 zt, zz, zb -- move screen so current line is in top, middle, or bottom of screen
 m<c> -- set bookmark <c>
 `<c> -- go to bookmark <c>
+
+:Vex -- open builtin explorer in vertical split
 </pre>
 
 ### mapping
