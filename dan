@@ -927,6 +927,19 @@ let g:lsp_diagnostics_signs_enabled = 0
 nnoremap ,,diag :LspDocumentDiagnostics<CR>
 
 let g:lsp_settings_enable_suggestions = 0
+
+let g:lsp_auto_enable = 0
+let g:dan_lsp_enabled = 0
+function ToggleLsp()
+  if g:dan_lsp_enabled
+    call lsp#disable()
+    let g:dan_lsp_enabled = 0
+  else
+    call lsp#enable()
+    let g:dan_lsp_enabled = 1
+  endif
+endfunction
+nnoremap ,,lsp :call ToggleLsp()<CR>
 '''
 
 def vi():

@@ -148,6 +148,7 @@ nnoremap ,k :wincmd k<CR>
 	- ctrl-o to get back out
 	- ctrl-i to go back in again
 ,,diag -- show LSP diagnostics
+,,lsp -- toggle LSP
 
 ## personal plugins
 :PlugInstall -- install vim-plug plugins (https://github.com/junegunn/vim-plug)
