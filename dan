@@ -900,6 +900,8 @@ endif
 " navigating splits without ctrl-w
 nnoremap ,h :wincmd h<CR>
 nnoremap ,l :wincmd l<CR>
+nnoremap ,j :wincmd j<CR>
+nnoremap ,k :wincmd k<CR>
 
 " tree view for builtin explorer
 let g:netrw_liststyle = 3
@@ -919,6 +921,10 @@ call plug#end()
 filetype indent off
 
 nnoremap ,d :LspDef<CR>
+
+let g:lsp_diagnostics_highlights_enabled = 0
+let g:lsp_diagnostics_signs_enabled = 0
+nnoremap ,,diag :LspDocumentDiagnostics<CR>
 '''
 
 def vi():

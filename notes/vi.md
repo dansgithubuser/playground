@@ -137,6 +137,8 @@ in vimrc:
 " navigating splits without ctrl-w
 nnoremap ,h :wincmd h<CR>
 nnoremap ,l :wincmd l<CR>
+nnoremap ,j :wincmd j<CR>
+nnoremap ,k :wincmd k<CR>
 
 ## personal .vimrc remaps
 ,s -- toggle semantic highlighting
@@ -145,6 +147,7 @@ nnoremap ,l :wincmd l<CR>
 ,d -- go to definition
 	- ctrl-o to get back out
 	- ctrl-i to go back in again
+,,diag -- show LSP diagnostics
 
 ## personal plugins
 :PlugInstall -- install vim-plug plugins (https://github.com/junegunn/vim-plug)
