@@ -102,6 +102,8 @@ H, M, L -- move cursor to top, middle, low line of screen
 zt, zz, zb -- move screen so current line is in top, middle, or bottom of screen
 m<c> -- set bookmark <c>
 `<c> -- go to bookmark <c>
+
+:Vex -- open builtin explorer in vertical split
 </pre>
 
 ### mapping
@@ -135,4 +137,20 @@ in vimrc:
 " navigating splits without ctrl-w
 nnoremap ,h :wincmd h<CR>
 nnoremap ,l :wincmd l<CR>
+nnoremap ,j :wincmd j<CR>
+nnoremap ,k :wincmd k<CR>
+
+## personal .vimrc remaps
+,s -- toggle semantic highlighting
+,h -- go to left split
+,l -- go to right split
+,d -- go to definition
+	- ctrl-o to get back out
+	- ctrl-i to go back in again
+,,diag -- show LSP diagnostics
+,,lsp -- toggle LSP
+
+## personal plugins
+:PlugInstall -- install vim-plug plugins (https://github.com/junegunn/vim-plug)
+:LspInstallServer -- install language server for opened file type (https://github.com/mattn/vim-lsp-settings)
 </pre>

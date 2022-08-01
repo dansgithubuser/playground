@@ -821,7 +821,7 @@ def bash():
     ]):
         disable_capslock()
 
-_vimrc = '''\
+_vimrc = r'''
 set autoindent
 set number
 set list
@@ -834,8 +834,8 @@ set smartcase
 set backspace=indent,eol,start
 set noswapfile
 set relativenumber
-nnoremap / /\\v
-vnoremap / /\\v
+nnoremap / /\v
+vnoremap / /\v
 set smartcase
 set fdm=indent " set fold method and fold everything
 autocmd BufWinEnter * normal zR " unfold everything
@@ -864,7 +864,7 @@ function SettingsForContent()
         return
     endif
 
-    let numTabs=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^\\t"'))
+    let numTabs=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^\t"'))
     let num2Spaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^  [^ ]"'))
     let num4Spaces=len(filter(getbufline(bufname("%"), 1, 250), 'v:val =~ "^    [^ ]"'))
 
@@ -900,6 +900,46 @@ endif
 " navigating splits without ctrl-w
 nnoremap ,h :wincmd h<CR>
 nnoremap ,l :wincmd l<CR>
+nnoremap ,j :wincmd j<CR>
+nnoremap ,k :wincmd k<CR>
+
+" tree view for builtin explorer
+let g:netrw_liststyle = 3
+let g:netrw_banner = 0
+
+" vim-plug
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+Plug 'prabirshrestha/vim-lsp'
+Plug 'mattn/vim-lsp-settings'
+call plug#end()
+filetype indent off
+
+nnoremap ,d :LspDef<CR>
+
+let g:lsp_diagnostics_highlights_enabled = 0
+let g:lsp_diagnostics_signs_enabled = 0
+nnoremap ,,diag :LspDocumentDiagnostics<CR>
+
+let g:lsp_settings_enable_suggestions = 0
+
+let g:lsp_auto_enable = 0
+let g:dan_lsp_enabled = 0
+function ToggleLsp()
+  if g:dan_lsp_enabled
+    call lsp#disable()
+    let g:dan_lsp_enabled = 0
+  else
+    call lsp#enable()
+    let g:dan_lsp_enabled = 1
+  endif
+endfunction
+nnoremap ,,lsp :call ToggleLsp()<CR>
 '''
 
 def vi():
@@ -913,6 +953,9 @@ def vi():
     if platform.system() == 'Windows':
         with open(_scripts_path('vi.bat'), 'w') as file:
                 file.write(r'"C:\Program Files\Git\usr\bin\vim" %*')
+    plugins_path = _home_path('.vim/pack/vendor/start')
+    os.makedirs(plugins_path, exist_ok=True)
+    invoke(f'git clone https://github.com/jaxbot/semantic-highlight.vim.git {plugins_path}/semantic-highlight.vim')
 
 def git():
     'update git aliases, download git-completion.bash, set conflict style to diff3'
@@ -1118,6 +1161,11 @@ def h(command=None):
     else:
         print(inspect.getdoc(eval(command)))
         print(inspect.getfullargspec(eval(command)))
+
+help = h
+
+def vi_notes():
+    invoke(f'vi {_home_path("Desktop/repos/playground/notes/vi.md")}')
 
 #=====main=====#
 parser = argparse.ArgumentParser(description='`dan h` to list commands, `dan h command` for help with specific command')
