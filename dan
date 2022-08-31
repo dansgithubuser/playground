@@ -606,6 +606,19 @@ def php():
         f.write(stdin)
     _invoke('php -f {}'.format(_tmp_path('tmp.php')))
 
+def cc():
+    'run c code from stdin; useful in vim `:w !dan cc`'
+    with open(_tmp_path('tmp.c'), 'w') as f:
+        f.write('#include <math.h>\n')
+        f.write('#include <stdio.h>\n')
+        f.write('#include <stdlib.h>\n')
+        f.write('#include <time.h>\n')
+        if 'main' not in stdin: f.write('int main(){')
+        f.write(stdin)
+        if 'main' not in stdin: f.write('}')
+    _invoke('gcc -o {} {}'.format(_tmp_path('tmp'), _tmp_path('tmp.c')))
+    _invoke(_tmp_path('tmp'))
+
 def cpp():
     'run c++ code from stdin; useful in vim `:w !dan cpp`'
     obvious_path = os.path.expanduser('~/Desktop/repos/obvious/cpp/obvious.hpp')
@@ -626,7 +639,7 @@ def cpp():
         if 'main' not in stdin: f.write('int main(){')
         f.write(stdin)
         if 'main' not in stdin: f.write('}')
-    _invoke('g++ -o {} {}'.format(_tmp_path('tmp'), _scripts_path('tmp.cpp')))
+    _invoke('g++ -o {} {}'.format(_tmp_path('tmp'), _tmp_path('tmp.cpp')))
     _invoke(_tmp_path('tmp'))
 
 def rust():
