@@ -1,0 +1,6 @@
+Say an SD card has been mounted to `/mnt/sdcard` but you want to see the files on the main drive at that same path:
+```
+mkdir /mnt-shadow
+mount --bind /mnt /mnt-shadow
+```
+The mount must be done to a _parent_ folder of the one you're interested in.
