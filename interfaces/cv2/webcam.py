@@ -44,7 +44,7 @@ if args.list:
 
 if args.list_formats:
     subprocess.run([
-        'v4l2-ctl',
+        'v4l2-ctl',  # apt install v4l-utils
         '-d', f'/dev/video{args.camera_index}',
         '--list-formats-ext',
     ])
