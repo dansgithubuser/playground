@@ -1,0 +1,8 @@
+Make sure you have the _right_ BIOS setting enabled. Is it a built-in network interface or plugged into a PCIe?
+
+OS needs configuration too. On Linux:
+- `sudo vi /etc/netplan/<whatever seems right>.yaml` and make sure network.ethernets.<interface name>.wakeonlan is set to true.
+- `sudo netplan apply`
+- `sudo ethtool <interface name>` and check for `Wake-on: g`
+
+You can install `wakeonlan` on Linux. Specifying just a MAC address (example: `11:22:33:AA:BB:CC`) should work if sender and WOLer are connected to same router.
