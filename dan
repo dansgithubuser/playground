@@ -95,7 +95,8 @@ _dan_bash = '''
 #===== config =====#
 force_color_prompt=yes
 PATH=$PATH:~/Desktop/scripts
-PS1="\\e[0;37;44m               $?               \\e[m
+PS1_PART1='\\e[0;37;44m               $?               \\e[m'
+PS1="$PS1_PART1
 $DAN_PS1_UNIQUIFIER\\h \\D{{%Y-%m-%d}} \\t \\w$ "
 
 #===== aliases =====#
