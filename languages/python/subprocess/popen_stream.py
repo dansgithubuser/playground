@@ -3,7 +3,7 @@ import subprocess
 import time
 
 p = subprocess.Popen(
-    ['python', '-u', 'timer.py'],
+    ['python3', '-u', 'timer.py'],
     stdin=subprocess.PIPE,
     stdout=subprocess.PIPE,
 )
