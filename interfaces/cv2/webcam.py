@@ -20,6 +20,7 @@ parser.add_argument('--width', type=int)
 parser.add_argument('--height', type=int)
 parser.add_argument('--dim', '-d', help='<width>x<height>')
 parser.add_argument('--fps', type=int)
+parser.add_argument('--rotate', choices=['90', '180', '270'])
 args = parser.parse_args()
 
 if args.dim:
@@ -80,6 +81,15 @@ while not done:
     while True:
         try:
             ret, frame = cap.read()
+            if args.rotate:
+                frame = cv2.rotate(
+                    frame,
+                    {
+                        '90': cv2.ROTATE_90_CLOCKWISE,
+                        '180': cv2.ROTATE_180,
+                        '270': cv2.ROTATE_90_COUNTERCLOCKWISE,
+                    }[args.rotate],
+                )
             cv2.imshow('Input', frame)
             if args.file: writer.write(frame)
         except:
