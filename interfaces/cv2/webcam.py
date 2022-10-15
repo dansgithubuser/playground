@@ -7,6 +7,7 @@ import datetime
 import subprocess
 import sys
 import traceback
+import time
 
 parser = argparse.ArgumentParser()
 parser.add_argument('camera_index', nargs='?', default=0, type=int)
@@ -29,6 +30,14 @@ if args.dim:
 def timestamp():
     return '{:%Y-%m-%d_%H-%M-%S}'.format(datetime.datetime.now())
 
+def open_camera():
+    cap = cv2.VideoCapture(args.camera_index)
+    if args.pixel_format: cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*args.pixel_format))
+    if args.width: cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
+    if args.height: cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.height)
+    if args.fps: cap.set(cv2.CAP_PROP_FPS, args.fps)
+    return cap
+
 if args.list:
     for i in range(10):
         cap = cv2.VideoCapture(i)
@@ -50,32 +59,34 @@ if args.list_formats:
     ])
     sys.exit()
 
-cap = cv2.VideoCapture(args.camera_index)
-if args.pixel_format: cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*args.pixel_format))
-if args.width: cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
-if args.height: cap.set(cv2.CAP_PROP_FRAME_HEIGHT, args.height)
-if args.fps: cap.set(cv2.CAP_PROP_FPS, args.fps)
-if args.file:
-    shape = cap.read()[1].shape
-    writer = cv2.VideoWriter(
-        f'rec-{timestamp()}.{args.file_ext}',
-        cv2.VideoWriter_fourcc(*args.pixel_format),
-        cap.get(cv2.CAP_PROP_FPS),
-        (shape[1], shape[0]),
-    )
 print('Hit escape to exit.')
-while True:
+writer = None
+done = False
+while not done:
     try:
-        ret, frame = cap.read()
-        cv2.imshow('Input', frame)
-        if args.file: writer.write(frame)
+        cap = open_camera()
+        if args.file and not writer:
+            shape = cap.read()[1].shape
+            writer = cv2.VideoWriter(
+                f'rec-{timestamp()}.{args.file_ext}',
+                cv2.VideoWriter_fourcc(*args.pixel_format),
+                cap.get(cv2.CAP_PROP_FPS),
+                (shape[1], shape[0]),
+            )
     except:
         traceback.print_exc()
+        time.sleep(2)
+        continue
+    while True:
         try:
-            cap = cv2.VideoCapture(args.camera_index)
+            ret, frame = cap.read()
+            cv2.imshow('Input', frame)
+            if args.file: writer.write(frame)
         except:
             traceback.print_exc()
-    c = cv2.waitKey(1)
-    if c == 27:
-        break
+            break
+        c = cv2.waitKey(1)
+        if c == 27:
+            done = True
+            break
 if args.file: writer.release()
