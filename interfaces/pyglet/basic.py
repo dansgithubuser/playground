@@ -79,6 +79,10 @@ gl.glEnableVertexAttribArray(a_position)
 gl.glEnableVertexAttribArray(a_color)
 
 @window.event
+def on_key_press(symbol, modifiers):
+    print(symbol, modifiers)
+
+@window.event
 def on_draw():
     gl.glClear(gl.GL_COLOR_BUFFER_BIT)
     gl.glUseProgram(program)
