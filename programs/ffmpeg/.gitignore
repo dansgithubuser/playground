@@ -1,1 +1,4 @@
 *.mkv
+*.tar.gz
+rtsp-simple-server
+rtsp-simple-server.yml
