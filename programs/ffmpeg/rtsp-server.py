@@ -3,6 +3,9 @@
 import os
 import subprocess
 
+DIR = os.path.dirname(os.path.realpath(__file__))
+os.chdir(DIR)
+
 def invoke(invocation):
     subprocess.run(invocation, shell=True, check=True)
 
