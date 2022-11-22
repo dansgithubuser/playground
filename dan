@@ -1000,6 +1000,31 @@ def git():
         _invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
     _invoke('git config --global merge.conflictstyle diff3')
 
+def pyenv():
+    _invoke('git clone https://github.com/pyenv/pyenv.git ~/.pyenv')
+    _invoke('sudo apt update')
+    _invoke(' '.join([
+        'sudo apt install',
+        'make',
+        'build-essential',
+        'libssl-dev',
+        'zlib1g-dev',
+        'libbz2-dev',
+        'libreadline-dev',
+        'libsqlite3-dev',
+        'wget',
+        'curl',
+        'llvm',
+        'libncursesw5-dev',
+        'xz-utils',
+        'tk-dev',
+        'libxml2-dev',
+        'libxmlsec1-dev',
+        'libffi-dev',
+        'liblzma-dev',
+    ]))
+    print('Your turn! Uncomment appropriate line in `~/.bashrc` and install your preferred version.')
+
 def disable_capslock():
     _invoke('xmodmap -e "keycode 66 = Shift_L NoSymbol Shift_L"')
 
