@@ -1,9 +1,15 @@
+import datetime
+
 def timestamp():
-    import datetime
+    return datetime.datetime.now().astimezone().isoformat(' ', 'seconds')
+
+def timestamp_file():
+    return datetime.datetime.utcnow().isoformat('_', 'seconds').replace(':', '-')
+
+def timestamp():
     return '{:%Y-%m-%d %H:%M:%S.%f}'.format(datetime.datetime.now())
 
 def timestamp(ambiguous=True):
-    import datetime
     format = '{:%Y-%m'
     if not ambiguous: format += '-%b'
     format += '-%d %H:%M:%S.%f}'
