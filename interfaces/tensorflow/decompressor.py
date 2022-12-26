@@ -11,8 +11,8 @@ import tensorflow.keras as keras
 print('===== initialize =====')
 model = keras.Sequential([
     keras.Input(shape=(len(inputs[0]),)),
-    keras.layers.Dense(128),
-    keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dense(64),
+    keras.layers.Dense(64, activation='relu'),
     keras.layers.Dense(len(outputs[0])),
 ])
 
