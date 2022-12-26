@@ -2,7 +2,7 @@ inputs = [
     [i/100, 0, 0] for i in range(100)
 ]
 outputs = [
-    [i/100, min(1, (i+10)/100), min(1, i*2/100), abs(i-50)/100] for i in range(100)
+    [i/100, min(1, (i+10)/100), min(1, i*2/100), abs(i-50)/100] + [0]*60 for i in range(100)
 ]
 
 print('===== import =====')
