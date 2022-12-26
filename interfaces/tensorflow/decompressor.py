@@ -19,7 +19,7 @@ outputs = [
 ]
 
 print('===== fit =====')
-model.fit(inputs, outputs, epochs=10)
+model.fit(inputs, outputs, epochs=100)
 
 print('===== predict =====')
 
