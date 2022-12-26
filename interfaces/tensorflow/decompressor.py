@@ -12,18 +12,23 @@ print('===== compile =====')
 model.compile(loss='binary_crossentropy')
 
 inputs = [
-    [i, 0, 0] for i in range(256)
+    [i/100, 0, 0] for i in range(100)
 ]
 outputs = [
-    [i, i+1, i*2, abs(i-128)] + [0]*60 for i in range(256)
+    [i/100, (i+1)%100/100, i*2%100/100, abs(i-50)/100] + [0]*60 for i in range(100)
 ]
 
 print('===== fit =====')
 model.fit(inputs, outputs, epochs=10)
 
 print('===== predict =====')
+
+def print_array(label, array):
+    print(label, ' '.join([f'{i:>5.2f}' for i in array[0:8]]))
+
 for i, o in zip(inputs[:16], outputs):
-    print(i)
-    print(o[0:5])
+    print_array('i  ', i)
+    print_array('o  ', o)
     o_p = model.predict([i], verbose=0)
-    print([int(i*10)/10 for i in o_p[0][0:5]])
+    print_array('o_p', o_p[0])
+    print()
