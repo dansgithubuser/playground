@@ -1,23 +1,23 @@
+inputs = [
+    [i/100, 0, 0] for i in range(100)
+]
+outputs = [
+    [i/100, min(1, (i+10)/100), min(1, i*2/100), abs(i-50)/100] for i in range(100)
+]
+
 print('===== import =====')
 import tensorflow.keras as keras
 
 print('===== initialize =====')
 model = keras.Sequential([
-    keras.Input(shape=(3,)),
+    keras.Input(shape=(len(inputs[0]),)),
     keras.layers.Dense(16),
     keras.layers.Dense(16, activation='relu'),
-    keras.layers.Dense(64),
+    keras.layers.Dense(len(outputs[0])),
 ])
 
 print('===== compile =====')
 model.compile(loss='mean_squared_error')
-
-inputs = [
-    [i/100, 0, 0] for i in range(100)
-]
-outputs = [
-    [i/100, (i+1)%100/100, i*2%100/100, abs(i-50)/100] + [0]*60 for i in range(100)
-]
 
 print('===== fit =====')
 model.fit(inputs, outputs, epochs=100)
