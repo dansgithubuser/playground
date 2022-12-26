@@ -4,6 +4,7 @@ import tensorflow.keras as keras
 print('===== initialize =====')
 model = keras.Sequential([
     keras.Input(shape=(3,)),
+    keras.layers.Dense(16),
     keras.layers.Dense(64),
 ])
 
