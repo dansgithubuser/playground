@@ -22,13 +22,20 @@ print('===== fit =====')
 model.fit(inputs, outputs, epochs=100)
 
 print('===== predict =====')
+predictions = model.predict(inputs, verbose=0)
 
-def print_array(label, array):
-    print(label, ' '.join([f'{i:>5.2f}' for i in array[0:8]]))
-
-for i, o in zip(inputs[:16], outputs):
-    print_array('i  ', i)
-    print_array('o  ', o)
-    o_p = model.predict([i], verbose=0)
-    print_array('o_p', o_p[0])
-    print()
+print('===== plot =====')
+import dansplotcore as dpc
+plot = dpc.Plot(
+    transform=dpc.t.Default([
+        dpc.t.Color(255, 0, 0), dpc.t.Color(128, 0, 0),
+        dpc.t.Color(0, 255, 0), dpc.t.Color(0, 128, 0),
+        dpc.t.Color(0, 0, 255), dpc.t.Color(0, 0, 128),
+        dpc.t.Color(255, 255, 255), dpc.t.Color(128, 128, 128),
+    ]),
+    primitive=dpc.p.Plus(),
+)
+for j in range(4):
+    plot.plot([i[0] for i in inputs], [i[j] for i in outputs])
+    plot.plot([i[0] for i in inputs], [float(i[j]) for i in predictions])
+plot.show()
