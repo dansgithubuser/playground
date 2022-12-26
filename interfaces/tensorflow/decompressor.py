@@ -9,7 +9,7 @@ model = keras.Sequential([
 ])
 
 print('===== compile =====')
-model.compile(loss='binary_crossentropy')
+model.compile(loss='mean_squared_error')
 
 inputs = [
     [i/100, 0, 0] for i in range(100)
