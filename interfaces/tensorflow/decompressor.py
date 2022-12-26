@@ -20,7 +20,13 @@ print('===== compile =====')
 model.compile(loss='mean_squared_error')
 
 print('===== fit =====')
-model.fit(inputs, outputs, epochs=500)
+model.fit(
+    inputs,
+    outputs,
+    epochs=500,
+    callbacks=[keras.callbacks.LambdaCallback(lambda epoch, logs: print(epoch))],
+    verbose=0,
+)
 
 print('===== predict =====')
 predictions = model.predict(inputs, verbose=0)
