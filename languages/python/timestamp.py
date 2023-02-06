@@ -1,18 +1,12 @@
-import datetime
+from datetime import datetime, timezone
 
 def timestamp():
-    return datetime.datetime.now().astimezone().isoformat(' ', 'seconds')
+    return datetime.now().astimezone().isoformat(' ', 'seconds')
+
+def timestamp_utc():
+    return datetime.now(timezone.utc).isoformat(' ', 'seconds').replace('+00:00', 'Z')
 
 def timestamp_file():
-    return datetime.datetime.utcnow().isoformat('_', 'seconds').replace(':', '-')
-
-def timestamp():
-    return '{:%Y-%m-%d %H:%M:%S.%f}'.format(datetime.datetime.now())
-
-def timestamp(ambiguous=True):
-    format = '{:%Y-%m'
-    if not ambiguous: format += '-%b'
-    format += '-%d %H:%M:%S.%f}'
-    return format.format(datetime.datetime.now()).lower()
+    return datetime.utcnow().isoformat('_', 'seconds').replace(':', '-') + 'Z'
 
 if __name__ == '__main__': print(timestamp())
