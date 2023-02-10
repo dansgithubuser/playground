@@ -181,7 +181,7 @@ def sleep(type=None):
             'EHC2',
         ]:
             _invoke('sudo sh -c "echo {} > /proc/acpi/wakeup"'.format(i))
-    _invoke('systemctl suspend')
+    _invoke('systemctl suspend -i')
 
 def reboot():
     'reboot computer'
