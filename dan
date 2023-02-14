@@ -274,9 +274,13 @@ def _put_in_clipboard(contents):
         stdin=stdin,
     )
 
-def c(*args):
+def c(strip=True):
     'copy stdin to clipboard'
-    _put_in_clipboard(stdin)
+    if strip:
+        x = stdin.strip()
+    else:
+        x = stdin
+    _put_in_clipboard(x)
 
 def v():
     'paste clipboard to stdout'
