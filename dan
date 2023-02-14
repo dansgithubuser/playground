@@ -943,38 +943,38 @@ let g:netrw_liststyle = 3
 let g:netrw_banner = 0
 
 " vim-plug
-let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
-if empty(glob(data_dir . '/autoload/plug.vim'))
-  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
-call plug#begin()
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
-call plug#end()
-filetype indent off
-
-nnoremap ,d :LspDef<CR>
-
-let g:lsp_diagnostics_highlights_enabled = 0
-let g:lsp_diagnostics_signs_enabled = 0
-nnoremap ,,diag :LspDocumentDiagnostics<CR>
-
-let g:lsp_settings_enable_suggestions = 0
-
-let g:lsp_auto_enable = 0
-let g:dan_lsp_enabled = 0
-function ToggleLsp()
-  if g:dan_lsp_enabled
-    call lsp#disable()
-    let g:dan_lsp_enabled = 0
-  else
-    call lsp#enable()
-    let g:dan_lsp_enabled = 1
-  endif
-endfunction
-nnoremap ,,lsp :call ToggleLsp()<CR>
+"let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+"if empty(glob(data_dir . '/autoload/plug.vim'))
+"  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+"  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+"endif
+"
+"call plug#begin()
+"Plug 'prabirshrestha/vim-lsp'
+"Plug 'mattn/vim-lsp-settings'
+"call plug#end()
+"filetype indent off
+"
+"nnoremap ,d :LspDef<CR>
+"
+"let g:lsp_diagnostics_highlights_enabled = 0
+"let g:lsp_diagnostics_signs_enabled = 0
+"nnoremap ,,diag :LspDocumentDiagnostics<CR>
+"
+"let g:lsp_settings_enable_suggestions = 0
+"
+"let g:lsp_auto_enable = 0
+"let g:dan_lsp_enabled = 0
+"function ToggleLsp()
+"  if g:dan_lsp_enabled
+"    call lsp#disable()
+"    let g:dan_lsp_enabled = 0
+"  else
+"    call lsp#enable()
+"    let g:dan_lsp_enabled = 1
+"  endif
+"endfunction
+"nnoremap ,,lsp :call ToggleLsp()<CR>
 '''
 
 def vi():
