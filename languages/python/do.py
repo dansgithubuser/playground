@@ -2,7 +2,6 @@
 
 #===== imports =====#
 import argparse
-import copy
 import datetime
 import os
 import re
@@ -54,7 +53,7 @@ def invoke(
         if popen: print('popen')
         print()
     if kwargs.get('env') != None:
-        env = copy.copy(os.environ)
+        env = os.environ.copy()
         env.update(kwargs['env'])
         kwargs['env'] = env
     if popen:
