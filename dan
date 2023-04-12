@@ -5,6 +5,7 @@ from __future__ import print_function
 import argparse
 import datetime
 import functools
+import glob
 import inspect
 import math
 import os
@@ -452,16 +453,9 @@ use \\ to split pattern across lines'''
                 for j in range(len(pattern)): print(lines[i+j].rstrip())
                 print('')
 
-def last(index=1):
-    'print last item in stdin'
-    print(sorted([i.strip() for i in stdin.split()])[-int(index)])
-
-def lasta(cmd, path='.'):
-    'apply cmd to last item in path'
-    _invoke('{} {}'.format(
-        cmd,
-        os.path.join(path, sorted(os.listdir(path))[-1]),
-    ))
+def last(path):
+    'print last item in directory'
+    print(sorted(glob.glob(f'{path}/*'))[-1])
 
 def bookmark_set(name):
     'bookmark current directory under specified name'
@@ -529,7 +523,6 @@ def ssh_save(name):
     shutil.copytree(_home_path('.ssh'), _home_path('.ssh-'+name))
 
 def ssh_list():
-    import glob
     print([i.split('ssh-')[-1] for i in glob.glob(_home_path('.ssh-*'))])
 
 def ssh_load(name):
