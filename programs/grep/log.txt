@@ -1,0 +1,4 @@
+info: started trip 1284266 {"timestamp":"2023-05-04T19:44:05.964Z"}
+warn: big jump; trip: 1284243 {"timestamp":"2023-05-04T19:44:07.915Z"}
+error: axios throwing error {"timestamp":"2023-05-04T19:44:09.343Z"}
+info: started trip 1284267 {"timestamp":"2023-05-04T19:45:05.964Z"}
