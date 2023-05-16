@@ -530,6 +530,9 @@ def ssh_load(name):
     name = _home_path('.ssh-'+name)
     shutil.copytree(name, _home_path('.ssh'))
 
+def ssh_keygen():
+    _invoke('ssh-keygen -t ed25519')
+
 _convenience_git = _SubSection()
 
 def gcaapf():
