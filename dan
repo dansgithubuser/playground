@@ -778,6 +778,7 @@ _setup = _Section()
 _bash_profile_appendage = '''
 
 {header}
+#DAN_PS1_UNIQUIFIER=""
 python3 {this} bash
 source {dan_bash_path}
 
@@ -979,7 +980,9 @@ let g:netrw_banner = 0
 def vi():
     'setup vi stuff'
     p = _home_path('.vimrc')
-    print('I will create a vimrc file, it requires package vim-gui-common.')
+    print('Installing vim-gui-common.')
+    _invoke('sudo apt install vim-gui-common')
+    print('I will create a vimrc file.')
     if os.path.exists(p): print('I will overwrite the existing one.')
     print('If that is OK, enter y.')
     if _input() != 'y': sys.exit(1)
@@ -999,6 +1002,8 @@ def git():
                 if 'alias.sf' in line: continue
             _invoke(line)
     if platform.system() != 'Windows':
+        print('Installing curl.')
+        _invoke('sudo apt install curl')
         _invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
     _invoke('git config --global merge.conflictstyle diff3')
 
