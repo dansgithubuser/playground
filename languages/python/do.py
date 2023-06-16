@@ -5,6 +5,7 @@ import argparse
 import datetime
 import os
 import re
+import signal
 import subprocess
 import sys
 
@@ -30,6 +31,7 @@ def invoke(
     popen=False,
     no_split=False,
     out=False,
+    handle_signal=False,
     quiet=False,
     **kwargs,
 ):
@@ -58,6 +60,11 @@ def invoke(
         kwargs['env'] = env
     if popen:
         return subprocess.Popen(args, **kwargs)
+    elif handle_signal:
+        p = subprocess.Popen(args, **kwargs)
+        signal.signal(signal.SIGINT, lambda *args: p.send_signal(signal.SIGINT))
+        p.wait()
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
     else:
         if 'check' not in kwargs: kwargs['check'] = True
         if out: kwargs['capture_output'] = True
