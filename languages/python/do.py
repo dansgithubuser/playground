@@ -28,14 +28,16 @@ def timestamp():
 
 def invoke(
     *args,
-    popen=False,
-    no_split=False,
-    out=False,
-    handle_signal=False,
     quiet=False,
+    env_add={},
+    handle_sigint=True,
+    popen=False,
+    check=True,
+    out=False,
+    err=False,
     **kwargs,
 ):
-    if len(args) == 1 and not no_split:
+    if len(args) == 1 and type(args) == str:
         args = args[0].split()
     if not quiet:
         print(blue('-'*40))
@@ -54,25 +56,31 @@ def invoke(
         if kwargs: print(kwargs)
         if popen: print('popen')
         print()
-    if kwargs.get('env') != None:
+    if env_add:
         env = os.environ.copy()
-        env.update(kwargs['env'])
+        env.update(env_add)
         kwargs['env'] = env
-    if popen:
-        return subprocess.Popen(args, **kwargs)
-    elif handle_signal:
-        p = subprocess.Popen(args, **kwargs)
+    if out or err: kwargs['capture_output'] = True
+    p = subprocess.Popen(args, **kwargs)
+    if handle_sigint:
         signal.signal(signal.SIGINT, lambda *args: p.send_signal(signal.SIGINT))
-        p.wait()
+    if popen:
+        return p
+    p.wait()
+    if handle_sigint:
         signal.signal(signal.SIGINT, signal.SIG_DFL)
-    else:
-        if 'check' not in kwargs: kwargs['check'] = True
-        if out: kwargs['capture_output'] = True
-        result = subprocess.run(args, **kwargs)
-        if out:
-            result = result.stdout.decode('utf-8')
-            if out != 'exact': result = result.strip()
-        return result
+    if check and p.returncode:
+        raise Exception(f'invocation {repr(args)} returned code {p.returncode}.')
+    if out:
+        stdout = p.stdout.decode('utf-8')
+        if out != 'exact': stdout = stdout.strip()
+        if not err: return stdout
+    if err:
+        stderr = p.stderr.decode('utf-8')
+        if err != 'exact': stderr = stderr.strip()
+        if not out: return stderr
+    if out and err: return [stdout, stderr]
+    return p
 
 #===== main =====#
 if len(sys.argv) == 1:
