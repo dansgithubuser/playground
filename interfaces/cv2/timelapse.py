@@ -4,6 +4,8 @@ import cv2
 
 import argparse
 import datetime
+import os
+import shutil
 import time
 import traceback
 
@@ -14,6 +16,8 @@ parser.add_argument('--width', type=int)
 parser.add_argument('--height', type=int)
 parser.add_argument('--extension', '-e', default='png')
 parser.add_argument('--skip-similar', metavar='threshold [attention span] [max time between images]')
+parser.add_argument('--rm-thresh-gb', type=float, default=1, help='Remove old images when this much disk or less remains, in gigabytes.')
+parser.add_argument('--rm-amount-gb', type=float, default=0.1, help='Remove this many gigabytes of images when threshold reached.')
 parser.add_argument('--preview', action='store_true')
 args = parser.parse_args()
 
@@ -55,6 +59,12 @@ class SimilarChecker:
 if args.skip_similar:
     similar_checker = SimilarChecker(*[float(i) for i in args.skip_similar.split()])
 
+def rm_old():
+    if shutil.disk_usage('.').free / 1e9 > args.rm_thresh_gb: return
+    for path in sorted(os.listdir('.')):
+        os.remove(path)
+        if shutil.disk_usage('.').free / 1e9> args.rm_thresh_gb + args.rm_amount_gb: return
+
 def main():
     cap = cv2.VideoCapture(args.camera_index)
     if args.width: cap.set(cv2.CAP_PROP_FRAME_WIDTH, args.width)
@@ -75,6 +85,7 @@ def main():
             )
             cv2.imwrite(file_name, frame)
         time.sleep(args.period)
+        rm_old()
 
 while True:
     try:
