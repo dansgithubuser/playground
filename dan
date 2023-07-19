@@ -1008,7 +1008,10 @@ def git():
     _invoke('git config --global merge.conflictstyle diff3')
 
 def pyenv():
-    _invoke('git clone https://github.com/pyenv/pyenv.git ~/.pyenv')
+    _invoke('git clone https://github.com/pyenv/pyenv.git            ~/.pyenv')
+    _invoke('git clone https://github.com/pyenv/pyenv-doctor.git     ~/.pyenv/plugins/pyenv-doctor')
+    _invoke('git clone https://github.com/pyenv/pyenv-update.git     ~/.pyenv/plugins/pyenv-update')
+    _invoke('git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv')
     _invoke('sudo apt update')
     _invoke(' '.join([
         'sudo apt install',
