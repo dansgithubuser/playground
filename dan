@@ -1186,6 +1186,56 @@ def lat_lon_distance(lat_0, lon_0, *lat_lon_i):
         dx = (lon_0 - float(lat_lon_i[i+1])) * lat_to_meters * aspect
         print(math.sqrt(dy * dy + dx * dx))
 
+def cron_add():
+    print('What is the name of this job?')
+    name = input()
+    print()
+    print('I will ask about the minute, hour, day-of-month, month, and day-of-week this job should run at.')
+    print('Here are the special symbols you can use:')
+    print(
+        '\t* any value\n'
+        '\t, value list separator\n'
+        '\t- range of values\n'
+        '\t/ step values\n'
+    )
+    print('On which minute should this task run? (0-59)')
+    minute = input() or '*'
+    print('On which hour should this task run? (0-23)')
+    hour = input() or '*'
+    print('On which day of the month should this task run? (1-31)')
+    day_m = input() or '*'
+    print('On which month should this task run? (1-12)')
+    month = input() or '*'
+    print('On which day of the week should this task run? (0-6)')
+    day_w = input() or '*'
+    print()
+    print('I will open a web page to review. Enter to continue. s to skip.')
+    i = input()
+    if i != 's':
+        webbrowser.open(f'https://crontab.guru/#{minute}_{hour}_{day_m}_{month}_{day_w}')
+        print('Enter to confirm and continue, ctrl-c to abort.')
+        input()
+    print()
+    print('What user should this job run under?')
+    user = input()
+    print()
+    print('What is the command?')
+    command = input()
+    print()
+    line = f'{minute} {hour} {day_m} {month} {day_w} {user} {command}'
+    file_path = f'/etc/cron.d/{name}'
+    print('I will put')
+    print('\t' + line)
+    print('into')
+    print('\t' + file_path)
+    print('Enter to continue, ctrl-c to abort.')
+    input()
+    if os.access('/etc/cron.d', os.W_OK):
+        with open(file_path, 'w') as f:
+            f.write(line)
+    else:
+        _invoke(f'''sudo sh -c "echo '{line}' > {file_path}"''')
+
 _help = _Section()
 
 def _get_commands():
