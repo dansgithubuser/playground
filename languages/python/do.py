@@ -37,7 +37,7 @@ def invoke(
     err=False,
     **kwargs,
 ):
-    if len(args) == 1 and type(args) == str:
+    if len(args) == 1 and type(args[0]) == str:
         args = args[0].split()
     if not quiet:
         print(blue('-'*40))
