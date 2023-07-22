@@ -5,6 +5,7 @@ from __future__ import print_function
 import argparse
 import datetime
 import functools
+import getpass
 import glob
 import inspect
 import math
@@ -264,6 +265,21 @@ def kill_the_greedy():
 
 def temperature():
     _invoke('cat /sys/class/thermal/thermal_zone*/temp')
+
+def cpu_frequency():
+    try:
+        _invoke('cpufreq-info')
+    except Exception as e:
+        print('Exception:', e)
+        print('Try `sudo apt install cpufrequtils`.')
+
+def set_cpu_frequency_governor(governor):
+    assert os.path.exists('/etc/default')
+    if not os.access('/etc/default', os.W_OK):
+        _invoke(f'sudo {this} set_cpu_frequency_governor {governor}')
+        return
+    with open('/etc/default/cpufrequtils', 'w') as f:
+        f.write(f'GOVERNOR="{governor}"\n')
 
 _convenience = _Section()
 _convenience_text = _SubSection()
@@ -1300,7 +1316,7 @@ if len(sys.argv) == 1: h()
 args = parser.parse_args()
 
 if not args.quiet:
-    sys.stderr.write('invoked with: {}\n'.format(sys.argv))
+    sys.stderr.write(f'invoked as {getpass.getuser()} with: {sys.argv}\n')
 
 def _translate_lazy(lazy, possibilities):
 
