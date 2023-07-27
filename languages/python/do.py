@@ -63,7 +63,7 @@ def invoke(
     if out or err: kwargs['capture_output'] = True
     p = subprocess.Popen(args, **kwargs)
     if handle_sigint:
-        signal.signal(signal.SIGINT, lambda *args: p.send_signal(signal.SIGINT))
+        signal.signal(signal.SIGINT, signal.SIG_IGN)
     if popen:
         return p
     p.wait()
