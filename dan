@@ -281,6 +281,13 @@ def set_cpu_frequency_governor(governor):
     with open('/etc/default/cpufrequtils', 'w') as f:
         f.write(f'GOVERNOR="{governor}"\n')
 
+def gpu_info():
+    print('===== lshw =====')
+    _invoke('sudo lshw -c display')
+    print()
+    print('===== glxinfo =====')
+    _invoke('glxinfo -B')
+
 _convenience = _Section()
 _convenience_text = _SubSection()
 
