@@ -288,6 +288,9 @@ def gpu_info():
     print('===== glxinfo =====')
     _invoke('glxinfo -B')
 
+def listening_ports():
+    _invoke('sudo netstat -lntup')
+
 _convenience = _Section()
 _convenience_text = _SubSection()
 
