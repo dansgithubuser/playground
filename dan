@@ -735,9 +735,11 @@ def dan(*args):
     ' -- useful for creating compound statements, for example in an alias'
     for arg in args: _invoke('dan '+arg)
 
-def pyre(pattern, repl):
-    'python regex'
-    print(re.sub(pattern, repl, stdin), end='')
+def pyre(pattern):
+    'run python re.search on each line of stdin, print matches'
+    for line in stdin.splitlines():
+        if m := re.search(pattern, line):
+            print(line)
 
 def hista():
     '''\
