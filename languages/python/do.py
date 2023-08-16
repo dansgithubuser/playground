@@ -33,8 +33,9 @@ def invoke(
     handle_sigint=True,
     popen=False,
     check=True,
-    out=False,
-    err=False,
+    put_in=False,
+    get_out=False,
+    get_err=False,
     **kwargs,
 ):
     if len(args) == 1 and type(args[0]) == str:
@@ -60,10 +61,19 @@ def invoke(
         env = os.environ.copy()
         env.update(env_add)
         kwargs['env'] = env
-    if out or err: kwargs['capture_output'] = True
+    if put_in and 'stdin' not in kwargs: kwargs['stdin'] = subprocess.PIPE
+    if get_out or get_err: kwargs['capture_output'] = True
     p = subprocess.Popen(args, **kwargs)
     if handle_sigint:
         signal.signal(signal.SIGINT, signal.SIG_IGN)
+    if put_in:
+        if type(put_in) == str:
+            put_in = put_in.encode()
+        p.stdin.write(put_in)
+        if popen:
+            p.stdin.flush()
+        else:
+            p.stdin.close()
     if popen:
         return p
     p.wait()
@@ -71,15 +81,15 @@ def invoke(
         signal.signal(signal.SIGINT, signal.SIG_DFL)
     if check and p.returncode:
         raise Exception(f'invocation {repr(args)} returned code {p.returncode}.')
-    if out:
+    if get_out:
         stdout = p.stdout.decode('utf-8')
-        if out != 'exact': stdout = stdout.strip()
-        if not err: return stdout
-    if err:
+        if get_out != 'exact': stdout = stdout.strip()
+        if not get_err: return stdout
+    if get_err:
         stderr = p.stderr.decode('utf-8')
-        if err != 'exact': stderr = stderr.strip()
-        if not out: return stderr
-    if out and err: return [stdout, stderr]
+        if get_err != 'exact': stderr = stderr.strip()
+        if not get_out: return stderr
+    if get_out and get_err: return [stdout, stderr]
     return p
 
 #===== main =====#
