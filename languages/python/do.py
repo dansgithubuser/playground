@@ -62,7 +62,8 @@ def invoke(
         env.update(env_add)
         kwargs['env'] = env
     if put_in and 'stdin' not in kwargs: kwargs['stdin'] = subprocess.PIPE
-    if get_out or get_err: kwargs['capture_output'] = True
+    if get_out: kwargs['stdout'] = subprocess.PIPE
+    if get_err: kwargs['stderr'] = subprocess.PIPE
     p = subprocess.Popen(args, **kwargs)
     if handle_sigint:
         signal.signal(signal.SIGINT, signal.SIG_IGN)
@@ -82,11 +83,11 @@ def invoke(
     if check and p.returncode:
         raise Exception(f'invocation {repr(args)} returned code {p.returncode}.')
     if get_out:
-        stdout = p.stdout.decode('utf-8')
+        stdout = p.stdout.read().decode('utf-8')
         if get_out != 'exact': stdout = stdout.strip()
         if not get_err: return stdout
     if get_err:
-        stderr = p.stderr.decode('utf-8')
+        stderr = p.stderr.read().decode('utf-8')
         if get_err != 'exact': stderr = stderr.strip()
         if not get_out: return stderr
     if get_out and get_err: return [stdout, stderr]
