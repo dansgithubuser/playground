@@ -30,6 +30,7 @@ def invoke(
     *args,
     quiet=False,
     env_add={},
+    env_add_secrets=set(),
     handle_sigint=True,
     popen=False,
     check=True,
@@ -54,6 +55,8 @@ def invoke(
                 else:
                     end = ';\n'
                 print(v, end=end)
+        if env_add:
+            print('env_add:', {k: (v if v not in env_add_secrets else '...') for k, v in env_add.items()})
         if kwargs: print(kwargs)
         if popen: print('popen')
         print()
