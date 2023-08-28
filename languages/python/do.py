@@ -56,7 +56,7 @@ def invoke(
                     end = ';\n'
                 print(v, end=end)
         if env_add:
-            print('env_add:', {k: (v if v not in env_add_secrets else '...') for k, v in env_add.items()})
+            print('env_add:', {k: (v if k not in env_add_secrets else '...') for k, v in env_add.items()})
         if kwargs: print(kwargs)
         if popen: print('popen')
         print()
@@ -80,20 +80,22 @@ def invoke(
             p.stdin.close()
     if popen:
         return p
-    p.wait()
+    stdout, stderr = p.communicate()
+    p.out = stdout
+    p.err = stderr
     if handle_sigint:
         signal.signal(signal.SIGINT, signal.SIG_DFL)
     if check and p.returncode:
         raise Exception(f'invocation {repr(args)} returned code {p.returncode}.')
     if get_out:
-        stdout = p.stdout.read().decode('utf-8')
+        stdout = stdout.decode('utf-8')
         if get_out != 'exact': stdout = stdout.strip()
         if not get_err: return stdout
     if get_err:
-        stderr = p.stderr.read().decode('utf-8')
+        stderr = stderr.decode('utf-8')
         if get_err != 'exact': stderr = stderr.strip()
         if not get_out: return stderr
-    if get_out and get_err: return [stdout, stderr]
+    if get_out and get_err: return stdout, stderr
     return p
 
 #===== main =====#
