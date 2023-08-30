@@ -236,6 +236,10 @@ def install(command):
         file.write('\n')
     _invoke(command)
 
+def ps():
+    'run ps with the best options'
+    invoke('ps -e --forest u')
+
 def kill(name):
     'kill a process by name'
     lines = [
