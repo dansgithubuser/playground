@@ -1,3 +1,7 @@
+'''
+example usage: python3 cam-cv2.py | python3 dmonitor.py
+'''
+
 import cv2
 import numpy as np
 
