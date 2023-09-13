@@ -37,6 +37,7 @@ nvarguscamerasrc \
 def pack(im):
     return struct.pack(f'{IM_SIZE}f', *im)
 
+print(f'cam-gst-nano.py PID is {os.getpid()}')
 if not os.path.exists('fifo-gst'):
     subprocess.run('mkfifo fifo-gst'.split())
 if not os.path.exists('fifo-dmon'):
