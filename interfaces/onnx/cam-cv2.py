@@ -5,8 +5,10 @@ example usage: python3 cam-cv2.py | python3 dmonitor.py
 import cv2
 import numpy as np
 
-import json
+import struct
 import sys
+
+IM_SIZE = 1440 * 960
 
 def resize(im):
     w_f = 1440
@@ -47,7 +49,7 @@ def preprocess(im):
     return im
 
 def pack(im):
-    return json.dumps([float(i) for i in im])
+    return struct.pack(f'{IM_SIZE}f', *im)
 
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1440)
@@ -55,6 +57,5 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 960)
 while True:
     ret, im = cap.read()
     if not ret: break
-    sys.stdout.write(pack(preprocess(resize(im))))
-    sys.stdout.write('\0')
+    sys.stdout.buffer.write(pack(preprocess(resize(im))))
     sys.stdout.flush()

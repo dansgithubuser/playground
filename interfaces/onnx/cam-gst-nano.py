@@ -18,13 +18,13 @@ raw video---->.             .             .             .
 .             .             .             .             .             
 '''
 
-import json
 import os
+import struct
 import subprocess
 import sys
 
-Y_SIZE = 1440 * 960
-IM_SIZE = Y_SIZE * 3 // 2
+IM_SIZE = 1440 * 960
+I420_SIZE = IM_SIZE * 3 // 2
 GST_PIPELINE = '''\
 nvarguscamerasrc \
 ! nvvidconv \
@@ -35,7 +35,7 @@ nvarguscamerasrc \
 '''
 
 def pack(im):
-    return json.dumps(im)
+    return struct.pack(f'{IM_SIZE}f', *im)
 
 if not os.path.exists('fifo-gst'):
     subprocess.run('mkfifo fifo-gst'.split())
@@ -45,9 +45,8 @@ p_gst = subprocess.Popen(f'gst-launch-1.0 {GST_PIPELINE}'.split())
 fifo_gst = open('fifo-gst', 'rb')
 fifo_dmon = open('fifo-dmon', 'wb')
 while True:
-    buf = fifo_gst.read(IM_SIZE)
-    assert len(buf) == IM_SIZE
-    im = [i / 255 for i in buf[:Y_SIZE]]
-    fifo_dmon.write(pack(im).encode())
-    fifo_dmon.write(b'\0')
+    buf = fifo_gst.read(I420_SIZE)
+    assert len(buf) == I420_SIZE
+    im = [i / 255 for i in buf[:IM_SIZE]]
+    fifo_dmon.write(pack(im))
     fifo_dmon.flush()

@@ -17,8 +17,8 @@ raw video---->.             .             .             .
 .             .             .             .             .             
 '''
 
-import json
 import os
+import struct
 import subprocess
 import sys
 
@@ -33,7 +33,7 @@ v4l2src \
 '''
 
 def pack(im):
-    return json.dumps(im)
+    return struct.pack(f'{IM_SIZE}f', *im)
 
 if not os.path.exists('fifo-gst'):
     subprocess.run('mkfifo fifo-gst'.split())
@@ -46,6 +46,5 @@ while True:
     buf = fifo_gst.read(IM_SIZE)
     assert len(buf) == IM_SIZE
     im = [i / 255 for i in buf]
-    fifo_dmon.write(pack(im).encode())
-    fifo_dmon.write(b'\0')
+    fifo_dmon.write(pack(im))
     fifo_dmon.flush()

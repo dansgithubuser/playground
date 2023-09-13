@@ -5,19 +5,21 @@ Python script that takes input from stdin, puts into ONNX model, and prints the 
 import numpy as np
 import onnxruntime as ort
 
-import json
 import pprint
+import struct
 import sys
 
+IM_SIZE = 1440 * 960
+
 ort_sess = ort.InferenceSession('openpilot-dmonitor.onnx')
-buf = bytearray()
 while True:
-    b = sys.stdin.buffer.read(1)[0]
-    if b != 0:
-        buf.append(b)
-    else:
-        pprint.pprint(ort_sess.run(None, {
-            'input_img': np.array([json.loads(buf)], dtype=np.float32),
+    buf = sys.stdin.buffer.read(IM_SIZE * 4)
+    im = struct.unpack(f'{IM_SIZE}f', buf)
+    out = ort_sess.run(
+        None,
+        {
+            'input_img': np.array([im], dtype=np.float32),
             'calib': np.zeros((1, 3), dtype=np.float32),
-        }))
-        buf.clear()
+        },
+    )
+    pprint.pprint(out)
