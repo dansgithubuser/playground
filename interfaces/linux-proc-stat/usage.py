@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+# Linux CPU usage monitor
+
 import time
 
 class State:
