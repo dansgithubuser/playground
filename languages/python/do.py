@@ -4,6 +4,7 @@
 import argparse
 import datetime
 import os
+from pathlib import Path
 import re
 import signal
 import subprocess
@@ -14,7 +15,7 @@ parser = argparse.ArgumentParser()
 args = parser.parse_args()
 
 #===== consts =====#
-DIR = os.path.dirname(os.path.realpath(__file__))
+DIR = Path(__file__).resolve().parent
 
 #===== setup =====#
 os.chdir(DIR)
@@ -39,12 +40,12 @@ def invoke(
     get_err=False,
     **kwargs,
 ):
-    if len(args) == 1 and type(args[0]) == str:
+    if len(args) == 1 and type(args[0]) == str and not kwargs.get('shell'):
         args = args[0].split()
     if not quiet:
         print(blue('-'*40))
         print(timestamp())
-        print(os.getcwd()+'$', end=' ')
+        print(f'{Path.cwd()}$', end=' ')
         if any([re.search(r'\s', i) for i in args]):
             print()
             for i in args: print(f'\t{i} \\')
