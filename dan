@@ -878,6 +878,7 @@ def install_self():
     #other stuff
     vi()
     git()
+    enable_sysrq()
 
 def bash():
     'update bash setup, writes to ~/Desktop/scripts/'
@@ -1072,6 +1073,9 @@ def pyenv():
 
 def disable_capslock():
     _invoke('xmodmap -e "keycode 66 = Shift_L NoSymbol Shift_L"')
+
+def enabled_sysrq():
+    _invoke("sudo sh -c 'echo kernel.sysrq=1>>/etc/sysctl.d/99-sysctl.conf'")
 
 _esoteric = _Section()
 
