@@ -12,4 +12,7 @@ def timestamp_file():
 def timestamp_file_non_utc():
     return datetime.now().astimezone().strftime('%Y-%m-%d_%H-%M-%S%z')
 
+def datetime_from_unix_timestamp(unix_timestamp):
+    return datetime.fromtimestamp(unix_timestamp, timezone.utc)
+
 if __name__ == '__main__': print(timestamp())
