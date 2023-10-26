@@ -295,6 +295,9 @@ def gpu_info():
 def listening_ports():
     _invoke('sudo netstat -lntup')
 
+def battery_microwattage():
+    _invoke('cat /sys/class/power_supply/BAT*/power_now')
+
 _convenience = _Section()
 _convenience_text = _SubSection()
 
