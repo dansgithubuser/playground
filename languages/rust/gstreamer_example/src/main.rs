@@ -19,7 +19,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let appsink = gstreamer_app::AppSink::builder().build();
     pipeline.add(&cam)?;
     pipeline.add(&appsink)?;
-    cam.link(&appsink)?;
+    cam.link_filtered(
+        &appsink,
+        &gstreamer::caps::Caps::builder("video/x-raw")
+            .field("format", "YUY2")
+            .field("width", 960)
+            .field("height", 540)
+            .field("framerate", gstreamer::Fraction::new(15, 1))
+            .build(),
+    )?;
     appsink.set_callbacks(
         gstreamer_app::AppSinkCallbacks::builder()
             .new_sample(|appsink| {
@@ -42,8 +50,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 })?;
                 let slice = map.as_slice();
                 println!(
-                    "avg: {}",
+                    "avg: {:.1}, len: {}",
                     slice.iter().map(|i| *i as f32).sum::<f32>() / slice.len() as f32,
+                    slice.len(),
                 );
                 Ok(gstreamer::FlowSuccess::Ok)
             })
