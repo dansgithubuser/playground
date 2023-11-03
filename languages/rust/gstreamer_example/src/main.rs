@@ -16,10 +16,39 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("GStreamer version: {:?}", gstreamer::version());
     let pipeline = gstreamer::Pipeline::new();
     let cam = gstreamer::ElementFactory::make("v4l2src").build()?;
-    let appsink = gstreamer::ElementFactory::make("appsink").build()?;
+    let appsink = gstreamer_app::AppSink::builder().build();
     pipeline.add(&cam)?;
     pipeline.add(&appsink)?;
     cam.link(&appsink)?;
+    appsink.set_callbacks(
+        gstreamer_app::AppSinkCallbacks::builder()
+            .new_sample(|appsink| {
+                let sample = appsink.pull_sample().map_err(|_| gstreamer::FlowError::Eos)?;
+                let buffer = sample.buffer().ok_or_else(|| {
+                    gstreamer::element_error!(
+                        appsink,
+                        gstreamer::ResourceError::Failed,
+                        ("Failed to get buffer from appsink")
+                    );
+                    gstreamer::FlowError::Error
+                })?;
+                let map = buffer.map_readable().map_err(|_| {
+                    gstreamer::element_error!(
+                        appsink,
+                        gstreamer::ResourceError::Failed,
+                        ("Failed to map buffer readable")
+                    );
+                    gstreamer::FlowError::Error
+                })?;
+                let slice = map.as_slice();
+                println!(
+                    "avg: {}",
+                    slice.iter().map(|i| *i as f32).sum::<f32>() / slice.len() as f32,
+                );
+                Ok(gstreamer::FlowSuccess::Ok)
+            })
+            .build(),
+    );
     pipeline.set_state(gstreamer::State::Playing)?;
     let bus = pipeline.bus().unwrap(); // pipeline without bus shouldn't happen
     for msg in bus.iter_timed(gstreamer::ClockTime::NONE) { // don't timeout
