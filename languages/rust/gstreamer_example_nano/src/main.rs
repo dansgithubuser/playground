@@ -11,6 +11,8 @@ use gstreamer::prelude::{
     GstObjectExt,
 };
 
+use std::str::FromStr;
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     gstreamer::init()?;
     println!("GStreamer version: {:?}", gstreamer::version());
@@ -25,34 +27,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     pipeline.add(&appsink)?;
     cam.link_filtered(
         &nvvidconv,
-        &gstreamer::caps::Caps::builder_full()
-            .structure_with_features(
-                gstreamer::structure::Structure::builder("video/x-raw")
-                    .field("width", 1440)
-                    .field("height", 1080)
-                    .field("framerate", gstreamer::Fraction::new(15, 1))
-                    .build(),
-                {
-                    let mut caps_features = gstreamer::CapsFeatures::new_empty();
-                    caps_features.add("memory:NVMM");
-                    caps_features
-                },
-            )
-            .build(),
+        &gstreamer::caps::Caps::from_str("video/x-raw(memory:NVMM),width=1440,height=1080,framerate=15/1")?,
     )?;
     nvvidconv.link_filtered(
         &videoconvert,
-        &gstreamer::caps::Caps::builder("video/x-raw")
-            .field("width", 1440)
-            .field("height", 1080)
-            .field("framerate", gstreamer::Fraction::new(15, 1))
-            .build(),
+        &gstreamer::caps::Caps::from_str("video/x-raw,width=1440,height=1080,framerate=15/1")?,
     )?;
     videoconvert.link_filtered(
         &appsink,
-        &gstreamer::caps::Caps::builder("video/x-raw")
-            .field("format", "I420") // BGR is very slow!
-            .build(),
+        &gstreamer::caps::Caps::from_str("video/x-raw,format=I420")?, // BGR is very slow!
     )?;
     appsink.set_callbacks(
         gstreamer_app::AppSinkCallbacks::builder()
