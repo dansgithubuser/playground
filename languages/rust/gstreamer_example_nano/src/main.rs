@@ -19,23 +19,29 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let pipeline = gstreamer::Pipeline::new();
     let cam = gstreamer::ElementFactory::make("nvarguscamerasrc").build()?;
     let nvvidconv = gstreamer::ElementFactory::make("nvvidconv").build()?;
-    let videoconvert = gstreamer::ElementFactory::make("videoconvert").build()?;
+    let videoconvert1 = gstreamer::ElementFactory::make("videoconvert").build()?;
+    let videoconvert2 = gstreamer::ElementFactory::make("videoconvert").build()?;
     let appsink = gstreamer_app::AppSink::builder().build();
     pipeline.add(&cam)?;
     pipeline.add(&nvvidconv)?;
-    pipeline.add(&videoconvert)?;
+    pipeline.add(&videoconvert1)?;
+    pipeline.add(&videoconvert2)?;
     pipeline.add(&appsink)?;
     cam.link_filtered(
         &nvvidconv,
         &gstreamer::caps::Caps::from_str("video/x-raw(memory:NVMM),width=1440,height=1080,framerate=15/1")?,
     )?;
     nvvidconv.link_filtered(
-        &videoconvert,
+        &videoconvert1,
         &gstreamer::caps::Caps::from_str("video/x-raw,width=1440,height=1080,framerate=15/1")?,
     )?;
-    videoconvert.link_filtered(
+    videoconvert1.link_filtered(
+        &videoconvert2,
+        &gstreamer::caps::Caps::from_str("video/x-raw,format=I420")?,
+    )?;
+    videoconvert2.link_filtered(
         &appsink,
-        &gstreamer::caps::Caps::from_str("video/x-raw,format=I420")?, // BGR is very slow!
+        &gstreamer::caps::Caps::from_str("video/x-raw,format=BGR")?,
     )?;
     appsink.set_callbacks(
         gstreamer_app::AppSinkCallbacks::builder()
@@ -59,8 +65,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 })?;
                 let slice = map.as_slice();
                 println!(
-                    "avg: {:.1}, len: {}",
-                    slice.iter().map(|i| *i as f32).sum::<f32>() / slice.len() as f32,
+                    "rough avg: {:.1}, len: {}",
+                    slice.iter().step_by(100).map(|i| *i as f32).sum::<f32>() * 100.0 / slice.len() as f32,
                     slice.len(),
                 );
                 Ok(gstreamer::FlowSuccess::Ok)
