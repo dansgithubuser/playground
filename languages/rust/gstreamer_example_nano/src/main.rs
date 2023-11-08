@@ -37,7 +37,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     )?;
     videoconvert1.link_filtered(
         &videoconvert2,
-        &gstreamer::caps::Caps::from_str("video/x-raw,format=I420")?,
+        &gstreamer::caps::Caps::from_str("video/x-raw,format=BGRx")?,
     )?;
     videoconvert2.link_filtered(
         &appsink,
