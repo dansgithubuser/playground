@@ -265,7 +265,7 @@ predict.lat_planner_state = np.zeros((1, LAT_PLANNER_STATE_LEN), dtype=np.float1
 predict.features_buffer = np.zeros((1, HISTORY_BUFFER_LEN, FEATURE_LEN), dtype=np.float16)
 
 def postprocess_im(output, im):
-    pass
+    print(output)
 
 #===== main =====#
 if __name__ == '__main__':

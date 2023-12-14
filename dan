@@ -520,6 +520,9 @@ def rename_tab_and_open(program, path=''):
         tab_name = path
         while len(tab_name) > 24:
             split = tab_name.split('/')
+            if len(split) == 1:
+                tab_name = split[0][:21] + '...'
+                break
             split.pop(0)
             tab_name = '/'.join(split)
         rename_tab(tab_name)
