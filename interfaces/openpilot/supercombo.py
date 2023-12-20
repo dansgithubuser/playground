@@ -79,30 +79,30 @@ sess = ort.InferenceSession('supercombo.onnx', providers=['CPUExecutionProvider'
 #===== helpers =====#
 #----- math -----#
 def sigmoid(x):
-  return 1. / (1. + np.exp(-x))
+    return 1. / (1. + np.exp(-x))
 
 def softmax(x, axis=-1):
-  x -= np.max(x, axis=axis, keepdims=True)
-  if x.dtype == np.float32 or x.dtype == np.float64:
-    np.exp(x, out=x)
-  else:
-    x = np.exp(x)
-  x /= np.sum(x, axis=axis, keepdims=True)
-  return x
+    x -= np.max(x, axis=axis, keepdims=True)
+    if x.dtype == np.float32 or x.dtype == np.float64:
+        np.exp(x, out=x)
+    else:
+        x = np.exp(x)
+    x /= np.sum(x, axis=axis, keepdims=True)
+    return x
 
 def interp(x, xp, fp):
-  N = len(xp)
+    N = len(xp)
 
-  def get_interp(xv):
-    hi = 0
-    while hi < N and xv > xp[hi]:
-      hi += 1
-    low = hi - 1
-    return fp[-1] if hi == N and xv > xp[low] else (
-      fp[0] if hi == 0 else
-      (xv - xp[low]) * (fp[hi] - fp[low]) / (xp[hi] - xp[low]) + fp[low])
+    def get_interp(xv):
+        hi = 0
+        while hi < N and xv > xp[hi]:
+            hi += 1
+        low = hi - 1
+        return fp[-1] if hi == N and xv > xp[low] else (
+            fp[0] if hi == 0 else
+            (xv - xp[low]) * (fp[hi] - fp[low]) / (xp[hi] - xp[low]) + fp[low])
 
-  return [get_interp(v) for v in x] if hasattr(x, '__iter__') else get_interp(x)
+    return [get_interp(v) for v in x] if hasattr(x, '__iter__') else get_interp(x)
 
 #----- graphics -----#
 # ratio is final_width / original_width
@@ -154,6 +154,16 @@ def put_text(
         cv2.putText(im, line, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, size, bg_color, 2)
         cv2.putText(im, line, (int(x), int(y)), cv2.FONT_HERSHEY_SIMPLEX, size, fg_color, 1)
         y += 24 * size
+
+def to_top_view(vec):
+    x = vec[0]
+    y = vec[1]
+    return int(y * 10 + 320), int(x * -10 + 240)
+
+def to_right_view(vec):
+    x = vec[0]
+    z = vec[2]
+    return int(x * 10 + 960), int(z * -10 + 720)
 
 #----- model output parsing -----#
 def parse_categorical_crossentropy(name, outs, out_shape=None):
@@ -229,6 +239,21 @@ def parse_outputs(outs):
     parse_categorical_crossentropy('desire_pred',  outs,                                            out_shape=(DESIRE_PRED_LEN, DESIRE_PRED_WIDTH))
     return outs
 
+def parse_output_more(output):
+    return {
+        'plan': [
+            {
+                'position': plan_element[0:3],
+                'velocity': plan_element[3:6],
+                'acceleration': plan_element[6:9],
+                'rotation': plan_element[9:12],
+                'rotation_rate': plan_element[12:15],
+            }
+            for plan_element in output['plan'][0]
+        ],
+        'lane_lines': output['lane_lines'][0],
+    }
+
 #----- high-level -----#
 def preprocess(im, fov):
     preprocess.input_imgs[:, :6] = preprocess.input_imgs[:, 6:]
@@ -265,7 +290,22 @@ predict.lat_planner_state = np.zeros((1, LAT_PLANNER_STATE_LEN), dtype=np.float1
 predict.features_buffer = np.zeros((1, HISTORY_BUFFER_LEN, FEATURE_LEN), dtype=np.float16)
 
 def postprocess_im(output, im):
-    print(output)
+    output, duration = output
+    output = parse_output_more(output)
+    im = cv2.copyMakeBorder(im, 480, 0, 0, 640, cv2.BORDER_CONSTANT)
+    # plan
+    thickness = 2
+    for i, (a, b) in enumerate(zip(output['plan'], output['plan'][1:])):
+        color = (255 - i * 6, 255 - i * 6, 255 - i * 6)
+        cv2.line(im, to_top_view(a['position'])  , to_top_view(b['position'])  , color, thickness)
+        cv2.line(im, to_right_view(a['position']), to_right_view(b['position']), color, thickness)
+    # lane lines
+    thickness = 2
+    color = (0, 255, 255)
+    for lane_line in output['lane_lines']:
+        for a, b in zip(lane_line, lane_line[1:]):
+            cv2.line(im, to_top_view(a), to_top_view(b), color, thickness)
+    return im
 
 #===== main =====#
 if __name__ == '__main__':
@@ -276,8 +316,8 @@ if __name__ == '__main__':
         if not ret:
             break
         output = predict(*preprocess(im, args.fov))
-        postprocess_im(output, im)
+        im = postprocess_im(output, im)
         cv2.imshow('supercombo', im)
-        c = cv2.waitKey(1)
+        c = cv2.waitKey()
         if c == 27:
             break
