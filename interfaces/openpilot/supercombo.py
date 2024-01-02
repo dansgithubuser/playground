@@ -165,6 +165,89 @@ def to_right_view(vec):
     z = vec[2]
     return int(x * 10 + 960), int(z * -10 + 720)
 
+#----- model-to-camera transformation -----#
+# https://github.com/commaai/openpilot/tree/3713e4d5eaed783738ea8ecdbd3b7e6abaa974c0/common/transformations
+
+def rot_from_euler(rpy):
+    # not gonna bother working this out, we're gonna assume no rotation anyway ('cause I want this to work on a video, which doesn't have orientation angles)
+    assert all(i == 0 for i in rpy)
+    return np.identity(3)
+
+#--- model frame to calibrated frame ---#
+MEDMODEL_INPUT_SIZE = (512, 256)
+MEDMODEL_CY = 47.6
+
+medmodel_fl = 910.0
+medmodel_intrinsics = np.array([
+    [medmodel_fl,          0.0,  0.5 * MEDMODEL_INPUT_SIZE[0]],
+    [        0.0,  medmodel_fl,                   MEDMODEL_CY],
+    [        0.0,          0.0,                           1.0],
+])
+
+device_frame_from_view_frame = np.array([
+  [0.,  0.,  1.],
+  [1.,  0.,  0.],
+  [0.,  1.,  0.],
+])
+view_frame_from_device_frame = device_frame_from_view_frame.T
+
+def get_view_frame_from_calib_frame(roll, pitch, yaw, height):
+    device_from_calib = rot_from_euler([roll, pitch, yaw])
+    view_from_calib = view_frame_from_device_frame.dot(device_from_calib)  # just swapping components
+    return np.hstack((view_from_calib, [[0], [height], [0]]))  # 3x4, but we never use this extra column
+
+medmodel_frame_from_calib_frame = medmodel_intrinsics @ get_view_frame_from_calib_frame(0, 0, 0, 0)
+
+# This is a chained transform.
+# Recall inverse of matrix product: (AB)-1 = B-1A-1.
+# Here, A = modemodel_intrinsics, and B = calib-to-view
+# So this chained transform is:
+# 1) A-1: medmodel_intrinsics-1
+# 2) B-1: view-to-calib
+# The view frame is in meters,
+# so seems that medmodel_intrinsics-1 goes from pixels to meters.
+# But meters of what? The lens? Is that useful?
+# 910 is too small for pixels/m, it may be pixels/mm.
+# I think this is gonna cancel out anyway.
+calib_from_medmodel = np.linalg.inv(medmodel_frame_from_calib_frame[:, :3])
+
+#--- view to camera ---#
+cam_fl = 910.0
+frame_size = (640, 480)
+cam_intrinsics = np.array([
+  [cam_fl,    0.0, frame_size[0]/2],
+  [   0.0, cam_fl, frame_size[1]/2],
+  [   0.0,    0.0,             1.0],
+])
+
+#--- full transformation: model frame to camera frame ---#
+def get_warp_matrix(*, big):
+    '''
+    This returns a 3x3 matrix that transforms 2d homogenous coordinates.
+    It should be used on each input element of the model.
+    That is, it transforms model input coords to camera image coords.
+    x' = Tx
+    where
+        x' is camera image coords (column vector [x, y, w]),
+        T is the output of this function,
+        x is camera image coords (column vector [x, y, 1])
+    So keep in mind the individual transformations in the code below are applied bottom-to-top
+
+    Our input is in model frame, coords are [u, v, focal]. u is right, v is down, focal is 1. A (u, v) pair maps to one model input.
+    We think of this as an image, call it the model image.
+    We transform to the calibration frame via the view frame.
+        To get the view frame, we transform by inverse of "model intrinsics".
+            This divides x and y by the model's "focal length" in pixels.
+                The focal length is 910. I believe it has to do with a camera, rather than the model itself.
+            And then centers the image horizontally, and puts the 47.6th pixel from the top of the model image at 0.
+    '''
+    return (
+        cam_intrinsics                                            # view to camera - meters to pixels
+        @ view_frame_from_device_frame                            # device to view - component twiddling
+        @ rot_from_euler([0, 0, 0])                               # rotation from calib to device
+        @ (calib_from_sbigmodel if big else calib_from_medmodel)  # model to calib - pixels to meters & component twiddling
+    )
+
 #----- model output parsing -----#
 def parse_categorical_crossentropy(name, outs, out_shape=None):
     raw = outs[name]
