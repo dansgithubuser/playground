@@ -8,11 +8,13 @@ import numpy as np
 import onnxruntime as ort
 
 import argparse
+import json
 import time
 
 #===== args =====#
 parser = argparse.ArgumentParser()
-parser.add_argument('video_path')
+parser.add_argument('--video-path', '-v', help='a video to run the model against, and visualize the output')
+parser.add_argument('--outputs-path', '-o', help='a JSON array of supercombo outputs to visualize')
 parser.add_argument('--fov', type=float, default=60)
 
 #===== consts =====#
@@ -42,6 +44,7 @@ DT_MDL = 0.05
 
 IDX_N = 33
 T_IDXS = [index_function(idx, max_val=10.0) for idx in range(IDX_N)]
+X_IDXS = [index_function(idx, max_val=192.0) for idx in range(IDX_N)]
 
 HISTORY_BUFFER_LEN = 99
 DESIRE_LEN = 8
@@ -163,7 +166,7 @@ def to_top_view(vec):
 def to_right_view(vec):
     x = vec[0]
     z = vec[2]
-    return int(x * 10 + 960), int(z * -10 + 720)
+    return int(x * 10 + 960), int(z * +10 + 720)
 
 #----- model-to-camera transformation -----#
 # https://github.com/commaai/openpilot/tree/3713e4d5eaed783738ea8ecdbd3b7e6abaa974c0/common/transformations
@@ -334,7 +337,13 @@ def parse_output_more(output):
             }
             for plan_element in output['plan'][0]
         ],
-        'lane_lines': output['lane_lines'][0],
+        'lane_lines': [
+            [
+                [x, y, z]
+                for x, (y, z) in zip(X_IDXS, lane_line)
+            ]
+            for lane_line in output['lane_lines'][0]
+        ],
     }
 
 #----- high-level -----#
@@ -383,24 +392,36 @@ def postprocess_im(output, im):
         cv2.line(im, to_top_view(a['position'])  , to_top_view(b['position'])  , color, thickness)
         cv2.line(im, to_right_view(a['position']), to_right_view(b['position']), color, thickness)
     # lane lines
-    thickness = 2
+    thickness = 1
     color = (0, 255, 255)
     for lane_line in output['lane_lines']:
         for a, b in zip(lane_line, lane_line[1:]):
             cv2.line(im, to_top_view(a), to_top_view(b), color, thickness)
+            cv2.line(im, to_right_view(a), to_right_view(b), color, thickness)
     return im
 
 #===== main =====#
 if __name__ == '__main__':
     args = parser.parse_args()
-    cap = cv2.VideoCapture(args.video_path)
-    while True:
-        ret, im = cap.read()
-        if not ret:
-            break
-        output = predict(*preprocess(im, args.fov))
-        im = postprocess_im(output, im)
-        cv2.imshow('supercombo', im)
-        c = cv2.waitKey()
-        if c == 27:
-            break
+    if args.video_path:
+        cap = cv2.VideoCapture(args.video_path)
+        while True:
+            ret, im = cap.read()
+            if not ret:
+                break
+            output = predict(*preprocess(im, args.fov))
+            im = postprocess_im(output, im)
+            cv2.imshow('supercombo', im)
+            c = cv2.waitKey()
+            if c == 27:
+                break
+    elif args.outputs_path:
+        with open(args.outputs_path) as f:
+            outputs = json.load(f)
+        for output in outputs:
+            im = np.zeros((480, 640, 3), dtype=np.uint8)
+            im = postprocess_im((output, 0), im)
+            cv2.imshow('supercombo', im)
+            c = cv2.waitKey()
+            if c == 27:
+                break
