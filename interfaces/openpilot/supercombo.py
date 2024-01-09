@@ -176,9 +176,28 @@ def rot_from_euler(rpy):
     assert all(i == 0 for i in rpy)
     return np.identity(3)
 
+#--- view to camera ---#
+cam_fl = 910.0
+frame_size = (640, 480)
+cam_intrinsics = np.array([
+  [cam_fl,    0.0, frame_size[0]/2],
+  [   0.0, cam_fl, frame_size[1]/2],
+  [   0.0,    0.0,             1.0],
+])
+
+#--- view frame from device frame ---#
+device_frame_from_view_frame = np.array([
+  [0.,  0.,  1.],
+  [1.,  0.,  0.],
+  [0.,  1.,  0.],
+])
+view_frame_from_device_frame = device_frame_from_view_frame.T
+
 #--- model frame to calibrated frame ---#
 MEDMODEL_INPUT_SIZE = (512, 256)
 MEDMODEL_CY = 47.6
+
+SBIGMODEL_INPUT_SIZE = (512, 256)
 
 medmodel_fl = 910.0
 medmodel_intrinsics = np.array([
@@ -187,12 +206,11 @@ medmodel_intrinsics = np.array([
     [        0.0,          0.0,                           1.0],
 ])
 
-device_frame_from_view_frame = np.array([
-  [0.,  0.,  1.],
-  [1.,  0.,  0.],
-  [0.,  1.,  0.],
-])
-view_frame_from_device_frame = device_frame_from_view_frame.T
+sbigmodel_fl = 455.0
+sbigmodel_intrinsics = np.array([
+  [sbigmodel_fl,  0.0,  0.5 * SBIGMODEL_INPUT_SIZE[0]],
+  [0.0,  sbigmodel_fl,      0.5 * (256 + MEDMODEL_CY)],
+  [0.0,  0.0,                                     1.0]])
 
 def get_view_frame_from_calib_frame(roll, pitch, yaw, height):
     device_from_calib = rot_from_euler([roll, pitch, yaw])
@@ -200,6 +218,7 @@ def get_view_frame_from_calib_frame(roll, pitch, yaw, height):
     return np.hstack((view_from_calib, [[0], [height], [0]]))  # 3x4, but we never use this extra column
 
 medmodel_frame_from_calib_frame = medmodel_intrinsics @ get_view_frame_from_calib_frame(0, 0, 0, 0)
+sbigmodel_frame_from_calib_frame = sbigmodel_intrinsics @ get_view_frame_from_calib_frame(0, 0, 0, 0)
 
 # This is a chained transform.
 # Recall inverse of matrix product: (AB)-1 = B-1A-1.
@@ -213,15 +232,7 @@ medmodel_frame_from_calib_frame = medmodel_intrinsics @ get_view_frame_from_cali
 # 910 is too small for pixels/m, it may be pixels/mm.
 # I think this is gonna cancel out anyway.
 calib_from_medmodel = np.linalg.inv(medmodel_frame_from_calib_frame[:, :3])
-
-#--- view to camera ---#
-cam_fl = 910.0
-frame_size = (640, 480)
-cam_intrinsics = np.array([
-  [cam_fl,    0.0, frame_size[0]/2],
-  [   0.0, cam_fl, frame_size[1]/2],
-  [   0.0,    0.0,             1.0],
-])
+calib_from_sbigmodel = np.linalg.inv(sbigmodel_frame_from_calib_frame[:, :3])
 
 #--- full transformation: model frame to camera frame ---#
 def get_warp_matrix(*, big):
