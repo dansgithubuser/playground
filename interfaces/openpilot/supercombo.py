@@ -395,7 +395,7 @@ predict.features_buffer = np.zeros((1, HISTORY_BUFFER_LEN, FEATURE_LEN), dtype=n
 def postprocess_im(output, im):
     output, duration = output
     output = parse_output_more(output)
-    im = cv2.copyMakeBorder(im, 480, 0, 0, 640, cv2.BORDER_CONSTANT)
+    im = cv2.copyMakeBorder(im, 480, 0, 0, 640 + 256 * 2, cv2.BORDER_CONSTANT)
     # plan
     thickness = 2
     for i, (a, b) in enumerate(zip(output['plan'], output['plan'][1:])):
@@ -409,6 +409,18 @@ def postprocess_im(output, im):
         for a, b in zip(lane_line, lane_line[1:]):
             cv2.line(im, to_top_view(a), to_top_view(b), color, thickness)
             cv2.line(im, to_right_view(a), to_right_view(b), color, thickness)
+    # model input
+    for i in range(6):
+        im[128 * i : 128 * (i+1), 640 * 2 : 640 * 2 + 256] = cv2.cvtColor(
+          preprocess.input_imgs[:, 6+i].astype('uint8')[0],
+          cv2.COLOR_GRAY2BGR,
+        )
+    for i in range(6):
+        im[128 * i : 128 * (i+1), 640 * 2 + 256 : 640 * 2 + 256 * 2] = cv2.cvtColor(
+          preprocess.big_input_imgs[:, 6+i].astype('uint8')[0],
+          cv2.COLOR_GRAY2BGR,
+        )
+    #
     return im
 
 #===== main =====#
