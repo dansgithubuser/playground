@@ -15,7 +15,7 @@ import time
 parser = argparse.ArgumentParser()
 parser.add_argument('--video-path', '-v', help='a video to run the model against, and visualize the output')
 parser.add_argument('--outputs-path', '-o', help='a JSON array of supercombo outputs to visualize')
-parser.add_argument('--fov', type=float, default=60)
+parser.add_argument('--fov', type=float, default=120)
 
 #===== consts =====#
 def index_function(idx, max_val=192, max_idx=32):
@@ -110,7 +110,8 @@ def interp(x, xp, fp):
 #----- graphics -----#
 # ratio is final_width / original_width
 # aspect is 2w:1h
-def center_crop(im, ratio):
+# center of result will be at center of input
+def center_center_crop(im, ratio):
     assert ratio <= 1
     w_i = im.shape[1]
     h_i = im.shape[0]
@@ -119,6 +120,21 @@ def center_crop(im, ratio):
     x_i = w_i // 2 - w_f // 2
     x_f = x_i + w_f
     y_i = h_i // 2 - h_f // 2
+    y_f = y_i + h_f
+    return im[y_i:y_f, x_i:x_f]
+
+# ratio is final_width / original_width
+# aspect is 2w:1h
+# top-center of result will be at center of input
+def top_center_crop(im, ratio):
+    assert ratio <= 1
+    w_i = im.shape[1]
+    h_i = im.shape[0]
+    w_f = int(w_i * ratio)
+    h_f = w_f // 2
+    x_i = w_i // 2 - w_f // 2
+    x_f = x_i + w_f
+    y_i = h_i // 2
     y_f = y_i + h_f
     return im[y_i:y_f, x_i:x_f]
 
@@ -169,6 +185,10 @@ def to_right_view(vec):
     return int(x * 10 + 960), int(z * +10 + 720)
 
 #----- model-to-camera transformation -----#
+# This section is unfinished and unused, I ended up empirically figuring what the model input should look like.
+# Empirically as in I looked at what comma's replay tool was feeding into the model.
+# I find it easier to work with horizontal FOVs than other optics concepts.
+
 # https://github.com/commaai/openpilot/tree/3713e4d5eaed783738ea8ecdbd3b7e6abaa974c0/common/transformations
 
 def rot_from_euler(rpy):
@@ -361,8 +381,8 @@ def parse_output_more(output):
 def preprocess(im, fov):
     preprocess.input_imgs[:, :6] = preprocess.input_imgs[:, 6:]
     preprocess.big_input_imgs[:, :6] = preprocess.big_input_imgs[:, 6:]
-    preprocess.input_imgs[:, 6:] = transform(center_crop(im, 30 / fov))
-    preprocess.big_input_imgs[:, 6:] = transform(center_crop(im, 60 / fov))
+    preprocess.input_imgs[:, 6:] = transform(top_center_crop(im, 30 / fov))
+    preprocess.big_input_imgs[:, 6:] = transform(center_center_crop(im, 60 / fov))
     return preprocess.input_imgs, preprocess.big_input_imgs
 preprocess.input_imgs = np.zeros((1, 12, 128, 256), dtype=np.float16)
 preprocess.big_input_imgs = np.zeros((1, 12, 128, 256), dtype=np.float16)
