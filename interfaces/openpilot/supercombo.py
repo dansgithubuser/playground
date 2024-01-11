@@ -46,6 +46,7 @@ DT_MDL = 0.05
 IDX_N = 33
 T_IDXS = [index_function(idx, max_val=10.0) for idx in range(IDX_N)]
 X_IDXS = [index_function(idx, max_val=192.0) for idx in range(IDX_N)]
+LEAD_T_IDXS = [0., 2., 4., 6., 8., 10.]
 
 HISTORY_BUFFER_LEN = 99
 DESIRE_LEN = 8
@@ -378,6 +379,18 @@ def parse_output_more(output):
             ]
             for lane_line in output['lane_lines'][0]
         ],
+        'lead': [
+            [
+                {
+                    'position': [x, y],
+                    'speed': v,
+                    'acceleration': a,
+                    't': t,
+                }
+                for t, (x, y, v, a) in zip(LEAD_T_IDXS, output['lead'][0][i])
+            ]
+            for i in range(3)  # I suppose there's up to 3 leads?
+        ],
     }
 
 #----- high-level -----#
@@ -432,6 +445,10 @@ def postprocess_im(output, im):
         for a, b in zip(lane_line, lane_line[1:]):
             cv2.line(im, to_top_view(a), to_top_view(b), color, thickness)
             cv2.line(im, to_right_view(a), to_right_view(b), color, thickness)
+    # lead
+    for lead in output['lead']:
+        p = to_top_view(lead[0]['position'])
+        cv2.circle(im, p, radius=5, color=(255, 128, 0), thickness=-1)
     # model input
     for i in range(6):
         im[128 * i : 128 * (i+1), 640 * 2 : 640 * 2 + 256] = cv2.cvtColor(
