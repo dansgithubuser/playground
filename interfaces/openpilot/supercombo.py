@@ -411,7 +411,7 @@ def predict(input_imgs, big_input_imgs):
             'input_imgs': input_imgs,
             'big_input_imgs': big_input_imgs,
             'desire': np.zeros((1, HISTORY_BUFFER_LEN + 1, DESIRE_LEN), dtype=np.float16),  # no desire
-            'traffic_convention': np.array([[0, 1]], dtype=np.float16),  # driver is on right from inward-facing dashcam's perspective
+            'traffic_convention': np.array([[1, 0]], dtype=np.float16),  # copied from model input of `./replay '0c7f0c7f0c7f0c7f|2021-10-13--13-00-00' --dcam --ecam`
             'lat_planner_state': predict.lat_planner_state,
             'nav_features': np.zeros((1, NAV_FEATURE_LEN), dtype=np.float16),  # experimental, not using
             'nav_instructions': np.zeros((1, NAV_INSTRUCTION_LEN), dtype=np.float16),  # experimental, not using
