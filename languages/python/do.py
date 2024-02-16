@@ -2,7 +2,7 @@
 
 #===== imports =====#
 import argparse
-import datetime
+from datetime import datetime
 import os
 from pathlib import Path
 import re
@@ -25,7 +25,7 @@ def blue(text):
     return '\x1b[34m' + text + '\x1b[0m'
 
 def timestamp():
-    return '{:%Y-%m-%d %H:%M:%S.%f}'.format(datetime.datetime.now())
+    return datetime.now().astimezone().isoformat(' ', 'seconds')
 
 def invoke(
     *args,
