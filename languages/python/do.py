@@ -87,7 +87,9 @@ def invoke(
     if handle_sigint:
         signal.signal(signal.SIGINT, signal.SIG_DFL)
     if check and p.returncode:
-        raise Exception(f'invocation {repr(args)} returned code {p.returncode}.')
+        e = Exception(f'invocation {repr(args)} returned code {p.returncode}.')
+        e.p = p
+        raise e
     if get_out:
         stdout = stdout.decode('utf-8')
         if get_out != 'exact': stdout = stdout.strip()
