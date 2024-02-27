@@ -1,1 +1,1 @@
-R --no-save < lm-summary.r
+R --no-save --quiet -f lm-summary.r
