@@ -77,8 +77,6 @@ def invoke(
         p.stdin.write(put_in)
         if popen:
             p.stdin.flush()
-        else:
-            p.stdin.close()
     if popen:
         return p
     stdout, stderr = p.communicate()
