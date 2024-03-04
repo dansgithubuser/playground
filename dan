@@ -1026,7 +1026,7 @@ def vi():
     'setup vi stuff'
     p = _home_path('.vimrc')
     print('Installing vim-gui-common.')
-    _invoke('sudo apt install vim-gui-common')
+    _invoke('sudo apt install -y vim-gui-common')
     print('I will create a vimrc file.')
     if os.path.exists(p): print('I will overwrite the existing one.')
     print('If that is OK, enter y.')
@@ -1048,7 +1048,7 @@ def git():
             _invoke(line)
     if platform.system() != 'Windows':
         print('Installing curl.')
-        _invoke('sudo apt install curl')
+        _invoke('sudo apt install -y curl')
         _invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
     _invoke('git config --global merge.conflictstyle diff3')
 
@@ -1059,7 +1059,7 @@ def pyenv():
     _invoke('git clone https://github.com/pyenv/pyenv-virtualenv.git ~/.pyenv/plugins/pyenv-virtualenv')
     _invoke('sudo apt update')
     _invoke(' '.join([
-        'sudo apt install',
+        'sudo apt install -y',
         'make',
         'build-essential',
         'libssl-dev',
@@ -1083,7 +1083,7 @@ def pyenv():
 def disable_capslock():
     _invoke('xmodmap -e "keycode 66 = Shift_L NoSymbol Shift_L"')
 
-def enabled_sysrq():
+def enable_sysrq():
     _invoke("sudo sh -c 'echo kernel.sysrq=1>>/etc/sysctl.d/99-sysctl.conf'")
 
 _esoteric = _Section()
