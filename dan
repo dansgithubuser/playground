@@ -1086,6 +1086,9 @@ def disable_capslock():
 def enable_sysrq():
     _invoke("sudo sh -c 'echo kernel.sysrq=1>>/etc/sysctl.d/99-sysctl.conf'")
 
+def ssh_server():
+    _invoke('sudo su -c "apt install -y openssh-server; systemctl enable ssh; systemctl restart ssh"')
+
 _esoteric = _Section()
 
 def _getmtime(path):
