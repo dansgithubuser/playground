@@ -1,3 +1,4 @@
 onnxruntime
 opencv-python
 gst-python
+numpy
