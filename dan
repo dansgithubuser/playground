@@ -970,7 +970,7 @@ nnoremap ,s :SemanticHighlightToggle<cr>
 let ext=expand('%:e')
 if index(["py", "md", "rs"], ext)!=-1
     call SpacesForIndent(4)
-elseif index(["html", "css", "js"], ext)!=-1
+elseif index(["html", "css", "js", "vue"], ext)!=-1
     call SpacesForIndent(2)
 elseif index(["c", "h", "cpp", "hpp"], ext)!=-1
     setlocal tabstop=2
