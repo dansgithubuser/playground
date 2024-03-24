@@ -4,7 +4,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let host = cpal::default_host();
     let device_i = host.default_input_device().unwrap();
     let device_o = host.default_output_device().unwrap();
-    let (tx, rx) = std::sync::mpsc::channel();
     let stream_i = device_i.build_input_stream(
         &cpal::StreamConfig {
             channels: 1,
@@ -12,13 +11,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             buffer_size: cpal::BufferSize::Fixed(128),
         },
         move |data: &[f32], _: &cpal::InputCallbackInfo| {
-            for i in data {
-                tx.send(*i).unwrap();
-            }
         },
         |err: cpal::StreamError| {
             eprintln!("error: {}", err);
         },
+        None,
     )?;
     let stream_o = device_o.build_output_stream(
         &cpal::StreamConfig {
@@ -27,13 +24,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             buffer_size: cpal::BufferSize::Fixed(128),
         },
         move |data: &mut [f32], _: &cpal::OutputCallbackInfo| {
-            for i in data.iter_mut() {
-                *i = rx.recv().unwrap_or(0.0);
+            let l = data.len();
+            println!("{}", l);
+            for i in 0..l {
+                data[i] = i as f32 / l as f32;
             }
         },
         |err: cpal::StreamError| {
             eprintln!("error: {}", err);
         },
+        None,
     )?;
     stream_i.play()?;
     stream_o.play()?;
