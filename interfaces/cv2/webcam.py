@@ -70,7 +70,7 @@ while not done:
             shape = cap.read()[1].shape
             writer = cv2.VideoWriter(
                 f'rec-{timestamp()}.{args.file_ext}',
-                cv2.VideoWriter_fourcc(*args.pixel_format),
+                cv2.VideoWriter_fourcc(*(args.pixel_format or 'MJPG')),
                 cap.get(cv2.CAP_PROP_FPS),
                 (shape[1], shape[0]),
             )

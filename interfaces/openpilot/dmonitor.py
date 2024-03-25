@@ -7,9 +7,14 @@ import cv2
 import numpy as np
 import onnxruntime as ort
 
+import argparse
 import math
 import os
 import time
+
+#===== args =====#
+parser = argparse.ArgumentParser()
+parser.add_argument('--input', '-i')
 
 #===== consts =====#
 REG_SCALE = 0.25
@@ -160,7 +165,6 @@ def draw_eye(im, center, blink, color, thickness):
     cv2.ellipse(im, center, (20, 10), 0, 0, end, color, thickness)
 
 def preprocess(im):
-    im = resize(im)
     im = cv2.cvtColor(im, cv2.COLOR_BGR2YUV)
     im = cv2.split(im)[0]
     im = np.float32(im) / 255
@@ -168,7 +172,6 @@ def preprocess(im):
     return im
 
 def predict(im):
-    im = preprocess(im)
     calib = np.zeros((1, 3), dtype=np.float32)
     start = time.time()
     output = sess.run(None, {'input_img': im, 'calib': calib})
@@ -260,21 +263,26 @@ def postprocess_im(output, im):
             cv2.ellipse(im, (x, y), (abs(nose_x), face_size), 0 if nose_x > 0 else 180, 90, 270, color, 2)
             cv2.ellipse(im, (x, y), (face_size, abs(nose_y)), 0 if nose_y < 0 else 180,  0, 180, color, 2)
             if dd.leftEyeProb > 0.1:
-                draw_eye(im, (x - eye_space, y - eye_space), dd.leftBlinkProb > 0.25, color, 2)
+                draw_eye(im, (x - eye_space, y - eye_space), dd.leftBlinkProb > 0.5, color, 2)
             if dd.rightEyeProb > 0.1:
-                draw_eye(im, (x + eye_space, y - eye_space), dd.rightBlinkProb > 0.25, color, 2)
+                draw_eye(im, (x + eye_space, y - eye_space), dd.rightBlinkProb > 0.5, color, 2)
         if (dd_i == 1) == (driver_state.wheelOnRightProb > 0.5):
             cv2.circle(im, (x, y), face_size + 5, color, 2)
 
 if __name__ == '__main__':
-    cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1440)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 960)
+    args = parser.parse_args()
+    if args.input:
+        cap = cv2.VideoCapture(args.input)
+    else:
+        cap = cv2.VideoCapture(0)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1440)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 960)
     while True:
         ret, im = cap.read()
         if not ret:
             break
-        output = predict(im)
+        im = resize(im)
+        output = predict(preprocess(im))
         postprocess_im(output, im)
         cv2.imshow('dmonitor', im)
         c = cv2.waitKey(1)
