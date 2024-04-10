@@ -347,21 +347,21 @@ def snipl():
     for name, first_line in snippets:
         print(('{:'+str(space)+'}: {}').format(name, first_line))
 
-def replace(pattern, replacement, file_pattern='.*'):
+def replace(pattern, replacement, file_pattern='.*', file_antipattern=r'.*?\.git'):
     'replace occurrences of pattern in current folder'
     for root, dirs, files in os.walk('.'):
         for i in files:
             path = os.path.relpath(os.path.join(root, i))
-            if re.match(file_pattern, path):
-                try:
-                    with open(path) as file: contents = file.read()
-                except Exception as e:
-                    print(f'error reading {path}: {e}')
-                    continue
-                contents, replacements = re.subn(pattern, replacement, contents)
-                if not replacements: continue
-                with open(path, 'w') as file: file.write(contents)
-                print(f'made {replacements} replacement(s) in {path}')
+            if not re.match(file_pattern, path): continue
+            if re.match(file_antipattern, path): continue
+            try:
+                with open(path) as file: contents = file.read()
+            except Exception as e:
+                continue
+            contents, replacements = re.subn(pattern, replacement, contents)
+            if not replacements: continue
+            with open(path, 'w') as file: file.write(contents)
+            print(f'made {replacements} replacement(s) in {path}')
 
 _convenience_time = _SubSection()
 
