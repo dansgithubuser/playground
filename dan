@@ -311,15 +311,16 @@ def _put_in_clipboard(contents):
         stdin=stdin,
     )
 
-def c(strip=True):
+def clipboard_copy(strip=True):
     'copy stdin to clipboard'
     if strip:
         x = stdin.strip()
     else:
         x = stdin
+    print(f'copied {x} to clipboard')
     _put_in_clipboard(x)
 
-def v():
+def clipboard_paste():
     'paste clipboard to stdout'
     _clipboard_paste()
 
@@ -631,13 +632,8 @@ def invoke(invocation, *args):
     'invocation with python-style substitutions'
     _invoke(invocation.format(*args))
 
-def p(expression, should_print='1'):
-    'python exec expression'
-    if eval(should_print): expression = 'print({})'.format(expression)
-    exec(expression)
-
-def py(format=None, *args):
-    'run python code from stdin; useful in vim `:w !dan py`'
+def python():
+    'run python code from stdin; useful in vim `:w !dan python`'
     with open(_tmp_path('tmp.py'), 'w') as f:
         f.write(stdin)
     _invoke('python3 {}'.format(_tmp_path('tmp.py')))
