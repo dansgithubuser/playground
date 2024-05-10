@@ -15,4 +15,7 @@ def timestamp_file_non_utc():
 def datetime_from_unix_timestamp(unix_timestamp):
     return datetime.fromtimestamp(unix_timestamp, timezone.utc)
 
+def utc_from_naive(s):
+    return datetime.fromisoformat(s).replace(tzinfo=timezone.utc)
+
 if __name__ == '__main__': print(timestamp())
