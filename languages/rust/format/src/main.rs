@@ -19,4 +19,9 @@ fn main() {
     format_test!("{:02x?}");
     format_test!("{:>2x?}");
     format_test!("{:0>2x?}");
+    {
+        let x = -2;
+        println!("{x}");
+        //println!("{-x}"); // can't use inline expressions
+    }
 }
