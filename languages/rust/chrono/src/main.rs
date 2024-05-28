@@ -31,4 +31,10 @@ fn main() {
         );
     }
     println!("{}", timestamp_file());
+    println!(
+        "{}",
+        chrono::DateTime::from_timestamp(253402315200, 0)
+            .unwrap()
+            .with_timezone(&chrono::FixedOffset::east_opt(-4 * 3600).unwrap()),
+    );
 }
