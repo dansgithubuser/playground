@@ -1,0 +1,107 @@
+{
+  "samsara/fleet/safety-events/281474990315963-1714848792175": {
+    "id": "281474990315963-1714848792175",
+    "vehicle": {
+      "id": "281474990315963",
+      "name": "Camry",
+      "externalIds": {
+        "samsara.serial": "GMZ3C2FZ7A",
+        "samsara.vin": "4T1BK3EK2AU116675"
+      }
+    },
+    "time": "2024-05-04T18:53:12.175Z",
+    "maxAccelerationGForce": 0,
+    "coachingState": "autoDismissed",
+    "behaviorLabels": [
+      {
+        "label": "followingDistance",
+        "source": "automated",
+        "name": "Following Distance"
+      }
+    ]
+  },
+  "samsara/fleet/safety-events/281474990315963-1714847710759": {
+    "id": "281474990315963-1714847710759",
+    "vehicle": {
+      "id": "281474990315963",
+      "name": "Camry",
+      "externalIds": {
+        "samsara.serial": "GMZ3C2FZ7A",
+        "samsara.vin": "4T1BK3EK2AU116675"
+      }
+    },
+    "time": "2024-05-04T18:35:10.759Z",
+    "maxAccelerationGForce": 0,
+    "coachingState": "needsReview",
+    "behaviorLabels": [
+      {
+        "label": "mobileUsage",
+        "source": "automated",
+        "name": "Mobile Usage"
+      }
+    ]
+  },
+  "samsara/fleet/safety-events/281474990315963-1714833238453": {
+    "id": "281474990315963-1714833238453",
+    "vehicle": {
+      "id": "281474990315963",
+      "name": "Camry",
+      "externalIds": {
+        "samsara.serial": "GMZ3C2FZ7A",
+        "samsara.vin": "4T1BK3EK2AU116675"
+      }
+    },
+    "time": "2024-05-04T14:33:58.453Z",
+    "maxAccelerationGForce": 0,
+    "coachingState": "needsReview",
+    "behaviorLabels": [
+      {
+        "label": "mobileUsage",
+        "source": "automated",
+        "name": "Mobile Usage"
+      }
+    ]
+  },
+  "samsara/fleet/safety-events/281474990315963-1714777724092": {
+    "id": "281474990315963-1714777724092",
+    "vehicle": {
+      "id": "281474990315963",
+      "name": "Camry",
+      "externalIds": {
+        "samsara.serial": "GMZ3C2FZ7A",
+        "samsara.vin": "4T1BK3EK2AU116675"
+      }
+    },
+    "time": "2024-05-03T23:08:44.092Z",
+    "maxAccelerationGForce": 0,
+    "coachingState": "needsReview",
+    "behaviorLabels": [
+      {
+        "label": "mobileUsage",
+        "source": "automated",
+        "name": "Mobile Usage"
+      }
+    ]
+  },
+  "samsara/fleet/safety-events/281474990315963-1714774313651": {
+    "id": "281474990315963-1714774313651",
+    "vehicle": {
+      "id": "281474990315963",
+      "name": "Camry",
+      "externalIds": {
+        "samsara.serial": "GMZ3C2FZ7A",
+        "samsara.vin": "4T1BK3EK2AU116675"
+      }
+    },
+    "time": "2024-05-03T22:11:53.651Z",
+    "maxAccelerationGForce": 0.48249033,
+    "coachingState": "autoDismissed",
+    "behaviorLabels": [
+      {
+        "label": "harshTurn",
+        "source": "automated",
+        "name": "Harsh Turn"
+      }
+    ]
+  }
+}
