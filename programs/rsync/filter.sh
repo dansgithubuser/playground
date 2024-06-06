@@ -3,6 +3,7 @@ set -v
 # filtering
 # include stuff that ends in 2
 # otherwise, exclude stuff that starts with x
+# by default, include
 ./setup.sh
 touch a/x1
 touch a/x2

@@ -1,3 +1,4 @@
+set -v
 rm -rf a b
 mkdir a
 mkdir b
