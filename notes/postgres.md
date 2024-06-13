@@ -30,7 +30,7 @@ Peer is an authentication method that's a default in a bunch of cases. It requir
 
 The obvious method to switch to is password, and we must guarantee a secure connection to not leak the password. We shouldn't care about the password in the first place, there should be no possibility of a connection to the db that we don't already know is OK. So we could just use trust. In either case we need to actually change the auth method.
 
-`pg_hba.conf` is the file we're looking for. Find it with `su postgres -c 'psql -c "SHOW hba_file"'`.
+`pg_hba.conf` is the file we're looking for. Find it with `sudo su postgres -c 'psql -c "SHOW hba_file"'`.
 
 Insert an entry to `pg_hba.conf`:
 `local database_name database_user_name trust`
@@ -39,7 +39,7 @@ If there's a line like
 then make sure the new line is above it so it takes effect first.
 
 Update live config:
-`su postgres -c 'psql -c "SELECT pg_reload_conf()"'`.
+`sudo su postgres -c 'psql -c "SELECT pg_reload_conf()"'`.
 
 Check on it:
-`su postgres -c 'psql -c "select * from pg_hba_file_rules"'`
+`sudo su postgres -c 'psql -c "select * from pg_hba_file_rules"'`
