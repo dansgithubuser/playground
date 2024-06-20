@@ -24,8 +24,24 @@ Query on random sampling of table:
 SELECT <selection> FROM <table> TABLESAMPLE SYSTEM(<percentage 0.0 to 100.0>) WHERE <condition>;
 ```
 
+# performance
+## Why isn't Postgres using my index?
+### When the index is new
+Postgres decides on an execution plan based on internal state it keeps. It offers no insights into how it came up with an execution plan. In general, internal state is created over time, and there's no guarantee it is accurate after an index is created. Simply, postgres doesn't fully know what an index does after it's created. Autovacuuming seems to be the normal method for internal state to be updated. There's two manual queries we can do to spur internal state updates:
+
+This one sounds right and works in some cases:
+```
+ANALYZE <table>
+```
+
+This one doesn't sound useful, but it's what postgres will do over time, now:
+```
+VACUUM <table>
+```
+In particular, this seems to be necessary for an index-only scan. I'm unclear if `ANALYZE` handles any cases that `VACUUM` does not.
+
 # psql
-## Peer authentication failed for user
+## peer authentication failed for user
 Peer is an authentication method that's a default in a bunch of cases. It requires that your OS user matches your db user, which is probably not the case. That's why `postgres` user often works without asking - during install, both OS user and db user are created.
 
 The obvious method to switch to is password, and we must guarantee a secure connection to not leak the password. We shouldn't care about the password in the first place, there should be no possibility of a connection to the db that we don't already know is OK. So we could just use trust. In either case we need to actually change the auth method.
