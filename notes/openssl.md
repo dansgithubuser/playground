@@ -1,3 +1,5 @@
+# Two-way authentication provisioning
+
 Two-way authenticated communication under a single authority can be established with the following provisions.
 
 Note:
@@ -46,3 +48,6 @@ Example using rustls:
 Reference:
 - https://tools.ietf.org/rfcmarkup/5246
 - especially https://tools.ietf.org/rfcmarkup/5246#section-7.4.8, which doesn't seem covered in summaries
+
+# Getting certificate for URL
+`openssl s_client -connect foresightanalytics.ca:443 | openssl x509`
