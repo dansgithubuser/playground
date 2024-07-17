@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 '`python hello.py` to run'
 
 from flask import Flask
