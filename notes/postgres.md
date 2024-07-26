@@ -59,3 +59,8 @@ Update live config:
 
 Check on it:
 `sudo su postgres -c 'psql -c "select * from pg_hba_file_rules"'`
+
+Other example `pg_hba.conf` lines:
+```
+host database user 1.2.3.4/32 md5  # allow users with specific IP to log in via password
+```
