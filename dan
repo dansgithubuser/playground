@@ -910,6 +910,7 @@ set ignorecase
 set smartcase
 set backspace=indent,eol,start
 set noswapfile
+set path+=**
 nnoremap / /\v
 vnoremap / /\v
 set smartcase
