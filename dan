@@ -260,8 +260,16 @@ def kill(name):
         _invoke(f'kill -9 {proc}')
 
 def kill_the_greedy():
+    t_report = 0
     while True:
-        if int(subprocess.check_output(['free']).decode().split()[12]) < 100000:
+        free_split = subprocess.check_output(['free']).decode().split()
+        mem_free = int(free_split[12])
+        mem_total = int(free_split[7])
+        t = time.time()
+        if t - t_report > 600:
+            print(f'{mem_free / 1e6:.3f} / {mem_total / 1e6:.3f} GB free')
+            t_report = t
+        if mem_free < 100000:
             info = subprocess.check_output(['ps', '-e', '--sort', '%mem']).decode().split()[-4:] 
             subprocess.check_call(['kill', info[0]])
             print('killed {}'.format(info[-1]))
