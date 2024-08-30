@@ -636,6 +636,9 @@ def grecent():
 
 _convenience_inlining = _SubSection()
 
+def shell(*args):
+    _invoke(' '.join(args))
+
 def invoke(invocation, *args):
     'invocation with python-style substitutions'
     _invoke(invocation.format(*args))
@@ -1346,8 +1349,10 @@ def vi_notes():
 #=====main=====#
 parser = argparse.ArgumentParser(description='`dan h` to list commands, `dan h command` for help with specific command')
 parser.add_argument('--dry', action='store_true', help='only print invocations')
-parser.add_argument('-l', action='store_true',
+parser.add_argument('-i', action='store_true',
     help='take a Python iterable from stdin and run command on each item')
+parser.add_argument('-l', action='store_true',
+    help='take lines from stdin and run command on each')
 parser.add_argument('--quiet', '-q', action='store_true')
 parser.add_argument('--force', '-f', action='store_true', help='bypass checks for system-altering commands')
 parser.add_argument('command')
@@ -1414,10 +1419,15 @@ try:
         else:
             result = f(*args.args)
         if result: print(result)
-    if args.l:
+    if args.i:
         outer_stdin = stdin
         del stdin
         for stdin in eval(outer_stdin):
+            _ex(args, stdin)
+    elif args.l:
+        outer_stdin = stdin
+        del stdin
+        for stdin in outer_stdin.splitlines():
             _ex(args, stdin)
     else: _ex(args, stdin)
 except TypeError: h(args.command); raise
