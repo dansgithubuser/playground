@@ -910,29 +910,20 @@ def bash():
         disable_capslock()
 
 _vimrc = r'''
-set autoindent
-set number
-set list
-set listchars=tab:>-
-set nocompatible
-syntax on
-set pastetoggle=<F2>
-set ignorecase
-set smartcase
-set backspace=indent,eol,start
-set noswapfile
-set path+=**
+set autoindent " apply indentation of previous line to new line
+set number " line numbers
+set list " show whitespace
+set listchars=tab:>- " show tabs non-disgustingly
+set ignorecase " case-insensitive matching lowercase pattern
+set smartcase " case-sensitive matching otherwise
+set noswapfile " swap files screw up lots of other software
+set path+=** " :find recursively in current directory
+" "very magic" ie use regex, normal mode non-recursive map
 nnoremap / /\v
+" same in visual and select modes
 vnoremap / /\v
-set smartcase
 set fdm=indent " set fold method and fold everything
 autocmd BufWinEnter * normal zR " unfold everything
-
-" color scheme
-"colorscheme darkblue
-"hi Whitespace ctermfg=DarkBlue
-"match Whitespace /\s/
-"hi MatchParen cterm=none ctermbg=DarkGrey ctermfg=none
 
 " helpers
 function SpacesForIndent(n)
