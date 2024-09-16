@@ -929,10 +929,10 @@ set fdm=indent " set fold method and fold everything
 autocmd BufWinEnter * normal zR " unfold everything
 
 " color scheme
-colorscheme darkblue
-hi Whitespace ctermfg=DarkBlue
-match Whitespace /\s/
-hi MatchParen cterm=none ctermbg=DarkGrey ctermfg=none
+"colorscheme darkblue
+"hi Whitespace ctermfg=DarkBlue
+"match Whitespace /\s/
+"hi MatchParen cterm=none ctermbg=DarkGrey ctermfg=none
 
 " helpers
 function SpacesForIndent(n)
