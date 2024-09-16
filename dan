@@ -826,7 +826,7 @@ def crypto_decrypt(file_name):
 
 _setup = _Section()
 
-_bash_profile_appendage = '''
+_bash_profile_appendage = r'''
 
 {header}
 #DAN_PS1_UNIQUIFIER=""
@@ -885,7 +885,7 @@ def install_self():
                 shutil.copy(path, path[:-len('.disguise')])
         with open(_scripts_path('init.bat'), 'w') as file: file.write(rf'@PATH=%PATH%;{_scripts_path()};{_this_path("windows-portable")}')
         with open(_scripts_path('dan.bat'), 'w') as file: file.write(f'python {this} %*')
-        _invoke('reg add "HKCU\Software\Microsoft\Command Processor"'
+        _invoke(r'reg add "HKCU\Software\Microsoft\Command Processor"'
             ' /v AutoRun ^'
             ' /t REG_EXPAND_SZ'
             f''' /d "{_scripts_path('init.bat')}"'''
