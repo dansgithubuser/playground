@@ -1,0 +1,96 @@
+<div
+  id="container"
+  style="
+    border-style: solid;
+    background-color: grey;
+  "
+>
+</div>
+
+<script src="https://unpkg.com/konva@9/konva.min.js"></script>
+<script>
+
+let stage = new Konva.Stage({
+  container: 'container',
+  width: 500,
+  height: 500
+});
+let layer = new Konva.Layer();
+
+let bg = new Konva.Rect({
+  x: 0,
+  y: 0,
+  width: stage.width() * 2,
+  height: stage.height() * 2,
+  fill: 'lightgray',
+});
+layer.add(bg);
+
+let rect_red = new Konva.Rect({
+  fill: 'red',
+  x: stage.width() / 2,
+  y: stage.height() / 2,
+  width: 40,
+  height: 100,
+  offsetX: 20,
+});
+layer.add(rect_red);
+
+let circle_red = new Konva.Circle({
+  fill: 'red',
+  x: 100,
+  y: 100,
+  radius: 10,
+});
+layer.add(circle_red);
+
+let group = new Konva.Group({
+  x: 100,
+  y: 100,
+  offsetX: 100,
+});
+
+let rect_green = new Konva.Rect({
+  fill: 'green',
+  x: -10,
+  y: 10,
+  width: 20,
+  height: 30,
+});
+group.add(rect_green);
+
+let rect_cyan= new Konva.Rect({
+  fill: 'cyan',
+  x: 0,
+  y: 0,
+  width: 10,
+  height: 10,
+});
+group.add(rect_cyan);
+
+let rect_blue = new Konva.Rect({
+  fill: 'blue',
+  x: 0,
+  y: 0,
+  width: 20,
+  height: 30,
+  offsetX: 10,
+  offsetY: -10,
+});
+
+group.add(rect_blue);
+layer.add(group);
+
+stage.add(layer);
+let anim = new Konva.Animation(
+  (frame) => {
+    const degrees = frame.timeDiff * 360 / 1000 / 10;
+    rect_red.rotate(degrees);
+    group.rotate(degrees);
+    rect_blue.rotate(degrees);
+  },
+  layer,
+);
+anim.start();
+
+</script>
