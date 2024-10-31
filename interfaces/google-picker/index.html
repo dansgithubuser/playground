@@ -1,0 +1,79 @@
+<script>
+
+const APP_ID = 'steady-climate-440313-c4'; // google-drive-toy
+const API_KEY = 'AIzaSyBl3m4fhuas54NQKtnOjdg0C0Uh36_MuAk'; // deleted
+const OAUTH_CLIENT_ID = '90885684625-g97mca5vtrjdji7gl1s7648ihhrsbjl5.apps.googleusercontent.com'; // deleted
+
+let tokenClient;
+let accessToken = null;
+let pickerInited = false;
+let gisInited = false;
+
+function pickerCallback(data) {
+  console.log('pickerCallback');
+  const url = 'nothing';
+  if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+    const doc = data[google.picker.Response.DOCUMENTS][0];
+    url = doc[google.picker.Document.URL];
+  }
+  const message = `You picked: ${url}`;
+  document.getElementById('result').textContent = message;
+}
+
+function createPicker() {
+  console.log('createPicker');
+  const showPicker = () => {
+    const picker = new google.picker.PickerBuilder()
+      .addView(google.picker.ViewId.DOCS)
+      .setOAuthToken(accessToken)
+      .setDeveloperKey(API_KEY)
+      .setCallback(pickerCallback)
+      .setAppId(APP_ID)
+      .build();
+    picker.setVisible(true);
+  }
+
+  // Request an access token.
+  tokenClient.callback = async (response) => {
+    if (response.error !== undefined) {
+      throw (response);
+    }
+    accessToken = response.access_token;
+    showPicker();
+  };
+
+  if (accessToken === null) {
+    // Prompt the user to select a Google Account and ask for consent to share their data
+    // when establishing a new session.
+    tokenClient.requestAccessToken({prompt: 'consent'});
+  } else {
+    // Skip display of account chooser and consent dialog for an existing session.
+    tokenClient.requestAccessToken({prompt: ''});
+  }
+}
+
+function onPickerApiLoad() {
+  console.log('onPickerApiLoad');
+  pickerInited = true;
+  if (gisInited) createPicker();
+}
+
+function onApiLoad() {
+  console.log('onApiLoad');
+  gapi.load('picker', onPickerApiLoad);
+}
+
+function gisLoaded() { // gis = Google Identity Services (new); gsi = Google Sign-In (old)
+  console.log('gisLoaded');
+  tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: OAUTH_CLIENT_ID,
+    scope: 'https://www.googleapis.com/auth/drive.readonly',
+    callback: '',
+  });
+  gisInited = true;
+  if (pickerInited) createPicker();
+}
+
+</script>
+<script async defer src="https://apis.google.com/js/api.js" onload="onApiLoad()"></script>
+<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
