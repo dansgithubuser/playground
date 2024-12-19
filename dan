@@ -834,6 +834,13 @@ def crypto_decrypt(file_name):
 def cert_summary(path):
     subprocess.run(['openssl', 'x509', '-text', '-in', path])
 
+_aws = _Section()
+
+def s3_download(path):
+    bucket, key = re.match('s3://([^/]+)/(.+)', path).groups()
+    outfile = key.split('/')[-1]
+    subprocess.run(f'aws s3api get-object --bucket {bucket} --key {key} {outfile}'.split())
+
 _setup = _Section()
 
 _bash_profile_appendage = r'''
