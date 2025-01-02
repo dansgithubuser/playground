@@ -275,7 +275,7 @@ def kill_the_greedy():
             end = '\r'
         clear_line()
         print(f'{mem_free / 1e6:.3f} / {mem_total / 1e6:.3f} GB free', end=end)
-        if mem_free < 100000:
+        if mem_free < 1_000_000:
             pid = subprocess.check_output(['ps', '-e', '--sort', '%mem']).decode().splitlines()[-1].split()[0]
             subprocess.check_call(['kill', pid])
             clear_line()
