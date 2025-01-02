@@ -837,9 +837,7 @@ def cert_summary(path):
 _aws = _Section()
 
 def s3_download(path):
-    bucket, key = re.match('s3://([^/]+)/(.+)', path).groups()
-    outfile = key.split('/')[-1]
-    subprocess.run(f'aws s3api get-object --bucket {bucket} --key {key} {outfile}'.split())
+    subprocess.run(f'aws s3 cp {path} .'.split())
 
 _setup = _Section()
 
