@@ -8,6 +8,7 @@ import functools
 import getpass
 import glob
 import inspect
+import json
 import math
 import os
 import platform
@@ -332,8 +333,10 @@ def clipboard_copy(strip=True):
         x = stdin.strip()
     else:
         x = stdin
-    print(f'copied {x} to clipboard')
     _put_in_clipboard(x)
+    if len(x) > 40:
+        x = f'{len(x)} bytes'
+    print(f'copied {x} to clipboard')
 
 def clipboard_paste():
     'paste clipboard to stdout'
@@ -404,10 +407,9 @@ def print_hex(file_name):
         if i%16 == 15: print()
     print()
 
-def json():
+def json_pretty_print():
     'take json from clipboard and pretty print'
     j = _clipboard_paste(stdout=True)
-    import json
     pprint.pprint(json.loads(j))
 
 def sql():
@@ -459,6 +461,19 @@ def unix_timestamp():
     print(t.isoformat())
     t = t.astimezone(datetime.timezone.utc)
     print(t.isoformat())
+
+def jupyter_to_text(path):
+    with open(path) as f:
+        nb = json.load(f)
+    for cell in nb['cells']:
+        print('#=== cell start ===#')
+        print(f'# cell type: {cell["cell_type"]}')
+        for line in cell['source']:
+            if cell['cell_type'] != 'code':
+                print('#', end=' ')
+            print(line.rstrip())
+        print('#=== cell end   ===#')
+        print('')
 
 _convenience_navigation = _SubSection()
 
@@ -1404,7 +1419,8 @@ def _translate_lazy(lazy, possibilities):
         if len(candidates) == 1:
             result = possibilities[candidates[0]]
             if lazy != result.__name__:
-                print(f'{lazy} interpreted as {result.__name__}')
+                if not args.quiet:
+                    sys.stderr.write(f'{lazy} interpreted as {result.__name__}')
             return result
     for strategy in strategies:
         print(strategy.__name__, 'candidates:', ' '.join(strategy()))
