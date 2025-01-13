@@ -280,7 +280,7 @@ def kill_the_greedy():
             pid = subprocess.check_output(['ps', '-e', '--sort', '%mem']).decode().splitlines()[-1].split()[0]
             subprocess.check_call(['kill', pid])
             clear_line()
-            print(f'killed {info[-1]}')
+            print(f'killed {pid}')
         time.sleep(0.1)
 
 def temperature():
