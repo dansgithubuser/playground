@@ -37,4 +37,10 @@ fn main() {
             .unwrap()
             .with_timezone(&chrono::FixedOffset::east_opt(-4 * 3600).unwrap()),
     );
+    println!();
+    test!(chrono::NaiveDateTime::parse_from_str("2025010201020301", "%Y%m%d%H%M%S%f")); // I guess. Weak choice for meaning of %f.
+    test!(chrono::NaiveDateTime::parse_from_str("20250102010203012345678987654321", "%Y%m%d%H%M%S%f"));
+    test!(chrono::NaiveDateTime::parse_from_str("2025010201023", "%Y%m%d%H%M%S")); // wtf is this
+    test!(chrono::NaiveDateTime::parse_from_str("20250102012", "%Y%m%d%H%M")); // wtf is this
+    test!(chrono::NaiveDateTime::parse_from_str("202501020102", "%Y%m%d%H%M%S"));
 }
