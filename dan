@@ -626,7 +626,7 @@ def grbo():
     for i in b:
         rev = 'origin/'+i
         split = 'vlkaeiwhvi4uhlksajhdvkausdhv'
-        author, date = _invoke('git show -q --pretty="format:%an{}%ai" {}'.format(split, rev), stdout=True).split(split)
+        author, date = _invoke("""git show -q --pretty="format:%an{}%ai" '{}'""".format(split, rev), stdout=True).split(split)
         results.append((rev, author, date))
     results = sorted(results, key=lambda x: x[2])
     a = str(max([len(i[0]) for i in results]))
