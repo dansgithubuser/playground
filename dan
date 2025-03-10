@@ -465,14 +465,18 @@ def unix_timestamp():
 def jupyter_to_text(path):
     with open(path) as f:
         nb = json.load(f)
+    code_cell_num = 1
     for cell in nb['cells']:
-        print('#=== cell start ===#')
-        print(f'# cell type: {cell["cell_type"]}')
+        if cell['cell_type'] == 'code':
+            if not cell['source']: continue
+            print(f'# [{code_cell_num}]')
+            code_cell_num += 1
+        else:
+            print(f'# {cell["cell_type"]:>10}')
         for line in cell['source']:
             if cell['cell_type'] != 'code':
                 print('#', end=' ')
             print(line.rstrip())
-        print('#=== cell end   ===#')
         print('')
 
 _convenience_navigation = _SubSection()
