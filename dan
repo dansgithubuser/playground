@@ -277,10 +277,13 @@ def kill_the_greedy():
         clear_line()
         print(f'{mem_free / 1e6:.3f} / {mem_total / 1e6:.3f} GB free', end=end)
         if mem_free < 1_000_000:
-            pid = subprocess.check_output(['ps', '-e', '--sort', '%mem']).decode().splitlines()[-1].split()[0]
+            lines = subprocess.check_output(['ps', '-eFww', '--sort', '%mem']).decode().splitlines()
+            greedy = lines[-1]
+            pid = greedy.split()[1]
             subprocess.check_call(['kill', pid])
             clear_line()
-            print(f'killed {pid}')
+            headers = lines[0]
+            print(f'killed\n{headers}\n{greedy}')
         time.sleep(0.1)
 
 def temperature():
