@@ -104,6 +104,8 @@ m<c> -- set bookmark <c>
 `<c> -- go to bookmark <c>
 
 :Vex -- open builtin explorer in vertical split
+
+ctrl-n -- autocomplete
 </pre>
 
 ### mapping
