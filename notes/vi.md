@@ -142,6 +142,11 @@ nnoremap ,l :wincmd l<CR>
 nnoremap ,j :wincmd j<CR>
 nnoremap ,k :wincmd k<CR>
 
+### custom syntax highlighting
+Some custom syntax files in `config/vim/syntax`
+To install a custom syntax: `cp syntax-file.vim ~/.vim/syntax/`
+Enable: `:setfiletype syntax-file`
+
 ## personal .vimrc remaps
 ,s -- toggle semantic highlighting
 ,h -- go to left split
