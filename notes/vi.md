@@ -142,6 +142,9 @@ nnoremap ,l :wincmd l<CR>
 nnoremap ,j :wincmd j<CR>
 nnoremap ,k :wincmd k<CR>
 
+Reverse Lines
+Select the desired lines, hit !, and in the resulting prompt pipe the lines through tac a la :'<,'>!tac. See man tac for more details.
+
 ### custom syntax highlighting
 Some custom syntax files in `config/vim/syntax`
 To install a custom syntax: `cp syntax-file.vim ~/.vim/syntax/`
