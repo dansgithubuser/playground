@@ -1,1 +1,2 @@
 gdsfactory==8.32.2
+cspdk==0.13.0
