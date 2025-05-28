@@ -57,6 +57,10 @@ echo rebase
 git config --global alias.rc "rebase --continue"
 git config --global alias.ri "rebase -i --autosquash"
 
+echo cherry-pick
+git config --global alias.cp "cherry-pick"
+git config --global alias.cpc "cherry-pick --continue"
+
 echo reflog
 git config --global alias.rl "reflog --date=iso"
 
