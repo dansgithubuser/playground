@@ -37,7 +37,7 @@ c -- change block selection
 u -- undo
 ctrl-R -- redo
 
-/<b>regex</b> -- search for <b>regex</b> (afterward, n for next, N for previous)
+/<b>regex</b> -- search for <b>regex</b> (afterward, n for next, N for previous; while writing regex, ctrl-p to pop search history)
 :s/<b>pattern</b>/<b>replacement</b> -- replace <b>pattern</b> with <b>replacement</b> on current line
 :.,$s/<b>pattern</b>/<b>replacement</b>/gc -- replace all (g) <b>pattern</b> with <b>replacement</b> on
 	lines from current (.) to last ($), ask for confirmation (c)
