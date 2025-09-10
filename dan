@@ -51,14 +51,23 @@ def _tmp_path(path=''):
     os.makedirs(tmp, exist_ok=True)
     return os.path.join(tmp, path)
 
-def _invoke(invocation, stdin=None, stdout=None):
+def _invoke(invocation, stdin=None, stdout=None, show=False, check=True):
     if args.dry:
         print(invocation)
         return
-    if stdout is not None:
-        return subprocess.check_output(invocation, shell=True, stdin=stdin).decode().strip()
-    else:
-        subprocess.check_call(invocation, shell=True, stdin=stdin)
+    if show:
+        print('➡️ ', invocation)
+    try:
+        if stdout is not None:
+            return subprocess.check_output(invocation, shell=True, stdin=stdin).decode().strip()
+        else:
+            subprocess.check_call(invocation, shell=True, stdin=stdin)
+        return 0
+    except Exception as e:
+        if check:
+            raise
+        print(f'❌ {e}')
+        return 1
 
 def _platform_invoke(linux=None, darwin=None, windows=None, **kwargs):
     invocation = {
@@ -812,11 +821,20 @@ def eol():
                 except:
                     print(_Emoji.explode+'Exception while checking')
 
-def lint():
-    'Lint whatever is in the current directory.'
+def lint(path=None):
+    'Lint whatever. Appropriate linter(s) are inferred by contents of current directory. A path may be specified to limit linting scope.'
+    status = 0
     if os.path.exists('Cargo.toml'):
-        _invoke('cargo fmt')
-        _invoke('cargo clippy')
+        status |= _invoke(f'cargo fmt -- --check {path or ""}', show=True, check=False)
+        status |= _invoke(f'cargo clippy {path or ""}', show=True, check=False)
+    if os.path.exists('pyproject.toml'):
+        status |= _invoke(f'ruff check --ignore D {path or "."}', show=True, check=False)
+    if os.path.exists('package.json'):
+        status |= _invoke(f'npx eslint {path or "."}', show=True, check=False)
+        if os.path.exists('tsconfig.json'):
+            status |= _invoke(f'npx tsc --noEmit --skipLibCheck --project .', show=True, check=False)
+    if status:
+        raise Exception('At least one check failed!')
 
 _crypto = _Section()
 
