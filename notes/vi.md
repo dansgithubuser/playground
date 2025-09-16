@@ -106,6 +106,12 @@ m<c> -- set bookmark <c>
 :Vex -- open builtin explorer in vertical split
 
 ctrl-n -- autocomplete
+
+gf -- while cursor is over a link to a local file, open that file (in a new buffer)
+:bp or ctrl-o -- previous buffer
+:bn or ctrl-i -- next buffer
+:ex . -- open explorer to open a file in new buffer
+
 </pre>
 
 ### mapping
