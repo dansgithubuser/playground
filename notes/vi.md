@@ -100,8 +100,9 @@ W, B -- move to space
 ctrl-Y, ctrl-E -- move screen by line
 H, M, L -- move cursor to top, middle, low line of screen
 zt, zz, zb -- move screen so current line is in top, middle, or bottom of screen
-m<c> -- set bookmark <c>
-`<c> -- go to bookmark <c>
+m<c> -- set mark <c>
+`<c> -- go to mark <c>
+:marks -- list marks
 
 :Vex -- open builtin explorer in vertical split
 
