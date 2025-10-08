@@ -1,0 +1,7 @@
+block_scalar: >
+  a b c d
+  e f g h
+
+block_scalar_chomp: >-
+  a b c d
+  e f g h

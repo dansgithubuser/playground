@@ -1,0 +1,9 @@
+run1: >
+  uv sync --locked --group dev
+    --no-install-package boto3
+    --no-install-package urllib3
+
+run2: >
+  uv sync --locked --group dev
+  --no-install-package boto3
+  --no-install-package urllib3
