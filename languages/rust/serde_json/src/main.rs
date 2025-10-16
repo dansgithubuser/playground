@@ -13,6 +13,17 @@ struct Array {
     arr: Vec<Element>,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+struct DoubleOption {
+    a: Option<Option<String>>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct DoubleOptionSerdeWith {
+    #[serde(default, skip_serializing_if = "Option::is_none", with = "serde_with::rust::double_option")]
+    a: Option<Option<String>>,
+}
+
 fn main() {
     println!("{}", json!(Array { arr: vec![Element { a: None }] }).to_string());
     println!("{:?}", serde_json::from_str::<Array>(r#"{"arr": [{}]}"#));
@@ -46,4 +57,14 @@ fn main() {
         j["a"] = json!(1);
         println!("{:?}", j);
     }
+
+    println!("{:?}", serde_json::from_str::<DoubleOption>(r#"{}"#));
+    println!("{:?}", serde_json::from_str::<DoubleOption>(r#"{"a": null}"#));
+    println!("{:?}", serde_json::from_str::<DoubleOption>(r#"{"a": "asdf"}"#));
+
+    println!("{:?}", serde_json::from_str::<DoubleOptionSerdeWith>(r#"{}"#));
+    println!("{:?}", serde_json::from_str::<DoubleOptionSerdeWith>(r#"{"a": null}"#));
+    println!("{:?}", serde_json::from_str::<DoubleOptionSerdeWith>(r#"{"a": "asdf"}"#));
+
+    // https://github.com/serde-rs/serde/issues/1042
 }
