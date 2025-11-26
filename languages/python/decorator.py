@@ -1,21 +1,39 @@
-def f(x, m=1):
-    print('in decorator, x =', x, 'm =', m)
-    x.m = m
-    return x
+def print_on_call(f):
+    print('in print_on_call')
+    def g(*args, **kwargs):
+        print('in print_on_call inner function')
+        f(*args, **kwargs)
+    return g
 
-print('declaring decorated class C')
+print('\ndecorating function')
+@print_on_call
+def f(*args, **kwargs):
+    print(f'in f {args=} {kwargs=}')
 
-@f
+print('\ncalling decorated function')
+f()
+
+print('\ndecorating class')
+@print_on_call
 class C:
-    pass
+    def __init__(self):
+        print('in C.__init__')
 
-print('C.m =', C.m)
+print('\ninstantiating decorated class')
+C()
 
-def g(m):
-    return lambda x: f(x, m)
+def outer_decorator(f):
+    print('in outer_decorator')
+    f = print_on_call(f)
+    def g(*args, **kwargs):
+        print('in outer_decorator inner function')
+        f(*args, **kwargs)
+    return g
 
-@g(2)
-class D:
-    pass
+print('\nouter-decorating function')
+@outer_decorator
+def f(*args, **kwargs):
+    print(f'in f {args=} {kwargs=}')
 
-print('D.m =', D.m)
+print('\ncalling outer-decorated function')
+f(1, 2, z=3)
