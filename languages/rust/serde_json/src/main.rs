@@ -24,6 +24,12 @@ struct DoubleOptionSerdeWith {
     a: Option<Option<String>>,
 }
 
+#[derive(Debug, Deserialize)]
+enum AOrB {
+    A,
+    B,
+}
+
 fn main() {
     println!("{}", json!(Array { arr: vec![Element { a: None }] }).to_string());
     println!("{:?}", serde_json::from_str::<Array>(r#"{"arr": [{}]}"#));
@@ -67,4 +73,6 @@ fn main() {
     println!("{:?}", serde_json::from_str::<DoubleOptionSerdeWith>(r#"{"a": "asdf"}"#));
 
     // https://github.com/serde-rs/serde/issues/1042
+
+    println!("{:?}", serde_json::from_str::<AOrB>(r#""A""#));
 }
