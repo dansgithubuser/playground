@@ -37,3 +37,15 @@ def f(*args, **kwargs):
 
 print('\ncalling outer-decorated function')
 f(1, 2, z=3)
+
+def decorator(f=None, a=None):
+    print(f'{f=} {a=}')
+    return lambda f: print(f'{f=}')
+
+print('\nusing decorator without params')
+@decorator
+def f(): pass
+
+print('\nusing decorator with param')
+@decorator(a=1)
+def f(): pass
