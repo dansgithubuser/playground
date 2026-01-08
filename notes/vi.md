@@ -74,6 +74,10 @@ w, b -- move by word
 gg, G -- move to beginning, end of file
 ctrl-U, ctrl-D -- move by half-page
 
+`. -- go to last change
+ctrl-O -- go to previous location
+ctrl-I -- go to next location (i.e. return to original location after ctrl-O)
+
 x -- delete
 dd -- delete line
 J -- join lines
