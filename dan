@@ -1015,7 +1015,6 @@ function SettingsForContent()
         setlocal noexpandtab
     endif
 endfunction
-autocmd BufReadPost * call SettingsForContent()
 
 " semantic highlighting
 autocmd BufEnter * :syntax sync fromstart
@@ -1032,6 +1031,8 @@ elseif index(["html", "css", "js", "vue"], ext)!=-1
 elseif index(["c", "h", "cpp", "hpp"], ext)!=-1
     setlocal tabstop=2
     setlocal shiftwidth=2
+else
+    autocmd BufReadPost * call SettingsForContent()
 endif
 
 " navigating splits without ctrl-w
