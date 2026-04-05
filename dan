@@ -110,6 +110,7 @@ PATH=$PATH:~/Desktop/scripts
 PS1_PART1='\\e[0;37;44m               $?               \\e[m'
 PS1="$PS1_PART1
 $DAN_PS1_UNIQUIFIER\\h \\D{{%Y-%m-%d}} \\t \\w$ "
+shopt -s globstar
 
 #===== aliases =====#
 #----- folders -----#
