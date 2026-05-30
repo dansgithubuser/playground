@@ -136,6 +136,7 @@ alias d="python3 do.py"
 
 #----- overrides -----#
 alias vi="dan rename_tab_and_open vi"
+alias vf='dan rename_tab_and_open vi `fzf`'
 
 #----- tab naming -----#
 alias tp="dan rename_tab_pwd; export DAN_TAB_NAME_KEEP=1"
