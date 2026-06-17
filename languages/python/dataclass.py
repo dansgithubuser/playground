@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass
 class C:
@@ -16,3 +16,16 @@ def test(expr):
 test('C()')
 test('C(1, 2)')
 C(1, 2)
+
+
+try:
+    @dataclass
+    class C:
+        l: list = []
+except Exception as e:
+    print(e)
+
+
+@dataclass
+class C:
+    l: list = field(default_factory=list)
