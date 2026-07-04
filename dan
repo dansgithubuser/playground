@@ -1111,6 +1111,8 @@ def git():
         _invoke('sudo apt install -y curl')
         _invoke('curl https://raw.githubusercontent.com/git/git/master/contrib/completion/git-completion.bash > ~/git-completion.bash')
     _invoke('git config --global merge.conflictstyle diff3')
+    _invoke('git config --global user.email dansonlinepresence@gmail.com')
+    _invoke('git config --global user.name Dan')
 
 def pyenv():
     print('cloning pyenv repos into ~/.pyenv')
