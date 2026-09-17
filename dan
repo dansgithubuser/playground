@@ -442,18 +442,21 @@ def sql():
         'LIMIT': 0,
     }
     result = []
-    broke = False
+    break_prev = None
     for token in split:
         if token.upper() in breaks:
-            if not broke:
-                result.append('\n'+'\t'*breaks[token.upper()])
+            break_curr = breaks[token.upper()]
+            if break_prev is None:
+                result.append('\n'+'\t'*break_curr)
             else:
                 result.append(' ')
-            broke = True
+            break_prev = break_curr
         else:
-            result.append(' ')
-            broke = False
+            if not result[-1].endswith('\t'): result.append(' ')
+            break_prev = None
         result.append(token)
+        if token.endswith(','):
+            result.append('\n'+'\t'*(break_curr or 0 + 1))
     print(''.join(result))
 
 def base64():
