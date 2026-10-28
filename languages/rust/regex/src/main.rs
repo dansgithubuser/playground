@@ -22,6 +22,12 @@ fn sub(text: String) {
 }
 
 fn main() {
+    let re = regex::Regex::new("(asdf)bbbb").unwrap();
+    if let Some(captures) = re.captures("lolasdfbbbbxxxxasdfbbbb") {
+        println!("{}", captures.get(0).unwrap().as_str());
+        println!("{}", captures.get(1).unwrap().as_str());
+    }
+
     sub(r#"{
         "name": "hello",
         "args": [
